@@ -269,3 +269,6 @@
 @keyframes acx-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes acx-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .acx-conf * { transition: none !important; } .acx-conf *:not(.acx-c-mtrack) { animation: none !important; } .acx .acx-btn:active { transform: none; } }
+
+/* Inside the original conference page: the new sections follow its content column */
+.conf-page .wrap > .acx-c-in { width: auto; max-width: none; margin: 0; padding: 0; }

@@ -162,8 +162,8 @@ def build_home():
 
 def build_conference():
     import sys; sys.path.insert(0, os.path.join(ROOT, "tools"))
-    from conference_page import build_conference as _bc
-    return _bc(ROOT, block_span, asset_version, EMAIL)
+    from conference_page import build_legacy_conference
+    return build_legacy_conference(ROOT, asset_version)
 
 def enhance_buttons(h):
     """Interactive hover button (port of the shadcn InteractiveHoverButton, in CSS): wrap each text

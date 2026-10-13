@@ -156,32 +156,8 @@ def conference_html(c, email):
              % (head(cf, "acx-h-cfp"), esc(mail), download(dl["Call for Best Practices"]["href"], "Download the full call for best practices", "PDF · 1.9 MB"),
                 t0.isoformat(), t1.isoformat(), months, ticks, dates, parts, "".join(spec(g) for g in cf["specs"])))
 
-    fe = c["fees"]
-    base = max(int(t["price"]) for t in fe["tiers"])
-    def plan(t):
-        sub, inc = PLAN[t["name"]]
-        hi = t["highlight"]
-        badge = '<p class="acx-c-plan-badge">%sSave AED %d</p>' % (I_STAR, base - int(t["price"])) if hi else ""
-        return ('<div class="acx-c-plan%s">%s<h3>%s</h3><p class="acx-c-plan-price"><b>AED %s</b><span>/ person</span></p>'
-                '<p class="acx-c-plan-sub">%s</p><ul class="acx-c-plan-inc">%s</ul>'
-                '<a class="acx-btn %s" href="%s" target="_blank" rel="noopener">Register</a></div>'
-                % (" is-hi" if hi else "", badge, esc(t["name"][0] + t["name"][1:].lower()), esc(t["price"]), esc(sub),
-                   "".join("<li>%s%s</li>" % (I_CHECK, esc(x)) for x in inc), "acx-btn-light" if hi else "acx-btn-ghost", reg))
-    o.append('<section class="acx-c-sec acx-c-band" id="registration" aria-labelledby="acx-h-fees"><div class="acx-c-in">'
-             '<div class="acx-c-head"><h2 class="acx-c-h2" id="acx-h-fees">%s</h2>'
-             '<p class="acx-c-lead">Prices are per person and exclude 5%% VAT.</p></div>'
-             '<div class="acx-c-plans">%s</div></div></section>'
-             % (esc(fe["title"]), "".join(plan(t) for t in fe["tiers"])))
-
-    def logos(copy):
-        # Same visual weight for wide and tall logos: scale height by sqrt(reference aspect / aspect)
-        return "".join('<li><img src="../%s" alt="%s" width="%d" height="%d" style="--k:%.2f" loading="lazy" decoding="async"/></li>'
-                       % (esc(l["logo"]), "" if copy else esc(l["name"]), l["w"], l["h"],
-                          min(1.15, max(.5, (1.5 / (l["w"] / l["h"])) ** .5))) for l in c["logos"])
-    o.append('<section class="acx-c-sec" id="members" aria-labelledby="acx-h-mem"><div class="acx-c-in">'
-             '<h2 class="acx-c-h2" id="acx-h-mem">Founding member institutions</h2></div>'
-             '<div class="acx-c-marquee"><div class="acx-c-mtrack"><ul class="acx-c-logos">%s</ul>'
-             '<ul class="acx-c-logos" aria-hidden="true">%s</ul></div></div></section>' % (logos(False), logos(True)))
+    o.append(fees_section(c))
+    o.append(members_section(c))
 
     so = c["sponsorship"]
     o.append('<section class="acx-c-sec" id="sponsorship" aria-labelledby="acx-h-spo"><div class="acx-c-in">%s'
@@ -231,5 +207,86 @@ def build_conference(root, block_span, asset_version, email):
     tags = ['<link rel="stylesheet" id="acx-conf" href="../actlc-assets/conference.css?v=%s"/>' % asset_version("conference.css"),
             '<script id="acx-conf-js" src="../actlc-assets/conference.js?v=%s" defer></script>' % asset_version("conference.js")]
     h = h.replace("</head>", "\n".join(tags) + "\n</head>", 1)
+    open(p, "w", encoding="utf-8").write(h)
+    return p
+
+
+def fees_section(c):
+    """Three price cards on the teal band; the presenter rate raised with its saving."""
+    fe, reg = c["fees"], esc(c["hero"]["register"])
+    base = max(int(t["price"]) for t in fe["tiers"])
+    def plan(t):
+        sub, inc = PLAN[t["name"]]
+        hi = t["highlight"]
+        badge = '<p class="acx-c-plan-badge">%sSave AED %d</p>' % (I_STAR, base - int(t["price"])) if hi else ""
+        return ('<div class="acx-c-plan%s">%s<h3>%s</h3><p class="acx-c-plan-price"><b>AED %s</b><span>/ person</span></p>'
+                '<p class="acx-c-plan-sub">%s</p><ul class="acx-c-plan-inc">%s</ul>'
+                '<a class="acx-btn %s" href="%s" target="_blank" rel="noopener">Register</a></div>'
+                % (" is-hi" if hi else "", badge, esc(t["name"][0] + t["name"][1:].lower()), esc(t["price"]), esc(sub),
+                   "".join("<li>%s%s</li>" % (I_CHECK, esc(x)) for x in inc), "acx-btn-light" if hi else "acx-btn-ghost", reg))
+    return ('<section class="acx-c-sec acx-c-band" id="registration" aria-labelledby="acx-h-fees"><div class="acx-c-in">'
+            '<div class="acx-c-head"><h2 class="acx-c-h2" id="acx-h-fees">%s</h2>'
+            '<p class="acx-c-lead">Prices are per person and exclude 5%% VAT.</p></div>'
+            '<div class="acx-c-plans">%s</div></div></section>'
+            % (esc(fe["title"]), "".join(plan(t) for t in fe["tiers"])))
+
+
+def members_section(c):
+    """Founding members as a slow strip of large logos."""
+    def logos(copy):
+        # Same visual weight for wide and tall logos: scale height by sqrt(reference aspect / aspect)
+        return "".join('<li><img src="../%s" alt="%s" width="%d" height="%d" style="--k:%.2f" loading="lazy" decoding="async"/></li>'
+                       % (esc(l["logo"]), "" if copy else esc(l["name"]), l["w"], l["h"],
+                          min(1.15, max(.5, (1.5 / (l["w"] / l["h"])) ** .5))) for l in c["logos"])
+    return ('<section class="acx-c-sec" id="members" aria-labelledby="acx-h-mem"><div class="acx-c-in">'
+            '<h2 class="acx-c-h2" id="acx-h-mem">Founding member institutions</h2></div>'
+            '<div class="acx-c-marquee"><div class="acx-c-mtrack"><ul class="acx-c-logos">%s</ul>'
+            '<ul class="acx-c-logos" aria-hidden="true">%s</ul></div></div></section>' % (logos(False), logos(True)))
+
+
+# The page keeps its original (September) design. Today's information is applied on top of it:
+# venue is ADU's Abu Dhabi Campus only, the contact form opens the visitor's email app instead of
+# pretending to send, and the fees and member-logo sections are the new ones.
+LEGACY_FIXES = [
+    ("Abu Dhabi University- Abu Dhabi Campus, Al Ain", "Abu Dhabi University, Abu Dhabi Campus"),
+    ("Abu Dhabi University, Al Ain Campus", "Abu Dhabi University, Abu Dhabi Campus"),
+    ("<span>2 Feb 2027 · Abu Dhabi University- Abu Dhabi Campus</span>", "<span>2 Feb 2027 · Abu Dhabi University, Abu Dhabi Campus</span>"),
+    ("hosted by Abu Dhabi University- Abu Dhabi Campus and Abu Dhabi University at their Al Ain campuses.", "hosted by Abu Dhabi University at its Abu Dhabi Campus."),
+    ("2–3 February 2027 · Al Ain, UAE", "2–3 February 2027 · Abu Dhabi, UAE"),
+    ("Two days. Two campuses. One goal:", "Two days. One campus. One goal:"),
+    ("Two Days, Two Campuses", "Two Days in Abu Dhabi"),
+    ('''    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    setTimeout(function(){
+      btn.style.display = 'none';
+      document.getElementById('cf-ok').style.display = 'block';
+    }, 700);''',
+     '''    // No server behind this form: open the visitor's email app with the message filled in.
+    var f = w.querySelectorAll('input,textarea,select'), v = function(n){ return f[n].value.trim(); };
+    location.href = 'mailto:info@ac-tlc.org?subject=' + encodeURIComponent('ACTLC 2027 – ' + v(4)) +
+      '&body=' + encodeURIComponent(v(5) + '\\n\\n' + v(0) + ' ' + v(1) + '\\n' + v(3) + '\\n' + v(2));
+    document.getElementById('cf-ok').style.display = 'block';'''),
+    ("Message sent — we'll be in touch shortly.", "Your email app has opened with this message. Press Send there to reach us at info@ac-tlc.org."),
+    ('onclick="handleConferenceForm(this)" type="button">Send Message →</button>', 'onclick="handleConferenceForm(this)" type="button">Email this message →</button>'),
+]
+
+
+def build_legacy_conference(root, asset_version):
+    c = json.load(open(os.path.join(root, "tools", "conference.json"), encoding="utf-8"))
+    p = os.path.join(root, "conference", "index.html")
+    h = open(p, encoding="utf-8").read()
+    for old, new in LEGACY_FIXES:
+        h = h.replace(old, new)
+    def between(h, a, b, new):
+        i = h.index(a) + len(a); j = h.index(b, i)
+        return h[:i] + "\n" + new + "\n" + h[j:]
+    # The new sections sit in the old page's own content column (.wrap)
+    fees = fees_section(c).replace('<div class="acx-c-in">', '<div class="wrap"><div class="acx-c-in">', 1)
+    fees = fees[: fees.rindex("</div></section>")] + "</div></div></section>"
+    mem = members_section(c).replace('<div class="acx-c-in">', '<div class="wrap"><div class="acx-c-in">', 1).replace("</h2></div>", "</h2></div></div>", 1)
+    h = between(h, "<!-- ══ REGISTRATION ══ -->", "<!-- ══ DOWNLOADS ══ -->", '<div class="acx acx-conf">%s</div>' % fees)
+    h = between(h, "<!-- ══ FOUNDING MEMBERS MARQUEE ══ -->", "<!-- ══ SPONSORSHIP ══ -->", '<div class="acx acx-conf">%s</div>' % mem)
+    h = re.sub(r'<(?:link|script)\b[^>]*\bid="acx-(?:conf|conf-js)"[^>]*>(?:[^<]*</script>)?\n?', "", h)
+    h = h.replace("</head>", '<link rel="stylesheet" id="acx-conf" href="../actlc-assets/conference.css?v=%s"/>\n</head>' % asset_version("conference.css"), 1)
     open(p, "w", encoding="utf-8").write(h)
     return p
