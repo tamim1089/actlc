@@ -1,37 +1,53 @@
-/* Conference page: an honest contact form.
-   The original button waited 700 ms and printed "Message sent" without sending anything.
-   A static site has no server, so we hand the message to the visitor's email app instead. */
+/* ACTLC conference page: section bar under the site header, current-section highlight,
+   and programme day tabs. Without JS the page is complete: both days are listed. */
 (function () {
   'use strict';
-  var TO = 'info@ac-tlc.org';
+  var root = document.querySelector('.acx-conf'); if (!root) return;
 
-  function field(box, sel) { var el = box.querySelector(sel); return el ? el.value.trim() : ''; }
+  // 1. Sit the section bar under the theme header when that header stays on screen.
+  function headerOffset() {
+    var m = document.getElementById('masthead'), pos = m ? getComputedStyle(m).position : '';
+    var h = m && (pos === 'fixed' || pos === 'sticky') ? Math.round(m.getBoundingClientRect().height) : 0;
+    root.style.setProperty('--acx-hdr', h + 'px');
+  }
+  headerOffset(); window.addEventListener('resize', headerOffset);
 
-  window.handleConferenceForm = function (btn) {
-    var box = btn.closest('.cf') || document;
-    var ok = document.getElementById('cf-ok');
-    var email = box.querySelector('#cf-email'), msg = box.querySelector('#cf-message');
-    var missing = [];
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) missing.push(email);
-    if (!msg || !msg.value.trim()) missing.push(msg);
-    if (missing.length) {
-      ok.className = 'is-error';
-      ok.textContent = missing[0] === email
-        ? 'Add a valid email address so we can reply.'
-        : 'Write a short message before sending.';
-      ok.style.display = 'block';
-      missing[0] && missing[0].focus();
-      return;
-    }
-    var name = [field(box, '#cf-first'), field(box, '#cf-last')].filter(Boolean).join(' ');
-    var type = field(box, '#cf-type') || 'General enquiry';
-    var body = msg.value.trim() + '\n\n' + [name, field(box, '#cf-org'), email.value.trim()].filter(Boolean).join('\n');
-    var url = 'mailto:' + TO + '?subject=' + encodeURIComponent('ACTLC 2027 conference: ' + type) +
-              '&body=' + encodeURIComponent(body);
-    btn.setAttribute('data-mailto', url);
-    ok.className = '';
-    ok.textContent = 'Your email app should open with this message ready to send. If it doesn’t, write to ' + TO + '.';
-    ok.style.display = 'block';
-    window.location.href = url;
-  };
+  // 2. Mark the section in view in the bar (and keep it visible on phones).
+  var links = Array.prototype.slice.call(root.querySelectorAll('.acx-local-links a'));
+  if ('IntersectionObserver' in window && links.length) {
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.removeAttribute('aria-current'); });
+        var a = byId[e.target.id]; if (!a) return;
+        a.setAttribute('aria-current', 'true');
+        var bar = a.parentNode; bar.scrollLeft = a.offsetLeft - bar.clientWidth / 2 + a.clientWidth / 2;
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    Object.keys(byId).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+  }
+
+  // 3. Programme: Day 1 / Day 2 segmented control (WAI-ARIA tabs, automatic activation).
+  var tabs = root.querySelector('.acx-c-tabs');
+  if (tabs) {
+    var btn = Array.prototype.slice.call(tabs.querySelectorAll('[role="tab"]'));
+    var panels = btn.map(function (b) { return document.getElementById(b.getAttribute('aria-controls')); });
+    var select = function (i, focus) {
+      btn.forEach(function (b, j) {
+        var on = i === j; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1; panels[j].hidden = !on;
+      });
+      if (focus) btn[i].focus();
+    };
+    btn.forEach(function (b, i) {
+      b.addEventListener('click', function () { select(i, false); });
+      b.addEventListener('keydown', function (e) {
+        var n = btn.length, j = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : null;
+        if (j !== null) { e.preventDefault(); select(j, true); }
+      });
+    });
+    panels.forEach(function (p) { p.setAttribute('role', 'tabpanel'); });
+    root.classList.add('acx-js'); tabs.hidden = false; select(0, false);
+  }
 })();

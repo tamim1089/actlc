@@ -84,7 +84,7 @@
 .acx .acx-foot-in { max-width: 1140px; margin: 0 auto; padding: calc(var(--t) * 2.2) 20px calc(var(--t) * 1.4); }
 .acx .acx-foot-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: calc(var(--t) * 2); align-items: start; }
 .acx .acx-foot-brand { display: inline-block; }
-.acx .acx-foot-brand img { display: block; width: auto; height: calc(var(--t) * 3.2); }
+.acx .acx-foot-brand img { display: block; width: auto; height: calc(var(--t) * 4.6); }   /* ~78px phone, ~92px at 1920 */
 .acx .acx-foot-nav { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); column-gap: calc(var(--t) * 4); gap: calc(var(--t) * 1.5); }
 .acx .acx-foot-h { margin: 0 0 calc(var(--t) * 0.5); font: 600 var(--fs-foot)/1.4 var(--font); letter-spacing: 0; text-transform: none; color: var(--ink); }
 .acx .acx-foot-col ul { list-style: none; margin: 0; padding: 0; }

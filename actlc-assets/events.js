@@ -6,7 +6,7 @@
 
   var MIN = 6e4, DAY = 864e5;
   var MEMBER_TZ = {
-    'Asia/Dubai': 'ae', 'Asia/Riyadh': 'sa', 'Asia/Bahrain': 'bh',
+    'Asia/Dubai': 'ae', 'Asia/Riyadh': 'sa', 'Asia/Bahrain': 'bh', 'Asia/Beirut': 'lb',
     'Africa/Cairo': 'eg', 'Africa/Casablanca': 'ma', 'Africa/El_Aaiun': 'ma'
   };
 

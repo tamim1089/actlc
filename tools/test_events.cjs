@@ -39,6 +39,7 @@ test('member country clock on the session date (tzdata 2026c: Morocco +00 from 2
   assert.equal(E.clock(START, 'Asia/Riyadh'), '15:30');
   assert.equal(E.clock(START, 'Asia/Bahrain'), '15:30');
   assert.equal(E.clock(START, 'Africa/Cairo'), '15:30'); // Egypt summer time until late October
+  assert.equal(E.clock(START, 'Asia/Beirut'), '15:30');  // Lebanon summer time until late October
   // Morocco depends on the runtime's tz database; report rather than hard-fail on old ICU data.
   const ma = E.clock(START, 'Africa/Casablanca');
   assert.ok(ma === '12:30' || ma === '13:30', 'Morocco ' + ma);
@@ -48,6 +49,7 @@ test('member country clock on the session date (tzdata 2026c: Morocco +00 from 2
 test('memberCode and cityFromTz', () => {
   assert.equal(E.memberCode('Asia/Dubai'), 'ae');
   assert.equal(E.memberCode('Africa/Casablanca'), 'ma');
+  assert.equal(E.memberCode('Asia/Beirut'), 'lb');
   assert.equal(E.memberCode('Asia/Kuwait'), null);
   assert.equal(E.cityFromTz('America/New_York'), 'New York');
   assert.equal(E.cityFromTz('America/Argentina/Buenos_Aires'), 'Buenos Aires');

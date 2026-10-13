@@ -1,0 +1,747 @@
+{
+ "hero": {
+  "title": "Learning for Impact: Agency, Future Readiness, and Purpose in Higher Education",
+  "sub": "Bringing together faculty, learning designers, and academic leaders across the Arab region",
+  "when_where": "2–3 February 2027 · United Arab Emirates University (UAEU), Al Ain",
+  "register": "https://www.adu.ac.ae/conference/atlc-registration",
+  "proposal": "#call-for-papers"
+ },
+ "facts": [
+  {
+   "n": "2",
+   "label": "Conference Days"
+  },
+  {
+   "n": "4",
+   "label": "Parallel Tracks"
+  }
+ ],
+ "about": {
+  "eyebrow": "About the Conference",
+  "title": "Advancing learning that truly delivers impact",
+  "body": [
+   "The inaugural ACTLC Conference brings together academic leaders, faculty, and teaching and learning professionals from across the region for a gathering focused on learning for impact — advancing agency, future readiness, and purpose in higher education.",
+   "At a time when higher education is under increasing pressure to demonstrate its relevance and societal impact, this conference positions learning at the center of transformation, focusing on how institutions can intentionally design teaching, learning, and assessment to develop future-ready graduates with agency, adaptability, and purpose."
+  ],
+  "formats": [
+   {
+    "title": "Keynote Addresses",
+    "text": "Regional and international thought leaders"
+   },
+   {
+    "title": "Panel Discussions",
+    "text": "Plenary debates and dialogue sessions"
+   },
+   {
+    "title": "Best Practice Sessions",
+    "text": "4 parallel practice-led tracks"
+   },
+   {
+    "title": "Interactive Workshops",
+    "text": "Hands-on, transferable skills sessions"
+   }
+  ],
+  "goals": [
+   {
+    "title": "Embed employability and purpose into the student experience",
+    "text": "Design learning that prepares graduates for real workforce challenges"
+   },
+   {
+    "title": "Reimagine assessment as a driver of capability and agency",
+    "text": "Move beyond grading toward authentic, evidence-based evaluation"
+   },
+   {
+    "title": "Leverage AI and digital technologies responsibly and effectively",
+    "text": "Enhance human judgment rather than replace it"
+   },
+   {
+    "title": "Design personalised, inclusive, and flexible learning pathways at scale",
+    "text": "Equity-driven approaches that reach every learner"
+   }
+  ]
+ },
+ "themes": {
+  "eyebrow": "Conference Themes",
+  "title": "Four Sub-Themes, One Direction",
+  "lead": "All proposals must align with one of the four sub-themes. Practice-led. Evidence-informed. 500–1,000 words.",
+  "items": [
+   {
+    "n": "01",
+    "title": "Future-Ready Curricula and Graduates",
+    "short": "Employability, purpose, and societal impact",
+    "text": "",
+    "points": [
+     "Aligning graduate attributes with workforce and societal needs",
+     "Curriculum renewal for relevance, adaptability, and employability",
+     "Co-designing curricula with employers, industry, and communities",
+     "Interdisciplinary and challenge-based learning",
+     "Micro-credentials, stackable learning, and lifelong learning pathways",
+     "Measuring and evidencing graduate outcomes"
+    ]
+   },
+   {
+    "n": "02",
+    "title": "Assessment Reimagined for Capability and Agency",
+    "short": "Authentic, programmatic, and competency-based approaches",
+    "text": "",
+    "points": [
+     "Real-world, performance-based, and programmatic assessment",
+     "Assessment that builds confidence, autonomy, and learner agency",
+     "Portfolios, capstones, and reflective practice",
+     "Rethinking grading, feedback, and progression",
+     "Ensuring coherence, academic standards, and progression integrity"
+    ]
+   },
+   {
+    "n": "03",
+    "title": "Teaching & Learning in an AI- and Data-Rich Environment",
+    "short": "Innovation with purpose and integrity",
+    "text": "",
+    "points": [
+     "Blended, hybrid, and digitally enhanced learning models",
+     "AI as a co-pilot for teaching, learning design, and assessment",
+     "Learning analytics and evidence-informed teaching",
+     "Ethical use of data and educational technologies",
+     "Enhancing rather than replacing human judgment",
+     "Faculty capability and digital pedagogy development"
+    ]
+   },
+   {
+    "n": "04",
+    "title": "Personalised, Flexible, and Inclusive Learning at Scale",
+    "short": "Equity, support, and student success",
+    "text": "",
+    "points": [
+     "Designing personalised learning experiences at institutional scale",
+     "Flexible learning models and pathways",
+     "Equity-driven personalisation and inclusive pedagogies",
+     "Technology-enabled advising and learner support systems",
+     "Supporting student success, belonging, and well-being"
+    ]
+   }
+  ]
+ },
+ "programme": {
+  "eyebrow": "Conference Programme",
+  "title": "Two Days in Al Ain",
+  "lead": "Keynotes, plenary panels, structured debates, fireside conversations, and parallel workshops.",
+  "days": [
+   {
+    "tab": "Day 1 — 2 February",
+    "date": "Day 1 — 2 February 2027",
+    "venue": "United Arab Emirates University (UAEU), Al Ain",
+    "items": [
+     {
+      "time": "09:00–09:30",
+      "title": "Opening & Inaugural Conference Session",
+      "detail": "",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "09:30–09:55",
+      "title": "Keynote Address 1",
+      "detail": "",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "09:55–10:45",
+      "title": "Plenary Panel Discussion 1",
+      "detail": "Capability, Purpose, and Future Readiness: What Should Universities Really Be Preparing Students For?",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "10:45–11:05",
+      "title": "Networking & Refreshment Break",
+      "detail": "",
+      "note": "",
+      "break": true
+     },
+     {
+      "time": "11:05–11:30",
+      "title": "Keynote Address 2",
+      "detail": "",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "11:30–12:20",
+      "title": "Plenary Panel Discussion 2",
+      "detail": "Teaching in the Age of AI: Balancing Technology, Humanity, and Learning",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "12:20–13:20",
+      "title": "Lunch Break",
+      "detail": "",
+      "note": "",
+      "break": true
+     },
+     {
+      "time": "13:30–16:30",
+      "title": "Parallel Best Practice Sessions",
+      "detail": "",
+      "note": "(4 concurrent tracks)",
+      "break": false
+     },
+     {
+      "time": "16:30–16:45",
+      "title": "Day 1 Wrap-Up & Reflections",
+      "detail": "",
+      "note": "",
+      "break": false
+     }
+    ]
+   },
+   {
+    "tab": "Day 2 — 3 February",
+    "date": "Day 2 — 3 February 2027",
+    "venue": "United Arab Emirates University (UAEU), Al Ain",
+    "items": [
+     {
+      "time": "09:00–09:30",
+      "title": "Opening & Day 2 Welcome",
+      "detail": "",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "09:30–10:20",
+      "title": "Plenary Panel Discussion",
+      "detail": "",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "10:20–10:45",
+      "title": "Keynote Address",
+      "detail": "",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "10:45–11:05",
+      "title": "Networking & Refreshment Break",
+      "detail": "",
+      "note": "",
+      "break": true
+     },
+     {
+      "time": "11:05–11:55",
+      "title": "Structured Debate",
+      "detail": "Is Higher Education Still Teaching for the Future — or for the Past?",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "11:55–12:40",
+      "title": "Leadership Fireside Conversation",
+      "detail": "What Will Define a Great University in 2035 in Times of Disruption?",
+      "note": "",
+      "break": false
+     },
+     {
+      "time": "12:40–13:40",
+      "title": "Lunch Break",
+      "detail": "",
+      "note": "",
+      "break": true
+     },
+     {
+      "time": "13:50–16:30",
+      "title": "Parallel Interactive Workshops",
+      "detail": "",
+      "note": "(4 concurrent · 2.5 hrs each)",
+      "break": false
+     },
+     {
+      "time": "16:30–16:50",
+      "title": "Conference Closing & Key Takeaways",
+      "detail": "",
+      "note": "",
+      "break": false
+     }
+    ]
+   }
+  ]
+ },
+ "speakers": {
+  "eyebrow": "Speakers",
+  "title": "Speakers",
+  "lead": "Practitioners, leaders, and innovators from higher education across the Arab region and beyond.",
+  "people": [
+   {
+    "name": "Prof. Ghassan Aouad",
+    "role": "Chancellor",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Ghassan.png",
+    "linkedin": "https://www.linkedin.com/in/professor-ghassan-aouad-4678913b/"
+   },
+   {
+    "name": "Dr. Hamad Odhabi",
+    "role": "Vice Chancellor for AI and Operational Excellence",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Odhabi.png",
+    "linkedin": "https://www.linkedin.com/in/hamad-odhabi-17ab876/"
+   },
+   {
+    "name": "Dr. Mohammad Fteiha",
+    "role": "Director, Al Ain Campus & Centre for Faculty Development",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Fteiha.png",
+    "linkedin": "https://www.linkedin.com/in/mohammad-fteiha-pfhea-42434215/"
+   },
+   {
+    "name": "Dr. Narimane Hadj-Hamou",
+    "role": "Founder & CEO",
+    "org": "CLICKS",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Founder.png",
+    "linkedin": "https://www.linkedin.com/in/dr-narimane-hadj-hamou-6230b565/"
+   },
+   {
+    "name": "Dr. Randa Mikati",
+    "role": "Senior Educational Technologist",
+    "org": "CLICKS",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Randa.png",
+    "linkedin": "https://www.linkedin.com/in/randamikati/"
+   },
+   {
+    "name": "Dr. Mahinour Ezzat",
+    "role": "Director of Teaching and Learning",
+    "org": "Ajman University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Ezzat.png",
+    "linkedin": "https://www.linkedin.com/in/dr-mahinour-ezzat-sfhea-9153b716/"
+   },
+   {
+    "name": "Dr. Connie Mitchell, PFHEA",
+    "role": "Director, Teaching and Learning Center",
+    "org": "Prince Sultan University",
+    "country": "Saudi Arabia",
+    "photo": "../wp-content/uploads/2026/05/Connie.png",
+    "linkedin": "https://www.linkedin.com/in/dr-connie-mitchell-pfhea-07168010/"
+   },
+   {
+    "name": "Dr. Saed Alrabaee",
+    "role": "Director, Centre for Excellence in Teaching and Learning",
+    "org": "Abu Dhabi University- Abu Dhabi Campus",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Saed.png",
+    "linkedin": "https://www.linkedin.com/in/saed-alrabaee-104034134/"
+   },
+   {
+    "name": "Dr. Nina Abdul Razzak",
+    "role": "Associate Professor & Director, Center for Teaching and Learning",
+    "org": "American University of Bahrain",
+    "country": "Bahrain",
+    "photo": "../wp-content/uploads/2026/05/nina.jpeg",
+    "linkedin": "https://www.linkedin.com/in/nina-abdul-razzak-01945024/"
+   },
+   {
+    "name": "Dr. Sabri Hamdan",
+    "role": "Vice President for Academic Affairs",
+    "org": "Abu Dhabi University- Abu Dhabi Campus",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Sabri.png",
+    "linkedin": ""
+   },
+   {
+    "name": "Prof. Hoda Mostafa",
+    "role": "Director, Center for Learning and Teaching",
+    "org": "The American University in Cairo",
+    "country": "Egypt",
+    "photo": "../wp-content/uploads/2026/05/hoda.png",
+    "linkedin": "https://www.linkedin.com/in/hodamostafa/"
+   },
+   {
+    "name": "Prof. Norita Ahmad, SFHEA",
+    "role": "Director, Center for Innovation in Teaching and Learning & Professor of Information Systems and Business Analytics",
+    "org": "American University of Sharjah",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/norita.png",
+    "linkedin": "https://www.linkedin.com/in/norita-ahmad-7335b23/"
+   },
+   {
+    "name": "Dr. Karim Moustaghfir",
+    "role": "Associate Vice President for 21st Century Learning Innovation and Faculty Development",
+    "org": "Al Akhawayn University",
+    "country": "Morocco",
+    "photo": "../wp-content/uploads/2026/05/karim.png",
+    "linkedin": "https://www.linkedin.com/in/karim-moustaghfir-92a6bb49/"
+   },
+   {
+    "name": "Prof. Barry O'Mahony",
+    "role": "Provost",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/paul.png",
+    "linkedin": "https://www.linkedin.com/in/professor-barry-o-mahony-2b62501b/"
+   }
+  ]
+ },
+ "committee": {
+  "eyebrow": "Organizing Committee",
+  "title": "The Team Behind the Conference",
+  "lead": "The ACTLC Inaugural Conference is organized by the Arab Consortium for Teaching and Learning Centers, initiated by CLICKS in 2024, and hosted by United Arab Emirates University (UAEU) in Al Ain.",
+  "people": [
+   {
+    "name": "Dr. Mohammad Fteiha",
+    "role": "Director of Al Ain Campus & Director, Centre for Faculty Development and Learning Innovation",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Fteiha.png",
+    "linkedin": "",
+    "badge": "Co-Chair"
+   },
+   {
+    "name": "Dr. Narimane Hadj-Hamou",
+    "role": "Founder & CEO, Center for Learning Innovations and Customized Knowledge Solutions",
+    "org": "CLICKS",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Founder.png",
+    "linkedin": "",
+    "badge": "Co-Chair"
+   },
+   {
+    "name": "Dr. Saed Alrabaee",
+    "role": "Associate Professor & Director, Center for Excellence in Teaching and Learning",
+    "org": "Abu Dhabi University- Abu Dhabi Campus",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Saed.png",
+    "linkedin": "",
+    "badge": "Committee Member"
+   },
+   {
+    "name": "Dr. Connie Mitchell, PFHEA",
+    "role": "Director, Teaching and Learning Center",
+    "org": "Prince Sultan University",
+    "country": "Saudi Arabia",
+    "photo": "../wp-content/uploads/2026/05/Connie.png",
+    "linkedin": "",
+    "badge": "Committee Member"
+   },
+   {
+    "name": "Raneem Almadhoun",
+    "role": "Executive Projects Officer, Al Ain Campus",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Raneem.png",
+    "linkedin": "",
+    "badge": "Committee Member"
+   },
+   {
+    "name": "Udaya Chandrika",
+    "role": "Client & Project Engagement Manager",
+    "org": "CLICKS",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/udaya.png",
+    "linkedin": "",
+    "badge": "Committee Member"
+   },
+   {
+    "name": "Fatma Al Kaabi",
+    "role": "Senior Projects Administrator, Centre for Faculty Development and Learning Innovation",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Fatima.png",
+    "linkedin": "",
+    "badge": "Committee Member"
+   }
+  ]
+ },
+ "cfp": {
+  "eyebrow": "Call for Best Practices",
+  "title": "Share What You Actually Did",
+  "lead": "Practice-led. We are seeking proposals that showcase what was implemented, how it was done, what changed, and what others can learn.",
+  "dates_title": "Proposal Submission Deadline",
+  "dates": [
+   {
+    "date": "30 October 2026",
+    "title": "Proposal Submission Deadline",
+    "text": "500–1,000 words, Word or PDF format"
+   },
+   {
+    "date": "15 November 2026",
+    "title": "Notification of Acceptance",
+    "text": "Authors notified of review decision"
+   },
+   {
+    "date": "15 December 2026",
+    "title": "Revised Proposals (if applicable)",
+    "text": "Revisions submitted if requested by committee"
+   },
+   {
+    "date": "10 January 2027",
+    "title": "Final Presentation Materials Due",
+    "text": "PowerPoint (.pptx), 10–12 slides, 15 min presentation"
+   }
+  ],
+  "blocks": [
+   {
+    "title": "Proposal Structure (500–1,000 words)",
+    "items": [
+     "Cover page: title, sub-theme alignment, author & institution details",
+     "Context & challenge: institutional setting and problem addressed",
+     "The practice or innovation: what was designed or changed, who was involved",
+     "Implementation: how introduced, scope, scale, and timeline",
+     "Impact & evidence: outcomes, qualitative and quantitative indicators",
+     "Lessons learned & transferability: what other institutions can adapt"
+    ]
+   },
+   {
+    "title": "Submission Format",
+    "items": [
+     "File format: Word (.docx) or PDF",
+     "Length: 500–1,000 words",
+     "Font size: 11–12 pt, line spacing: 1.15–1.5",
+     "Include contact details of the corresponding author"
+    ]
+   },
+   {
+    "title": "Presentation Format",
+    "items": [
+     "15-minute showcase presentation",
+     "10–12 slides, PowerPoint (.pptx) format",
+     "Practice-focused and evidence-informed, not promotional"
+    ]
+   }
+  ],
+  "submit_title": "Ready to submit?",
+  "submit_text": "Send your proposal by email with the subject line below.",
+  "subject": "ACTLC 2027 – Best Practice Proposal – Track #"
+ },
+ "fees": {
+  "eyebrow": "Registration",
+  "title": "Conference Fees",
+  "lead": "All fees include access to all conference sessions and materials. All fees subject to 5% VAT.",
+  "tiers": [
+   {
+    "name": "Regular Delegate",
+    "qualifier": "Non-Founding Member",
+    "price": "250",
+    "vat": "+ 5% VAT = AED 262.50",
+    "includes": "All sessions, materials & networking events",
+    "badge": "",
+    "highlight": false
+   },
+   {
+    "name": "Presenter",
+    "qualifier": "",
+    "price": "175",
+    "vat": "+ 5% VAT = AED 183.75",
+    "includes": "All sessions + presentation slot & materials",
+    "badge": "Presenter Rate",
+    "highlight": true
+   },
+   {
+    "name": "Founding Member Delegate",
+    "qualifier": "beyond first 5 complimentary",
+    "price": "100",
+    "vat": "+ 5% VAT = AED 105.00",
+    "includes": "All sessions, materials & networking events",
+    "badge": "",
+    "highlight": false
+   }
+  ],
+  "note": "Founding member institutions receive five complimentary registrations. The member rate applies to any additional delegates beyond the first five.",
+  "cta": "Secure your place at the region's premier teaching and learning conference."
+ },
+ "downloads": [
+  {
+   "title": "Call for Best Practices",
+   "text": "Full submission guidelines, sub-themes, proposal structure, and key dates",
+   "href": "https://raw.githubusercontent.com/tamim1089/tamim1089.github.io/main/Call%20For%20Best%20Practices%20%20ACTLC%20(2).pdf"
+  },
+  {
+   "title": "Sponsorship Package",
+   "text": "Gold, Silver, and Bronze partnership tiers, benefits, and contact details",
+   "href": "https://raw.githubusercontent.com/tamim1089/tamim1089.github.io/main/_Sponsorship%20Package%20%20ACTLC.pdf"
+  }
+ ],
+ "logos": [
+  {
+   "src": "../wp-content/uploads/2025/04/AAU.webp",
+   "alt": "AAU",
+   "badge": "",
+   "name": "Al Akhawayn University",
+   "country": "Morocco",
+   "key": "aau",
+   "logo": "actlc-assets/logos/aau.png",
+   "w": 233,
+   "h": 154
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/UAEU.webp",
+   "alt": "UAEU",
+   "badge": "Host institution",
+   "name": "United Arab Emirates University",
+   "country": "UAE",
+   "key": "uaeu",
+   "logo": "actlc-assets/logos/uaeu.png",
+   "w": 399,
+   "h": 84
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/PSU.webp",
+   "alt": "PSU",
+   "badge": "",
+   "name": "Prince Sultan University",
+   "country": "Saudi Arabia",
+   "key": "psu",
+   "logo": "actlc-assets/logos/psu.png",
+   "w": 349,
+   "h": 118
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/Clicks.webp",
+   "alt": "CLICKS",
+   "badge": "Consortium initiator",
+   "name": "CLICKS – Center for Learning Innovations & Customized Knowledge Solutions",
+   "country": "UAE",
+   "key": "clicks",
+   "logo": "actlc-assets/logos/clicks.png",
+   "w": 292,
+   "h": 148
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/AUS.webp",
+   "alt": "AUS",
+   "badge": "",
+   "name": "American University of Sharjah",
+   "country": "UAE",
+   "key": "aus",
+   "logo": "actlc-assets/logos/aus.png",
+   "w": 401,
+   "h": 55
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/AUC.webp",
+   "alt": "AUC",
+   "badge": "",
+   "name": "The American University in Cairo",
+   "country": "Egypt",
+   "key": "auc",
+   "logo": "actlc-assets/logos/auc.png",
+   "w": 397,
+   "h": 83
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/AUB.webp",
+   "alt": "AUB",
+   "badge": "",
+   "name": "American University of Beirut",
+   "country": "Lebanon",
+   "key": "aub",
+   "logo": "actlc-assets/logos/aub.png",
+   "w": 378,
+   "h": 134
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/AU.webp",
+   "alt": "AU",
+   "badge": "",
+   "name": "Ajman University",
+   "country": "UAE",
+   "key": "au",
+   "logo": "actlc-assets/logos/au.png",
+   "w": 403,
+   "h": 135
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/AJUB.webp",
+   "alt": "AJUB",
+   "badge": "",
+   "name": "American University of Bahrain",
+   "country": "Bahrain",
+   "key": "ajub",
+   "logo": "actlc-assets/logos/ajub.png",
+   "w": 339,
+   "h": 146
+  },
+  {
+   "src": "../wp-content/uploads/2025/04/ADU.webp",
+   "alt": "ADU",
+   "badge": "",
+   "name": "Abu Dhabi University",
+   "country": "UAE",
+   "key": "adu",
+   "logo": "actlc-assets/logos/adu.png",
+   "w": 243,
+   "h": 177
+  }
+ ],
+ "sponsorship": {
+  "eyebrow": "Sponsorship Opportunities",
+  "title": "Partner With ACTLC 2027",
+  "lead": "Position your organisation at the heart of a growing community shaping the future of higher education in the Arab world.",
+  "why_title": "Why sponsor?",
+  "why_text": "Practical, high-value exposure to those leading teaching and learning across the region.",
+  "why": [
+   "Connect directly with faculty, learning designers, and academic leaders",
+   "Showcase your solutions to a focused, highly relevant audience",
+   "Build brand visibility before, during, and after the conference",
+   "Establish new connections and generate business opportunities",
+   "Align with a regional initiative shaping the future of higher education"
+  ],
+  "who_title": "Who Should Sponsor?",
+  "who": [
+   "EdTech and learning platform providers",
+   "Educational publishers and content developers",
+   "Assessment and analytics companies",
+   "Professional development providers",
+   "Faculty training providers",
+   "Graduate readiness and skills organisations"
+  ],
+  "cta": "To explore sponsorship or request a tailored package, contact us:"
+ },
+ "contact": {
+  "eyebrow": "Contact Us",
+  "title": "Get in Touch",
+  "lead": "Questions about registration, sponsorship, proposals, or the programme?",
+  "items": [
+   {
+    "label": "Conference Email",
+    "value": "info@ac-tlc.org",
+    "href": "mailto:info@ac-tlc.org"
+   },
+   {
+    "label": "Abu Dhabi University — CDLI",
+    "value": "adu.cdli@adu.ac.ae",
+    "href": "mailto:adu.cdli@adu.ac.ae"
+   },
+   {
+    "label": "Phone",
+    "value": "+971 43 487 445",
+    "href": "tel:+97143487445"
+   },
+   {
+    "label": "WhatsApp",
+    "value": "+971 58 807 7539",
+    "href": "https://wa.me/971588077539"
+   },
+   {
+    "label": "Abu Dhabi University — CDLI Address",
+    "value": "Center for Faculty Development and Learning Innovation P.O. Box 59911, Khalifa City Abu Dhabi, United Arab Emirates",
+    "href": ""
+   },
+   {
+    "label": "Website",
+    "value": "adu.ac.ae/center-for-faculty-development-and-learning-innovation",
+    "href": "https://www.adu.ac.ae/center-for-faculty-development-and-learning-innovation/overview"
+   },
+   {
+    "label": "Venue",
+    "value": "United Arab Emirates University (UAEU), Al Ain 2–3 February 2027",
+    "href": ""
+   }
+  ]
+ }
+}

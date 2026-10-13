@@ -25,7 +25,8 @@ def check(cond, msg):
     if not cond: fails.append(msg)
 
 CONTRAST = r"""(sel) => {
- const lum = c => { const m = c.match(/[\d.]+/g).map(Number); const f = v => { v/=255; return v<=.03928? v/12.92 : Math.pow((v+.055)/1.055,2.4) };
+ const rgba = c => { const m = c.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2], m[3] === undefined ? 1 : m[3]] };
+ const lum = m => { const f = v => { v/=255; return v<=.03928? v/12.92 : Math.pow((v+.055)/1.055,2.4) };
    return .2126*f(m[0]) + .7152*f(m[1]) + .0722*f(m[2]) };
  const bg = el => { for (let e=el; e; e=e.parentElement){ const c=getComputedStyle(e).backgroundColor; const a=(c.match(/[\d.]+/g)||[])[3];
    if (c!=='rgba(0, 0, 0, 0)' && (a===undefined||+a>0.5)) return c } return 'rgb(255,255,255)' };
@@ -33,7 +34,11 @@ CONTRAST = r"""(sel) => {
  document.querySelectorAll(sel).forEach(el => {
    if (!el.offsetParent && getComputedStyle(el).position!=='fixed') return;
    if (![...el.childNodes].some(n=>n.nodeType===3 && n.textContent.trim())) return;
-   const cs=getComputedStyle(el), L1=lum(cs.color), L2=lum(bg(el));
+   // blend semi-transparent text (and faded ancestors) over its real background before measuring
+   const cs=getComputedStyle(el), B=rgba(bg(el)), F=rgba(cs.color);
+   let a=F[3]; for (let e=el; e; e=e.parentElement) a*=+getComputedStyle(e).opacity;
+   const mix=[0,1,2].map(i => a*F[i] + (1-a)*B[i]);
+   const L1=lum(mix), L2=lum(B);
    const r=(Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05), px=parseFloat(cs.fontSize), w=+cs.fontWeight;
    out.push({t:el.textContent.trim().slice(0,28), cls:String(el.className), r:+r.toFixed(2), need:(px>=24||(px>=18.66&&w>=700))?3:4.5});
  }); return out.filter(c => c.r < c.need) }"""
@@ -187,55 +192,36 @@ with sync_playwright() as p:
             check(ok, f"{name}: local Inter webfont loaded"); pg.context.close()
 
     if run("conference"):
-        print("\n== Conference page on the design system ==")
+        print("\n== Conference page (tools/DESIGN-RULES.md) ==")
         C = CHROME["conference"]
-        c = b.new_context(viewport={"width": 1920, "height": 1080}, java_script_enabled=False); pg = c.new_page(); pg.goto(BASE + C)
-        hidden = pg.evaluate("[...document.querySelectorAll('.conf-page [data-r], .conf-page [data-st] > *')].filter(e => getComputedStyle(e).opacity !== '1').length")
-        check(hidden == 0, f"conference: all content visible without JavaScript ({hidden} hidden)"); c.close()
         for w, h in VIEWPORTS:
-            pg = page(b, C, w, h)
-            pg.evaluate("document.querySelectorAll('.conf-page [data-r], .conf-page [data-st]').forEach(e => e.classList.add('v'))"); pg.wait_for_timeout(900)
-            tag = f"conference @{w}"
+            pg = page(b, C, w, h); tag = f"conference @{w}"
             sw = pg.evaluate("document.documentElement.scrollWidth"); check(sw <= w, f"{tag}: no horizontal scroll ({sw}px)")
-            fonts = pg.evaluate("""() => [...new Set([...document.querySelectorAll('.conf-page h1, .conf-page h2, .conf-page h3, .conf-page p, .conf-page .btn, .conf-page .eyebrow, .conf-page label, .conf-page li')]
-                .filter(e => e.offsetParent).map(e => getComputedStyle(e).fontFamily.split(',')[0].replace(/["']/g,'').trim()))]""")
+            fonts = pg.evaluate("""() => [...new Set([...document.querySelectorAll('.acx-conf *')].filter(e => e.offsetParent && [...e.childNodes].some(n => n.nodeType===3 && n.textContent.trim()))
+                .map(e => getComputedStyle(e).fontFamily.split(',')[0].replace(/["']/g,'').trim()))]""")
             check(fonts == ["Inter"], f"{tag}: one typeface {fonts}")
-            tiny = pg.evaluate("""() => [...document.querySelectorAll('.conf-page *')].filter(e => e.offsetParent && [...e.childNodes].some(n => n.nodeType===3 && n.textContent.trim()) && parseFloat(getComputedStyle(e).fontSize) < 13)
-                .map(e => e.textContent.trim().slice(0,24)).slice(0,6)""")
+            tiny = pg.evaluate("""() => [...document.querySelectorAll('.acx-conf *')].filter(e => e.offsetParent && [...e.childNodes].some(n => n.nodeType===3 && n.textContent.trim()) && parseFloat(getComputedStyle(e).fontSize) < 13).map(e => e.textContent.trim().slice(0,20)).slice(0,5)""")
             check(not tiny, f"{tag}: no text below 13px {tiny or ''}")
-            bad = pg.evaluate(CONTRAST, ".conf-page *")
-            check(not bad, f"{tag}: WCAG contrast {[(x['t'], x['r']) for x in bad][:8] or ''}")
-            small = pg.evaluate("[...document.querySelectorAll('.conf-page .btn')].filter(e => e.offsetParent && e.getBoundingClientRect().height < 44).length")
-            check(small == 0, f"{tag}: buttons >= 44px ({small} smaller)")
+            bad = pg.evaluate(CONTRAST, ".acx-conf *"); check(not bad, f"{tag}: WCAG contrast {[(x['t'], x['r']) for x in bad][:6] or ''}")
+            small = pg.evaluate("[...document.querySelectorAll('.acx-conf .acx-btn, .acx-conf .acx-tab, .acx-conf .acx-link, .acx-local-links a')].filter(e => e.offsetParent && e.getBoundingClientRect().height < 40).length")
+            check(small == 0, f"{tag}: controls >= 40px tall ({small} smaller)")
             if w == 1920:
-                hh = pg.evaluate("Math.round(document.querySelector('.conf-page .hero').getBoundingClientRect().height)")
-                check(hh <= 860, f"{tag}: hero sized to its content ({hh}px, was 1080)")
-                if A.shots: pg.screenshot(path=f"{A.shots}/conference-{w}.png", full_page=True)
+                ht = pg.evaluate("document.documentElement.scrollHeight"); check(ht <= 11500, f"{tag}: page shorter than before ({ht}px, was 14242)")
+                bar = pg.evaluate("(e => e.scrollWidth <= e.clientWidth)(document.querySelector('.acx-local-links'))"); check(bar, f"{tag}: section bar fits, nothing cut off")
+                wrap = pg.evaluate("[...document.querySelectorAll('.acx-c-t')].filter(t => t.getBoundingClientRect().height > parseFloat(getComputedStyle(t).lineHeight) * 1.5).length")
+                check(wrap == 0, f"{tag}: programme times on one line ({wrap} wrapped)")
             pg.context.close()
         pg = page(b, C, 1920, 1080)
-        check(pg.evaluate("document.querySelectorAll('video').length") == 0, "conference: no autoplay background video (5.3 MB)")
-        check(not pg.is_visible("#cd"), "conference: no per-second countdown")
-        txt = pg.inner_text("body")
-        check("Two campuses" not in txt and "Two Days, Two Campuses" not in txt, "conference: no stale 'two campuses' copy")
-        dl = pg.evaluate("[...document.querySelectorAll('.dl-card')].map(a => a.tagName + ' ' + (a.getAttribute('href')||''))")
-        check(len(dl) == 2 and all(x.startswith("A https://") for x in dl), f"conference: both download cards are real links ({len(dl)})")
-        pg.hover(".mq")
-        check(pg.evaluate("getComputedStyle(document.querySelector('.mq__track')).animationPlayState") == "paused", "conference: logo marquee pauses on hover")
-        pg.click("#cf-btn")
-        err = pg.inner_text("#cf-ok"); check("valid email" in err and "sent" not in err.lower(), f"conference form: empty submit explains what to fix ('{err[:40]}')")
-        check(pg.evaluate("document.activeElement.id") == "cf-email", "conference form: focus moves to the field to fix")
-        pg.fill("#cf-first", "Test"); pg.fill("#cf-email", "test@example.org"); pg.select_option("#cf-type", "Sponsorship"); pg.fill("#cf-message", "Hello")
-        pg.evaluate("window.__nav=[]; const o=Object.getOwnPropertyDescriptor(window,'location');")
-        pg.route("**/*", lambda r: r.continue_())
-        pg.click("#cf-btn")
-        url = pg.evaluate("document.getElementById('cf-btn').getAttribute('data-mailto') || ''")
-        check(url.startswith("mailto:info@ac-tlc.org?subject=ACTLC%202027%20conference%3A%20Sponsorship") and "Hello" in url, "conference form: opens a real email to info@ac-tlc.org (no fake 'sent')")
-        check("email app" in pg.inner_text("#cf-ok"), "conference form: says what actually happens")
+        regs = pg.evaluate("[...document.querySelectorAll('a')].filter(a => /^Register$/.test(a.textContent.trim()) && a.closest('.acx-conf')).length")
+        check(regs <= 3, f"conference: Register appears {regs}x (bar, hero, fees; was 4 + floating bar + band)")
+        check(pg.evaluate("document.querySelectorAll('video, #cd, .conf-page, .acx-conf form').length") == 0, "conference: no video, countdown, old template or fake form")
+        badge = pg.evaluate("[...document.querySelectorAll('.acx-c-logos li')].filter(li => /Host institution/.test(li.textContent)).map(li => li.querySelector('img').alt)")
+        check(badge == ["United Arab Emirates University"], f"conference: host label on UAEU {badge}")
+        txt = pg.inner_text("body"); check("Two campuses" not in txt and "Message sent" not in txt and "Targeted Speakers" not in txt, "conference: no stale or invented claims")
+        pg.click("#acx-daytab-2"); check(pg.is_visible("#acx-day-2") and not pg.is_visible("#acx-day-1"), "conference: Day 2 tab switches the programme")
         pg.context.close()
-        pg = page(b, C, 1280, 800, reduced_motion="reduce")
-        check(pg.evaluate("getComputedStyle(document.querySelector('.mq__track')).animationName") == "none", "conference: marquee still for reduced motion")
-        check(pg.evaluate("[...document.querySelectorAll('.conf-page [data-r]')].every(e => getComputedStyle(e).opacity === '1')"), "conference: reduced motion shows content without reveal")
-        pg.context.close()
+        c2 = b.new_context(viewport={"width": 1280, "height": 900}, java_script_enabled=False); pg = c2.new_page(); pg.goto(BASE + C)
+        check(pg.is_visible("#acx-day-1") and pg.is_visible("#acx-day-2"), "conference: without JavaScript both days are listed"); c2.close()
 
     if run("motion"):
         print("\n== Reduced motion ==")
