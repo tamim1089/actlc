@@ -298,7 +298,7 @@
     "country": "UAE",
     "photo": "../wp-content/uploads/2026/05/Fteiha.png",
     "linkedin": "https://www.linkedin.com/in/mohammad-fteiha-pfhea-42434215/",
-    "featured": false
+    "featured": true
    },
    {
     "name": "Dr. Narimane Hadj-Hamou",
@@ -307,7 +307,7 @@
     "country": "UAE",
     "photo": "../wp-content/uploads/2026/05/Founder.png",
     "linkedin": "https://www.linkedin.com/in/dr-narimane-hadj-hamou-6230b565/",
-    "featured": false
+    "featured": true
    },
    {
     "name": "Dr. Randa Mikati",
@@ -530,7 +530,82 @@
   ],
   "submit_title": "Ready to submit?",
   "submit_text": "Send your proposal by email with the subject line below.",
-  "subject": "ACTLC 2027 – Best Practice Proposal – Track #"
+  "subject": "ACTLC 2027 – Best Practice Proposal – Track #",
+  "parts": [
+   {
+    "name": "Cover page",
+    "text": "title, sub-theme alignment, author & institution details"
+   },
+   {
+    "name": "Context & challenge",
+    "text": "institutional setting and problem addressed"
+   },
+   {
+    "name": "The practice or innovation",
+    "text": "what was designed or changed, who was involved"
+   },
+   {
+    "name": "Implementation",
+    "text": "how introduced, scope, scale, and timeline"
+   },
+   {
+    "name": "Impact & evidence",
+    "text": "outcomes, qualitative and quantitative indicators"
+   },
+   {
+    "name": "Lessons learned & transferability",
+    "text": "what other institutions can adapt"
+   }
+  ],
+  "specs": [
+   {
+    "title": "Your proposal",
+    "items": [
+     [
+      "Length",
+      "500–1,000",
+      "words"
+     ],
+     [
+      "File",
+      "Word or PDF",
+      ""
+     ],
+     [
+      "Font size",
+      "11–12",
+      "pt"
+     ],
+     [
+      "Line spacing",
+      "1.15–1.5",
+      ""
+     ]
+    ],
+    "note": "Include the contact details of the corresponding author."
+   },
+   {
+    "title": "Your presentation",
+    "items": [
+     [
+      "Talk",
+      "15",
+      "minutes"
+     ],
+     [
+      "Slides",
+      "10–12",
+      ""
+     ],
+     [
+      "File",
+      "PowerPoint",
+      ".pptx"
+     ]
+    ],
+    "note": "Practice-focused and evidence-informed, not promotional."
+   }
+  ]
  },
  "fees": {
   "eyebrow": "Registration",

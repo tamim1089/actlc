@@ -46,6 +46,24 @@
     tick(); setInterval(tick, 30000);
   }
 
+  // 3b. Key dates: mark today on the time axis and say how far away each date is (calendar days, UAE time).
+  var tl = root.querySelector('.acx-c-tl');
+  if (tl) {
+    var uae = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Dubai', year: 'numeric', month: '2-digit', day: '2-digit' });
+    var today = Date.parse(uae.format(Date.now())), DAY = 864e5;
+    var t0 = Date.parse(tl.getAttribute('data-t0')), t1 = Date.parse(tl.getAttribute('data-t1'));
+    var now = tl.querySelector('.acx-c-tl-now');
+    if (today >= t0 && today <= t1) { now.style.left = (100 * (today - t0) / (t1 - t0)) + '%'; now.hidden = false; }
+    var rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' }), next = false;
+    Array.prototype.forEach.call(root.querySelectorAll('.acx-c-dates [data-date]'), function (li) {
+      var d = Math.round((Date.parse(li.getAttribute('data-date')) - today) / DAY), rel = li.querySelector('.acx-c-rel');
+      rel.textContent = d < 0 ? 'Passed' : d === 0 ? 'Today' : rtf.format(d, 'day');
+      rel.hidden = false;
+      li.classList.toggle('is-done', d < 0);
+      if (d >= 0 && !next) { li.classList.add('is-next'); next = true; }
+    });
+  }
+
   // 4. Programme: Day 1 / Day 2 segmented control (WAI-ARIA tabs, automatic activation).
   var tabs = root.querySelector('.acx-c-tabs');
   if (tabs) {

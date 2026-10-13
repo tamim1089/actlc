@@ -89,6 +89,7 @@
 
     var nUp = $$('.acx-ev', upPanel).length, nPast = $$('.acx-ev', pastPanel).length;
     var empty = $('.acx-empty', upPanel); if (empty) empty.hidden = nUp > 0;
+    $$('[data-count="past"]', root).forEach(function (c) { c.textContent = nPast; });
 
     // Segmented control: Upcoming | Past (WAI-ARIA tabs, automatic activation)
     var tabs = $('.acx-tabs', root); if (!tabs) return;

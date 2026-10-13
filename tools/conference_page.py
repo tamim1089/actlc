@@ -95,29 +95,29 @@ def conference_html(c, email):
 
     th = c["themes"]
     tracks = "".join(
-        '<details class="acx-c-track"><summary><span class="acx-c-tn" aria-hidden="true">%d</span><span class="acx-c-tt"><span class="acx-vh">Track %d: </span>%s</span>'
-        '<span class="acx-c-ts">%s</span><span class="acx-c-tmore">%d topics</span></summary><ul>%s</ul></details>'
-        % (int(t["n"]), int(t["n"]), esc(t["title"]), esc(t["short"]), len(t["points"]), "".join("<li>%s</li>" % esc(x) for x in t["points"]))
+        '<li class="acx-c-track"><span class="acx-c-tn" aria-hidden="true">%d</span><div><h3 class="acx-c-tt"><span class="acx-vh">Track %d: </span>%s</h3>'
+        '<p class="acx-c-ts">%s</p><ul class="acx-c-topics">%s</ul></div></li>'
+        % (int(t["n"]), int(t["n"]), esc(t["title"]), esc(t["short"]), "".join("<li>%s</li>" % esc(x) for x in t["points"]))
         for t in th["items"])
-    o.append('<section class="acx-c-sec acx-c-band" id="tracks" aria-labelledby="acx-h-tracks"><div class="acx-c-in">%s'
-             '<div class="acx-c-tracks">%s</div></div></section>' % (head(th, "acx-h-tracks"), tracks))
+    o.append('<section class="acx-c-sec" id="tracks" aria-labelledby="acx-h-tracks"><div class="acx-c-in">%s'
+             '<ol class="acx-c-tracks">%s</ol></div></section>' % (head(th, "acx-h-tracks"), tracks))
 
-    pr = c["programme"]; tabs, days = [], []
+    pr = c["programme"]; days = []
+    mins = lambda hm: int(hm[:2]) * 60 + int(hm[3:5])
     for i, d in enumerate(pr["days"], 1):
-        tabs.append('<button class="acx-tab" type="button" role="tab" id="acx-daytab-%d" aria-controls="acx-day-%d" aria-selected="%s"%s>%s</button>'
-                    % (i, i, "true" if i == 1 else "false", "" if i == 1 else ' tabindex="-1"', esc(d["tab"])))
-        items = []
+        items, prev = [], None
         for it in d["items"]:
+            a, b = (mins(x) for x in it["time"].split("–"))
             kind = "is-break" if it["break"] else "is-par" if it["title"].startswith("Parallel") else "is-ses"
             note = '<span class="acx-c-note">%s</span>' % esc(it["note"].strip("()")) if it["note"] else ""
             detail = '<span class="acx-c-sd">%s</span>' % esc(it["detail"]) if it["detail"] else ""
-            items.append('<li class="%s"><time class="acx-c-t">%s</time><div class="acx-c-slot"><span class="acx-c-st">%s</span>%s%s</div></li>'
-                         % (kind, esc(it["time"]), esc(it["title"]), note, detail))
-        days.append('<div class="acx-c-day" id="acx-day-%d" aria-labelledby="acx-daytab-%d"><h3 class="acx-c-dayh">%s</h3>'
-                    '<p class="acx-c-dayv">%s</p><ol class="acx-c-sched">%s</ol></div>' % (i, i, esc(d["date"]), esc(d["venue"]), "".join(items)))
+            items.append('<li class="acx-c-blk %s" style="--m:%d;--g:%d"><time class="acx-c-t">%s</time><span class="acx-c-st">%s</span>%s%s</li>'
+                         % (kind, b - a, (a - prev) if prev is not None else 0, esc(it["time"]), esc(it["title"]), note, detail))
+            prev = b
+        days.append('<div class="acx-c-day" id="acx-day-%d"><h3 class="acx-c-dayh">%s</h3><p class="acx-c-dayv">%s</p>'
+                    '<ol class="acx-c-cal">%s</ol></div>' % (i, esc(d["date"]), esc(d["venue"]), "".join(items)))
     o.append('<section class="acx-c-sec" id="programme" aria-labelledby="acx-h-prog"><div class="acx-c-in">%s'
-             '<div class="acx-tabs acx-c-tabs" role="tablist" aria-label="Programme day" hidden>%s</div><div class="acx-c-days">%s</div></div></section>'
-             % (head(pr, "acx-h-prog"), "".join(tabs), "".join(days)))
+             '<div class="acx-c-days">%s</div></div></section>' % (head(pr, "acx-h-prog"), "".join(days)))
 
     sp, cm = c["speakers"], c["committee"]
     o.append('<section class="acx-c-sec" id="speakers" aria-labelledby="acx-h-spk"><div class="acx-c-in">%s'
@@ -129,16 +129,32 @@ def conference_html(c, email):
 
     cf = c["cfp"]; dl = {d["title"]: d for d in c["downloads"]}
     mail = "mailto:%s?subject=%s" % (email, quote(cf["subject"].replace(" #", " ")))
-    dates = "".join('<li><time>%s</time><div><b>%s</b></div></li>' % (esc(d["date"]), esc(d["title"])) for d in cf["dates"])
-    blocks = "".join('<h3 class="acx-c-h3">%s</h3>%s' % (esc(b["title"]), bullets(b["items"])) for b in cf["blocks"])
+    import datetime as _dt
+    day = lambda s: _dt.datetime.strptime(s, "%d %B %Y").date()
+    ds = [day(x["date"]) for x in cf["dates"]]; opens = _dt.date(2027, 2, 2)
+    t0, t1 = _dt.date(ds[0].year, ds[0].month, 1), opens
+    pos = lambda d: 100 * (d - t0).days / (t1 - t0).days
+    ticks = "".join('<li style="left:%.2f%%"><span>%s</span></li>' % (pos(d), "%d %s" % (d.day, d.strftime("%b"))) for d in ds + [opens])
+    months = "".join('<span style="left:%.2f%%">%s</span>' % (pos(m), m.strftime("%b")) for m in
+                     [_dt.date(t0.year + (t0.month - 1 + k) // 12, (t0.month - 1 + k) % 12 + 1, 1) for k in range(1, 5)])
+    dates = "".join('<li data-date="%s"><time datetime="%s">%s</time><b>%s</b><span class="acx-c-rel" hidden></span></li>'
+                    % (d.isoformat(), d.isoformat(), esc(x["date"]), esc(x["title"])) for d, x in zip(ds, cf["dates"]))
+    parts = "".join('<li><b>%s</b><span>%s</span></li>' % (esc(x["name"]), esc(x["text"])) for x in cf["parts"])
+    def spec(g):
+        return ('<div class="acx-c-specg"><h4>%s</h4><dl>%s</dl><p>%s</p></div>'
+                % (esc(g["title"]), "".join('<div><dt>%s</dt><dd><b>%s</b>%s</dd></div>' % (esc(k), esc(v), (" " + esc(u)) if u else "") for k, v, u in g["items"]), esc(g["note"])))
     o.append('<section class="acx-c-sec" id="call-for-papers" aria-labelledby="acx-h-cfp"><div class="acx-c-in">%s'
              '<div class="acx-c-cta"><a class="acx-btn" href="%s">Email your proposal</a>'
              '<p class="acx-c-hint">The subject is filled in for you; add your track number.</p></div><div class="acx-c-dlrow">%s</div>'
-             '<h3 class="acx-c-h3 acx-c-datesh">Key dates</h3><ol class="acx-c-dates">%s</ol>'
-             '<details class="acx-c-more"><summary>Submission requirements</summary><div class="acx-c-reqs">%s</div></details>'
+             '<h3 class="acx-c-h3 acx-c-datesh">Key dates</h3>'
+             '<div class="acx-c-tl" data-t0="%s" data-t1="%s" aria-hidden="true"><div class="acx-c-tl-m">%s</div><ol class="acx-c-tl-ticks">%s</ol>'
+             '<span class="acx-c-tl-now" hidden><span>Today</span></span></div>'
+             '<ol class="acx-c-dates">%s</ol>'
+             '<div class="acx-c-req"><div><h3 class="acx-c-h3">Your proposal, in this order <span class="acx-c-reqm">500–1,000 words</span></h3><ol class="acx-c-parts">%s</ol></div>'
+             '<div class="acx-c-specs">%s</div></div>'
              '</div></section>'
-             % (head(cf, "acx-h-cfp"), esc(mail), download(dl["Call for Best Practices"]["href"], "Download the full call for best practices", "PDF · 1.9 MB"), dates,
-                "".join('<div><h3 class="acx-c-h3">%s</h3>%s</div>' % (esc(b["title"]), bullets(b["items"])) for b in cf["blocks"])))
+             % (head(cf, "acx-h-cfp"), esc(mail), download(dl["Call for Best Practices"]["href"], "Download the full call for best practices", "PDF · 1.9 MB"),
+                t0.isoformat(), t1.isoformat(), months, ticks, dates, parts, "".join(spec(g) for g in cf["specs"])))
 
     fe = c["fees"]
     base = max(int(t["price"]) for t in fe["tiers"])

@@ -76,10 +76,11 @@ INTER_CSS = "wp-content/uploads/elementor/google-fonts/css/inter-local.css"
 def ensure_head(h, rel, events, body_class=None):
     """(Re)write our <head> links. Versioned by content hash so browsers never keep a stale copy."""
     h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter)"[^>]*>\n?', "", h)
-    h = re.sub(r'<script\b[^>]*\bid="acx-js"[^>]*></script>\n?', "", h)
+    h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal)"[^>]*></script>\n?', "", h)
     h = re.sub(r'<link\b[^>]*inter-local\.css[^>]*>\n?', "", h)          # old link at a wrong depth
     tags = [f'<link rel="stylesheet" id="acx-inter" href="{rel}{INTER_CSS}"/>',
-            f'<link rel="stylesheet" id="acx-site" href="{rel}actlc-assets/site.css?v={asset_version("site.css")}"/>']
+            f'<link rel="stylesheet" id="acx-site" href="{rel}actlc-assets/site.css?v={asset_version("site.css")}"/>',
+            f'<script id="acx-reveal" src="{rel}actlc-assets/reveal.js?v={asset_version("reveal.js")}" defer></script>']
     if events:
         tags += [f'<link rel="stylesheet" id="acx-css" href="{rel}actlc-assets/events.css?v={asset_version("events.css")}"/>',
                  f'<script id="acx-js" src="{rel}actlc-assets/events.js?v={asset_version("events.js")}" defer></script>']
@@ -244,16 +245,12 @@ def list_html():
                    f'<ol class="acx-list">\n' + "\n".join(row(e, "../") for e in evs) + "\n</ol></section>")
     return f"""<div class="acx acx-list-root" id="acx-events">
 <p class="acx-list-note">All webinars are online.</p>
-<div class="acx-tabs" role="tablist" aria-label="Show events" hidden>
-<button class="acx-tab" type="button" role="tab" id="acx-tab-up" aria-controls="acx-panel-up" aria-selected="true">Upcoming <span class="acx-count" data-count="upcoming">{len(up)}</span></button>
-<button class="acx-tab" type="button" role="tab" id="acx-tab-past" aria-controls="acx-panel-past" aria-selected="false" tabindex="-1">Past <span class="acx-count" data-count="past">{len(past)}</span></button>
-</div>
-<section class="acx-panel" id="acx-panel-up" data-panel="upcoming" aria-labelledby="acx-tab-up">
+<section class="acx-panel" id="acx-panel-up" data-panel="upcoming" aria-label="Upcoming webinars">
 {chr(10).join(out)}
-<p class="acx-empty"{' hidden' if up else ''}>No upcoming webinars right now. <a class="acx-link" href="#past">See past webinars</a></p>
+<p class="acx-empty"{' hidden' if up else ''}>No upcoming webinars right now.</p>
 </section>
-<section class="acx-panel" id="acx-panel-past" data-panel="past" aria-labelledby="acx-tab-past">
-<h2 class="acx-h2 acx-past-h">Past webinars</h2>
+<section class="acx-panel acx-panel-past" id="past" data-panel="past" aria-labelledby="acx-past-h">
+<h2 class="acx-h2 acx-past-h" id="acx-past-h">Past webinars <span class="acx-count" data-count="past">{len(past)}</span></h2>
 <ol class="acx-list">
 {chr(10).join(row(e, "../") for e in past)}
 </ol>
