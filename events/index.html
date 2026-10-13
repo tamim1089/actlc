@@ -868,13 +868,46 @@ document.addEventListener('DOMContentLoaded', function () {
 #mec_skin_5117 .event-f{color:#3a4658 !important;}
 #mec_skin_5117 .event-da{color:#5a6675 !important;}
 #mec_skin_5117 .mec-event-loc-place{color:#4a5666 !important;}
+/* Apple HIG type: system font (SF Pro / Segoe UI), natural case, semibold titles.
+   Dates, colors, buttons and layout are unchanged. */
+#mec_skin_5117 .mec-event-title,
+#mec_skin_5117 .mec-event-loc-place{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif !important;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+#mec_skin_5117 .mec-event-title{text-transform:none !important;letter-spacing:-0.01em !important;font-size:19px !important;font-weight:600 !important;line-height:1.32 !important;text-wrap:balance;}
+#mec_skin_5117 .mec-event-title a,
+#mec_skin_5117 .mec-event-title a.mec-color-hover{font-weight:600 !important;}
+#mec_skin_5117 .mec-event-loc-place{font-size:15px;}
+.entry-header .entry-title{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif !important;font-size:34px !important;font-weight:700 !important;letter-spacing:-0.02em;line-height:1.12;-webkit-font-smoothing:antialiased;}
+@media (max-width:600px){
+ #mec_skin_5117 .mec-event-title{font-size:17px !important;}
+ .entry-header .entry-title{font-size:28px !important;}
+}
+/* Interaction: press feedback, mouse-only hover, visible focus, 44px targets (transform only, <=200ms) */
+#mec_skin_5117 .mec-booking-button{display:inline-flex !important;align-items:center;justify-content:center;min-height:44px;padding-top:0 !important;padding-bottom:0 !important;transition:background-color .2s ease,color .2s ease,border-color .2s ease,transform .16s ease !important;}
+#mec_skin_5117 .mec-booking-button:active{transform:scale(.97);}
+#mec_skin_5117 a:focus-visible{outline:3px solid #0e7a83;outline-offset:3px;border-radius:4px;}
+@media (hover:none){#mec_skin_5117 .mec-booking-button:hover{border-color:#e1e1e1;background:#fff;color:#333;}}
+/* Row info: speaker + university, time + zone. Same muted ink, system font, no new colors */
+#mec_skin_5117 .ac-row{display:flex;align-items:flex-start;gap:8px;margin:0 0 6px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.4;color:#4a5666;-webkit-font-smoothing:antialiased;}
+#mec_skin_5117 .ac-row svg{width:15px;height:15px;flex:none;margin-top:3px;color:#5a6675;}
+#mec_skin_5117 .ac-row b{font-weight:600;color:#16202e;}
+#mec_skin_5117 .ac-time span{font-variant-numeric:tabular-nums;}
+#mec_skin_5117 .mec-event-detail{margin-top:2px;}
+#mec_skin_5117 .ac-is-past .ac-row b{color:#5a6675;}
+/* Ended: a status takes the place of the action (you cannot register for a past event) */
+#mec_skin_5117 .ac-ended{display:none;}
+#mec_skin_5117 .ac-is-past .mec-booking-button{display:none !important;}
+#mec_skin_5117 .ac-is-past .ac-ended{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border:1px solid #f0c3be;background:#fdf3f2;color:#b42318;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:var(--mec-secondary-border-radius);cursor:default;}
+#mec_skin_5117 .ac-ended svg{width:14px;height:14px;flex:none;}
+#mec_skin_5117 .ac-is-past .mec-event-title a,
+#mec_skin_5117 .ac-is-past .mec-event-title a:hover{color:#5a6675 !important;cursor:default;}
+@media (prefers-reduced-motion:reduce){#mec_skin_5117 .mec-booking-button{transition:none !important;}#mec_skin_5117 .mec-booking-button:active{transform:none;}}
 </style>
 <div class="mec-wrap mec-skin-list-container" id="mec_skin_5117">
 <div class="mec-skin-list-events-container" id="mec_skin_events_5117">
 <div class="mec-wrap colorskin-custom">
 <div class="mec-event-list-modern">
 <div class="mec-month-divider" data-toggle-divider="mec-toggle-202610-5117"><h5 style="display: inline;">October 2026</h5><i class="mec-sl-arrow-down"></i></div>
-<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="">
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2026-10-15T17:00:00+03:00">
 <div class="col-md-2 col-sm-2">
 <div class="mec-event-date">
 <div class="event-d mec-color">15</div>
@@ -883,16 +916,16 @@ document.addEventListener('DOMContentLoaded', function () {
 </div>
 </div>
 <div class="col-md-6 col-sm-6">
-<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7001" href="../events-main/teaching-the-learner-not-the-label/index.html" rel="noopener" target="_blank">Teaching the Learner, Not the Label: Designing Inclusive Learning for Neurodiverse University Students</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7005" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Gamification%20in%20the%20University%20Classroom" rel="noopener">Gamification in the University Classroom</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
 <div class="mec-event-detail">
-<div class="mec-event-loc-place">Online</div>
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Miriam Alily</b> · American University of Bahrain</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>16:00 – 17:00 Bahrain time · Online</span></div>
 </div>
-<ul class="mec-event-sharing"><li class="mec-event-social-icon"><a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.ac-tlc.org%2Fevents-main%2Fteaching-the-learner-not-the-label%2F" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=600'); return false;" target="_blank" title="Share on Facebook"><i class="mec-fa-facebook"></i><span class="mec-social-title">Facebook</span></a></li><li class="mec-event-social-icon"><a class="twitter" href="https://twitter.com/share?url=https%3A%2F%2Fwww.ac-tlc.org%2Fevents-main%2Fteaching-the-learner-not-the-label%2F" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500'); return false;" target="_blank" title="X Social Network"><svg clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewbox="0 0 512 462.799" xmlns="http://www.w3.org/2000/svg"><path d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z" fill-rule="nonzero"></path></svg><span class="mec-social-title">Twitter</span></a></li><li class="mec-event-social-icon"><a class="linkedin" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fwww.ac-tlc.org%2Fevents-main%2Fteaching-the-learner-not-the-label%2F" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500'); return false;" target="_blank" title="Linkedin"><i class="mec-fa-linkedin"></i><span class="mec-social-title">Linkedin</span></a></li><li class="mec-event-social-icon"><a class="email" href="../cdn-cgi/l/email-protection/index.html" title="Email"><i class="mec-fa-envelope"></i><span class="mec-social-title">Email</span></a></li></ul>
 </div>
 <div class="col-md-4 col-sm-4 mec-btn-wrapper">
-<a class="mec-booking-button" data-event-id="7001" href="../events-main/teaching-the-learner-not-the-label/index.html" rel="noopener" target="_blank">View Detail</a> </div>
+<a class="mec-booking-button" data-event-id="7005" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Gamification%20in%20the%20University%20Classroom" rel="noopener">Register</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
 </article>
-<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="">
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2026-10-19T18:00:00+04:00">
 <div class="col-md-2 col-sm-2">
 <div class="mec-event-date">
 <div class="event-d mec-color">19</div>
@@ -903,21 +936,165 @@ document.addEventListener('DOMContentLoaded', function () {
 <div class="col-md-6 col-sm-6">
 <h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7002" href="../events-main/designing-ai-ready-graduates/index.html" rel="noopener" target="_blank">Designing AI-Ready Graduates: Aligning AI Competencies with Program and Course Learning Outcomes</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
 <div class="mec-event-detail">
-<div class="mec-event-loc-place">Online</div>
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Narimane Hadj-Hamou</b> · CLICKS</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>16:30 – 18:00 UAE time · Online</span></div>
 </div>
-<ul class="mec-event-sharing"><li class="mec-event-social-icon"><a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.ac-tlc.org%2Fevents-main%2Fdesigning-ai-ready-graduates%2F" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=600'); return false;" target="_blank" title="Share on Facebook"><i class="mec-fa-facebook"></i><span class="mec-social-title">Facebook</span></a></li><li class="mec-event-social-icon"><a class="twitter" href="https://twitter.com/share?url=https%3A%2F%2Fwww.ac-tlc.org%2Fevents-main%2Fdesigning-ai-ready-graduates%2F" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500'); return false;" target="_blank" title="X Social Network"><svg clip-rule="evenodd" fill-rule="evenodd" image-rendering="optimizeQuality" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewbox="0 0 512 462.799" xmlns="http://www.w3.org/2000/svg"><path d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z" fill-rule="nonzero"></path></svg><span class="mec-social-title">Twitter</span></a></li><li class="mec-event-social-icon"><a class="linkedin" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fwww.ac-tlc.org%2Fevents-main%2Fdesigning-ai-ready-graduates%2F" onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500'); return false;" target="_blank" title="Linkedin"><i class="mec-fa-linkedin"></i><span class="mec-social-title">Linkedin</span></a></li><li class="mec-event-social-icon"><a class="email" href="../cdn-cgi/l/email-protection/index.html" title="Email"><i class="mec-fa-envelope"></i><span class="mec-social-title">Email</span></a></li></ul>
 </div>
 <div class="col-md-4 col-sm-4 mec-btn-wrapper">
-<a class="mec-booking-button" data-event-id="7002" href="../events-main/designing-ai-ready-graduates/index.html" rel="noopener" target="_blank">View Detail</a> </div>
+<a class="mec-booking-button" data-event-id="7002" href="../events-main/designing-ai-ready-graduates/index.html" rel="noopener" target="_blank">View Detail</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
 </article>
+<div class="mec-month-divider" data-toggle-divider="mec-toggle-202611-5117"><h5 style="display: inline;">November 2026</h5><i class="mec-sl-arrow-down"></i></div>
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2026-11-12T17:30:00+04:00">
+<div class="col-md-2 col-sm-2">
+<div class="mec-event-date">
+<div class="event-d mec-color">12</div>
+<div class="event-f">November</div>
+<div class="event-da">Thursday</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6">
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7006" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Building%20COIL%20from%20the%20Ground%20Up" rel="noopener">Building COIL from the Ground Up: What Virtual Exchange at AUS Has Taught Us</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<div class="mec-event-detail">
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Prof. Kristina Katsos</b> · American University of Sharjah</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>16:00 – 17:30 UAE time · Online</span></div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 mec-btn-wrapper">
+<a class="mec-booking-button" data-event-id="7006" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Building%20COIL%20from%20the%20Ground%20Up" rel="noopener">Register</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
+</article>
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2026-11-23T18:00:00+03:00">
+<div class="col-md-2 col-sm-2">
+<div class="mec-event-date">
+<div class="event-d mec-color">23</div>
+<div class="event-f">November</div>
+<div class="event-da">Monday</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6">
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7007" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Student%20Engagement%20in%20an%20Era%20of%20Digital%20Fatigue" rel="noopener">Student Engagement in an Era of Digital Fatigue</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<div class="mec-event-detail">
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Alia Mitchell</b> · Prince Sultan University</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>16:30 – 18:00 KSA time · Online</span></div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 mec-btn-wrapper">
+<a class="mec-booking-button" data-event-id="7007" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Student%20Engagement%20in%20an%20Era%20of%20Digital%20Fatigue" rel="noopener">Register</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
+</article>
+<div class="mec-month-divider" data-toggle-divider="mec-toggle-202612-5117"><h5 style="display: inline;">December 2026</h5><i class="mec-sl-arrow-down"></i></div>
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2026-12-07T18:00:00+04:00">
+<div class="col-md-2 col-sm-2">
+<div class="mec-event-date">
+<div class="event-d mec-color">7</div>
+<div class="event-f">December</div>
+<div class="event-da">Monday</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6">
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7008" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Designing%20Authentic%20Assessment%20as%20a%20Learning%20Journey" rel="noopener">Designing Authentic Assessment as a Learning Journey: Mapping Tasks to Outcomes in the Age of AI</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<div class="mec-event-detail">
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Sanaa Al Reiahy</b> · Abu Dhabi University</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>16:00 – 18:00 UAE time · Online</span></div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 mec-btn-wrapper">
+<a class="mec-booking-button" data-event-id="7008" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Designing%20Authentic%20Assessment%20as%20a%20Learning%20Journey" rel="noopener">Register</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
+</article>
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2026-12-14T18:00:00+03:00">
+<div class="col-md-2 col-sm-2">
+<div class="mec-event-date">
+<div class="event-d mec-color">14</div>
+<div class="event-f">December</div>
+<div class="event-da">Monday</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6">
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7009" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20AI-Assisted%20Learning%3A%20Practical%20Strategies" rel="noopener">AI-Assisted Learning: Practical Strategies for Enhancing Student Engagement and Learning</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<div class="mec-event-detail">
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Maqbool Khan</b> · American University of Bahrain</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>17:00 – 18:00 Bahrain time · Online</span></div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 mec-btn-wrapper">
+<a class="mec-booking-button" data-event-id="7009" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20AI-Assisted%20Learning%3A%20Practical%20Strategies" rel="noopener">Register</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
+</article>
+<div class="mec-month-divider" data-toggle-divider="mec-toggle-202701-5117"><h5 style="display: inline;">January 2027</h5><i class="mec-sl-arrow-down"></i></div>
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2027-01-14T18:00:00+04:00">
+<div class="col-md-2 col-sm-2">
+<div class="mec-event-date">
+<div class="event-d mec-color">14</div>
+<div class="event-f">January</div>
+<div class="event-da">Thursday</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6">
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7001" href="../events-main/teaching-the-learner-not-the-label/index.html" rel="noopener" target="_blank">Teaching the Learner, Not the Label: Designing Inclusive Learning for Neurodiverse University Students</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<div class="mec-event-detail">
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Mohammad Fteiha</b> · Abu Dhabi University</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>16:00 – 18:00 UAE time · Online</span></div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 mec-btn-wrapper">
+<a class="mec-booking-button" data-event-id="7001" href="../events-main/teaching-the-learner-not-the-label/index.html" rel="noopener" target="_blank">View Detail</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
+</article>
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle" itemscope="" data-end="2027-01-28T18:00:00+04:00">
+<div class="col-md-2 col-sm-2">
+<div class="mec-event-date">
+<div class="event-d mec-color">28</div>
+<div class="event-f">January</div>
+<div class="event-da">Thursday</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6">
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7010" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20From%20Isolated%20to%20Connected%3A%20Building%20Faculty%20Learning%20Communities" rel="noopener">From Isolated to Connected: A Practical Model for Building Faculty Learning Communities (FLC)</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<div class="mec-event-detail">
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Sanaa Al Reiahy</b> · Abu Dhabi University</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>16:00 – 18:00 UAE time · Online</span></div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 mec-btn-wrapper">
+<a class="mec-booking-button" data-event-id="7010" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20From%20Isolated%20to%20Connected%3A%20Building%20Faculty%20Learning%20Communities" rel="noopener">Register</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
+</article>
+<div class="mec-month-divider" data-toggle-divider="mec-toggle-past-5117"><h5 style="display: inline;">Past events</h5><i class="mec-sl-arrow-down"></i></div>
+<article class="mec-upcoming-event mec-event-article mec-clear mec-divider-toggle ac-is-past" itemscope="" data-end="2026-10-05T15:00:00+03:00">
+<div class="col-md-2 col-sm-2">
+<div class="mec-event-date">
+<div class="event-d mec-color">5</div>
+<div class="event-f">October</div>
+<div class="event-da">Monday</div>
+</div>
+</div>
+<div class="col-md-6 col-sm-6">
+<h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="7004" rel="noopener">Engaging Digital Natives in the Marketing Classroom</a> <span class="event-color" style="background: #1a5fb4"></span></h4>
+<div class="mec-event-detail">
+<div class="ac-row ac-who"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><b>Dr. Maryam Almahdi</b> · American University of Bahrain</span></div>
+<div class="ac-row ac-time"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>14:00 – 15:00 Bahrain time · Online</span></div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 mec-btn-wrapper">
+<a class="mec-booking-button" data-event-id="7004" href="mailto:info@ac-tlc.org?subject=Registration%20Interest%3A%20Engaging%20Digital%20Natives%20in%20the%20Marketing%20Classroom" rel="noopener">Register</a><span class="ac-ended"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ended</span> </div>
+</article>
+<script>
+(function(){
+var list=document.querySelector('#mec_skin_5117 .mec-event-list-modern');if(!list)return;
+var past=list.querySelector('[data-toggle-divider="mec-toggle-past-5117"]');if(!past)return;
+var now=Date.now();
+[].slice.call(list.querySelectorAll('article[data-end]:not(.ac-is-past)')).forEach(function(a){
+var end=Date.parse(a.getAttribute('data-end'));
+if(!isNaN(end)&&end<now){a.classList.add('ac-is-past');
+var t=a.querySelector('.mec-event-title a[href^="mailto:"]');if(t)t.removeAttribute('href');
+past.parentNode.insertBefore(a,past.nextSibling);}
+});
+[].slice.call(list.querySelectorAll('.mec-month-divider')).forEach(function(d){
+var n=d.nextElementSibling;while(n&&n.tagName==='SCRIPT')n=n.nextElementSibling;
+if(!n||n.tagName!=='ARTICLE')d.style.display='none';
+});
+})();
+</script>
 </div>
 </div>
 </div>
 <div class="mec-skin-list-no-events-container mec-util-hidden" id="mec_skin_no_events_5117">
         No event found!    </div>
-<div class="mec-load-more-wrap">
-<div class="mec-load-more-button" onkeydown="if(event.keyCode===13){jQuery(this).trigger('click');}" tabindex="0">Load More</div>
-</div>
 </div>
 </div>
 </div>
@@ -1415,8 +1592,8 @@ var ElementorProFrontendConfig = {"ajaxurl":"https:\/\/www.ac-tlc.org\/wp-admin\
                 "@context": "http://schema.org",
                 "@type": "Event",
                 "eventStatus": "https://schema.org/EventScheduled",
-                "startDate": "2026-10-15T16:00:00+04:00",
-                "endDate": "2026-10-15T18:00:00+04:00",
+                "startDate": "2027-01-14T16:00:00+04:00",
+                "endDate": "2027-01-14T18:00:00+04:00",
                 "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
                 "location": {
                                 "@type": "VirtualLocation",
@@ -1433,7 +1610,7 @@ var ElementorProFrontendConfig = {"ajaxurl":"https:\/\/www.ac-tlc.org\/wp-admin\
                                 "price": "0",
                                 "priceCurrency": "USD",
                                 "availability": "https://schema.org/InStock",
-                                "validFrom": "2026-10-15T16:00:00+04:00"
+                                "validFrom": "2027-01-14T16:00:00+04:00"
                 },
                 "performer": "Dr. Mohammad Fteiha",
                 "description": "This webinar explores how faculty can move beyond labels and diagnoses to better understand and support diverse learners in higher education. It will introduce practical, inclusive teaching strategies grounded in neurodiversity and Universal Design for Learning, with a focus on reducing barriers, increasing engagement, and creating more flexible learning environments without compromising academic standards.",
