@@ -13,8 +13,15 @@ CONTACT_LABELS = {"Conference Email": "Conference email", "Abu Dhabi University 
                   "Abu Dhabi University — CDLI Address": "Postal address", "Website": "Website", "Phone": "Phone",
                   "WhatsApp": "WhatsApp", "Venue": "Venue"}
 
+I_DL = '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>'
+
+def download(href, label, meta):
+    return ('<a class="acx-c-dl" href="%s" target="_blank" rel="noopener" download>%s<span><b>%s</b><small>%s</small></span></a>'
+            % (esc(href), I_DL, esc(label), esc(meta)))
+
+
 NAV = [("tracks", "Tracks"), ("programme", "Programme"), ("speakers", "Speakers"),
-       ("call-for-papers", "Proposals"), ("registration", "Fees"), ("sponsorship", "Sponsorship"), ("contact", "Contact")]
+       ("call-for-papers", "Proposals"), ("registration", "Fees"), ("contact", "Contact")]
 
 
 def head(d, hid):
@@ -32,7 +39,7 @@ def bullets(items, extra=""):
 
 
 def person(p):
-    line = ", ".join(x for x in (p["role"], p["org"]) if x) + (" · " + p["country"] if p["country"] else "")
+    line = ", ".join(x for x in (p["role"], p["org"]) if x)
     link = ""
     if p["linkedin"]:
         link = ('<a class="acx-c-lnk" href="%s" target="_blank" rel="noopener" aria-label="%s on LinkedIn">%s</a>'
@@ -42,10 +49,8 @@ def person(p):
 
 
 def member(m):
-    line = ", ".join(x for x in (m["role"], m["org"]) if x)
-    return ('<li class="acx-c-member"><img src="%s" alt="" width="64" height="64" loading="lazy" decoding="async"/>'
-            '<div><p class="acx-c-mb">%s</p><p class="acx-c-pn"><span>%s</span></p><p class="acx-c-pr">%s</p></div></li>'
-            % (esc(m["photo"]), esc(m["badge"]), esc(m["name"]), esc(line)))
+    return ('<li class="acx-c-person"><img class="acx-c-photo" src="%s" alt="" width="400" height="500" loading="lazy" decoding="async"/>'
+            '<p class="acx-c-pn"><span>%s</span></p><p class="acx-c-pr">%s · %s</p></li>' % (esc(m["photo"]), esc(m["name"]), esc(m["badge"]), esc(m["org"])))
 
 
 def conference_html(c, email):
@@ -59,18 +64,22 @@ def conference_html(c, email):
 
     h = c["hero"]
     facts = " · ".join("%s %s" % (f["n"], f["label"].lower()) for f in c["facts"])
-    o.append('<header class="acx-c-hero" id="overview"><div class="acx-c-in">'
+    o.append('<header class="acx-c-hero" id="overview"><div class="acx-c-in acx-c-herogrid"><div>'
              '<p class="acx-c-kicker">ACTLC inaugural conference</p>'
              '<h1 class="acx-c-h1">%s</h1><p class="acx-c-sub">%s</p><p class="acx-c-when">%s</p><p class="acx-c-facts">%s</p>'
              '<div class="acx-c-actions"><a class="acx-btn acx-btn-light" href="%s" target="_blank" rel="noopener">Register</a>'
-             '<a class="acx-link" href="#call-for-papers">Submit a proposal &rarr;</a></div></div></header>'
+             '<a class="acx-link" href="#call-for-papers">Submit a proposal &rarr;</a></div></div>'
+             '<div class="acx-c-count" data-start="2027-02-02T09:00:00+04:00" role="timer" aria-label="Time until the conference opens" hidden>'
+             '<p class="acx-c-count-h">Conference opens in</p><div class="acx-c-count-n">'
+             '<div><b data-u="d">0</b><span>days</span></div><div><b data-u="h">0</b><span>hours</span></div><div><b data-u="m">0</b><span>minutes</span></div>'
+             '</div></div></div></header>'
              % (esc(h["title"]), esc(h["sub"]), esc(h["when_where"]), esc(facts), reg))
 
     ab = c["about"]
     o.append('<section class="acx-c-sec" aria-labelledby="acx-h-about"><div class="acx-c-in acx-c-2col">'
              '<div class="acx-c-prose"><h2 class="acx-c-h2" id="acx-h-about">%s</h2>%s</div>'
-             '<div><h3 class="acx-c-h3">What to expect</h3>%s<h3 class="acx-c-h3">Conference goals</h3>%s</div></div></section>'
-             % (esc(ab["title"]), "".join("<p>%s</p>" % esc(x) for x in ab["body"]), rows(ab["formats"]), rows(ab["goals"])))
+             '<div><h3 class="acx-c-h3">What to expect</h3>%s%s</div></div></section>'
+             % (esc(ab["title"]), "<p>%s</p>" % esc(ab["body"][0]), rows(ab["formats"]), ""))
 
     th = c["themes"]
     tracks = "".join(
@@ -94,43 +103,42 @@ def conference_html(c, email):
         days.append('<div class="acx-c-day" id="acx-day-%d" aria-labelledby="acx-daytab-%d"><h3 class="acx-c-dayh">%s</h3>'
                     '<p class="acx-c-dayv">%s</p><ol class="acx-c-sched">%s</ol></div>' % (i, i, esc(d["date"]), esc(d["venue"]), "".join(items)))
     o.append('<section class="acx-c-sec" id="programme" aria-labelledby="acx-h-prog"><div class="acx-c-in">%s'
-             '<div class="acx-tabs acx-c-tabs" role="tablist" aria-label="Programme day" hidden>%s</div>%s</div></section>'
+             '<div class="acx-tabs acx-c-tabs" role="tablist" aria-label="Programme day" hidden>%s</div><div class="acx-c-days">%s</div></div></section>'
              % (head(pr, "acx-h-prog"), "".join(tabs), "".join(days)))
 
     sp, cm = c["speakers"], c["committee"]
     o.append('<section class="acx-c-sec" id="speakers" aria-labelledby="acx-h-spk"><div class="acx-c-in">%s'
              '<ul class="acx-c-people">%s</ul>'
              '<div class="acx-c-head acx-c-subhead"><h2 class="acx-c-h2" id="acx-h-team">%s</h2><p class="acx-c-lead">%s</p></div>'
-             '<ul class="acx-c-team" aria-labelledby="acx-h-team">%s</ul></div></section>'
+             '<ul class="acx-c-people" aria-labelledby="acx-h-team">%s</ul></div></section>'
              % (head(sp, "acx-h-spk"), "".join(person(p) for p in sp["people"]), esc(cm["title"]), esc(cm["lead"]),
                 "".join(member(m) for m in cm["people"])))
 
     cf = c["cfp"]; dl = {d["title"]: d for d in c["downloads"]}
     mail = "mailto:%s?subject=%s" % (email, quote(cf["subject"].replace(" #", " ")))
-    dates = "".join('<li><time>%s</time><div><b>%s</b><span>%s</span></div></li>' % (esc(d["date"]), esc(d["title"]), esc(d["text"]))
-                    for d in cf["dates"])
+    dates = "".join('<li><time>%s</time><div><b>%s</b></div></li>' % (esc(d["date"]), esc(d["title"])) for d in cf["dates"])
     blocks = "".join('<h3 class="acx-c-h3">%s</h3>%s' % (esc(b["title"]), bullets(b["items"])) for b in cf["blocks"])
-    o.append('<section class="acx-c-sec" id="call-for-papers" aria-labelledby="acx-h-cfp"><div class="acx-c-in acx-c-2col">'
-             '<div>%s<h3 class="acx-c-h3">Key dates</h3><ol class="acx-c-dates">%s</ol></div>'
-             '<div>%s<div class="acx-c-submit"><p>%s</p><p class="acx-c-subject">%s</p>'
-             '<a class="acx-btn" href="%s">Email your proposal</a>'
-             '<a class="acx-link" href="%s" target="_blank" rel="noopener">Full call for best practices (PDF, 1.9 MB)</a></div></div>'
+    o.append('<section class="acx-c-sec" id="call-for-papers" aria-labelledby="acx-h-cfp"><div class="acx-c-in">%s'
+             '<div class="acx-c-cta"><a class="acx-btn" href="%s">Email your proposal</a>'
+             '<p class="acx-c-hint">The subject is filled in for you; add your track number.</p></div><div class="acx-c-dlrow">%s</div>'
+             '<h3 class="acx-c-h3 acx-c-datesh">Key dates</h3><ol class="acx-c-dates">%s</ol>'
+             '<details class="acx-c-more"><summary>Submission requirements</summary><div class="acx-c-reqs">%s</div></details>'
              '</div></section>'
-             % (head(cf, "acx-h-cfp"), dates, blocks, esc(cf["submit_text"]), esc(cf["subject"]), esc(mail),
-                esc(dl["Call for Best Practices"]["href"])))
+             % (head(cf, "acx-h-cfp"), esc(mail), download(dl["Call for Best Practices"]["href"], "Download the full call for best practices", "PDF · 1.9 MB"), dates,
+                "".join('<div><h3 class="acx-c-h3">%s</h3>%s</div>' % (esc(b["title"]), bullets(b["items"])) for b in cf["blocks"])))
 
     fe = c["fees"]
-    tiers = "".join(
-        '<div class="acx-c-fee%s"><h3>%s</h3><p class="acx-c-q">%s</p><p class="acx-c-price"><span>AED</span>%s</p>'
-        '<p class="acx-c-vat">%s</p><p class="acx-c-inc">%s</p></div>'
-        % (" is-hi" if t["highlight"] else "", esc(t["name"]),
-           esc(t["qualifier"] or ("Lower rate for presenters" if t["highlight"] else "")),
-           esc(t["price"]), esc(t["vat"]), esc(t["includes"]))
-        for t in fe["tiers"])
-    o.append('<section class="acx-c-sec" id="registration" aria-labelledby="acx-h-fees"><div class="acx-c-in">%s'
-             '<div class="acx-c-fees">%s</div><p class="acx-c-feenote">%s</p>'
+    lines = {"Regular Delegate": "Delegates from non-member institutions", "Presenter": "Includes your presentation slot",
+             "Founding Member Delegate": "After the 5 free places each founding member receives"}
+    tiers = "".join('<div class="acx-c-fee%s"><h3>%s</h3><p class="acx-c-price"><span>AED</span>%s</p><p class="acx-c-q">%s</p></div>'
+                    % (" is-hi" if t["highlight"] else "", esc(t["name"]), esc(t["price"]), esc(lines.get(t["name"], t["qualifier"])))
+                    for t in fe["tiers"])
+    o.append('<section class="acx-c-sec" id="registration" aria-labelledby="acx-h-fees"><div class="acx-c-in">'
+             '<div class="acx-c-head"><h2 class="acx-c-h2" id="acx-h-fees">%s</h2>'
+             '<p class="acx-c-lead">Every ticket includes all sessions and materials. Prices exclude 5%% VAT.</p></div>'
+             '<div class="acx-c-fees">%s</div>'
              '<div class="acx-c-feecta"><a class="acx-btn" href="%s" target="_blank" rel="noopener">Register</a></div></div></section>'
-             % (head(fe, "acx-h-fees"), tiers, esc(fe["note"]), reg))
+             % (esc(fe["title"]), tiers, reg))
 
     logos = "".join('<li><img src="../%s" alt="%s" width="%d" height="%d" loading="lazy" decoding="async"/>%s</li>'
                     % (esc(l["logo"]), esc(l["name"]), l["w"], l["h"],
@@ -141,22 +149,23 @@ def conference_html(c, email):
 
     so = c["sponsorship"]
     o.append('<section class="acx-c-sec" id="sponsorship" aria-labelledby="acx-h-spo"><div class="acx-c-in">%s'
-             '<div class="acx-c-2col"><div><h3 class="acx-c-h3">%s</h3><p class="acx-c-why">%s</p>%s</div>'
-             '<div><h3 class="acx-c-h3">%s</h3>%s</div></div>'
+             '<h3 class="acx-c-h3">%s</h3>%s'
              '<div class="acx-c-actions acx-c-spcta"><a class="acx-btn" href="mailto:%s?subject=%s">Email about sponsorship</a>'
-             '<a class="acx-link" href="%s" target="_blank" rel="noopener">Sponsorship package (PDF, 4.0 MB)</a></div></div></section>'
-             % (head(so, "acx-h-spo"), esc(so["why_title"]), esc(so["why_text"]), bullets(so["why"]),
-                esc(so["who_title"]), bullets(so["who"]), email, quote("ACTLC 2027 sponsorship"), esc(dl["Sponsorship Package"]["href"])))
+             '</div>%s</div></section>'
+             % (head(so, "acx-h-spo"), esc(so["who_title"]), bullets(so["who"], ' style="columns:2;column-gap:2.5em"'),
+                email, quote("ACTLC 2027 sponsorship"), download(dl["Sponsorship Package"]["href"], "Download the sponsorship package", "PDF · 4.0 MB")))
 
     ct = c["contact"]
 
     def value(i):
-        v = "Centre page on adu.ac.ae" if i["label"] == "Website" else i["value"]
+        v = "Centre page on adu.ac.ae" if i["label"] == "Website" else re.sub(r"\s*\d+–\d+ \w+ \d{4}$", "", i["value"])
         if not i["href"]:
             return esc(v)
         ext = ' target="_blank" rel="noopener"' if i["href"].startswith("http") else ""
         return '<a href="%s"%s>%s</a>' % (esc(i["href"]), ext, esc(v))
-    items = "".join("<div><dt>%s</dt><dd>%s</dd></div>" % (esc(CONTACT_LABELS.get(i["label"], i["label"])), value(i)) for i in ct["items"])
+    keep = ("Conference Email", "Phone", "WhatsApp", "Venue")
+    items = "".join("<div><dt>%s</dt><dd>%s</dd></div>" % (esc(CONTACT_LABELS.get(i["label"], i["label"]).replace("Conference email", "Email")), value(i))
+                    for i in ct["items"] if i["label"] in keep)
     o.append('<section class="acx-c-sec" id="contact" aria-labelledby="acx-h-con"><div class="acx-c-in">%s'
              '<dl class="acx-c-contact">%s</dl><div class="acx-c-contactcta">'
              '<a class="acx-btn" href="mailto:%s?subject=%s">Email the organisers</a></div></div></section>'

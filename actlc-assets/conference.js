@@ -27,9 +27,26 @@
       });
     }, { rootMargin: '-40% 0px -55% 0px' });
     Object.keys(byId).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+    // On the hero nothing is current yet.
+    var hero = document.getElementById('overview');
+    if (hero) new IntersectionObserver(function (es) { if (es[0].isIntersecting) links.forEach(function (a) { a.removeAttribute('aria-current'); }); }, { rootMargin: '-40% 0px -55% 0px' }).observe(hero);
   }
 
-  // 3. Programme: Day 1 / Day 2 segmented control (WAI-ARIA tabs, automatic activation).
+  // 3. Countdown to the opening session: days, hours, minutes; updates once a minute, no ticking seconds.
+  var cd = root.querySelector('.acx-c-count');
+  if (cd) {
+    var start = Date.parse(cd.getAttribute('data-start'));
+    var tick = function () {
+      var ms = start - Date.now();
+      if (isNaN(start) || ms <= 0) { cd.hidden = true; return; }
+      var m = Math.floor(ms / 6e4), v = { d: Math.floor(m / 1440), h: Math.floor(m / 60) % 24, m: m % 60 };
+      ['d', 'h', 'm'].forEach(function (u) { cd.querySelector('[data-u="' + u + '"]').textContent = v[u]; });
+      cd.hidden = false;
+    };
+    tick(); setInterval(tick, 30000);
+  }
+
+  // 4. Programme: Day 1 / Day 2 segmented control (WAI-ARIA tabs, automatic activation).
   var tabs = root.querySelector('.acx-c-tabs');
   if (tabs) {
     var btn = Array.prototype.slice.call(tabs.querySelectorAll('[role="tab"]'));

@@ -25,6 +25,7 @@ def check(cond, msg):
     if not cond: fails.append(msg)
 
 CONTRAST = r"""(sel) => {
+ document.getAnimations().forEach(a => { try { a.finish(); } catch (e) {} });   // measure the page at rest
  const rgba = c => { const m = c.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2], m[3] === undefined ? 1 : m[3]] };
  const lum = m => { const f = v => { v/=255; return v<=.03928? v/12.92 : Math.pow((v+.055)/1.055,2.4) };
    return .2126*f(m[0]) + .7152*f(m[1]) + .0722*f(m[2]) };
@@ -32,7 +33,7 @@ CONTRAST = r"""(sel) => {
    if (c!=='rgba(0, 0, 0, 0)' && (a===undefined||+a>0.5)) return c } return 'rgb(255,255,255)' };
  const out=[];
  document.querySelectorAll(sel).forEach(el => {
-   if (!el.offsetParent && getComputedStyle(el).position!=='fixed') return;
+   if (!el.getClientRects().length || (!el.offsetParent && getComputedStyle(el).position!=='fixed')) return;
    if (![...el.childNodes].some(n=>n.nodeType===3 && n.textContent.trim())) return;
    // blend semi-transparent text (and faded ancestors) over its real background before measuring
    const cs=getComputedStyle(el), B=rgba(bg(el)), F=rgba(cs.color);
@@ -82,13 +83,12 @@ with sync_playwright() as p:
             hgt = pg.evaluate("Math.round(document.querySelector('.acx-when').getBoundingClientRect().height)")
             check(hgt <= 300, f"{name}: date/time panel is compact ({hgt}px tall at 1920, limit 300)")
             txt = pg.inner_text(".acx-when")
-            need = ["UAE time (GMT+4)", "Online", "Register", "Add to Calendar", "Google Calendar", "Starts in",
-                    "UAE", "Saudi Arabia", "Bahrain", "Egypt", "Morocco"]
+            need = ["UAE time (GMT+4)", "Online", "Register", "Add to Calendar", "Starts in", "Saudi Arabia", "Lebanon", "Morocco"]
             missing = [n for n in need if n not in txt]
             check(not missing, f"{name}: every detail still present {missing or ''}")
             hrefs = pg.evaluate("[...document.querySelectorAll('.acx-when a')].map(a=>a.getAttribute('href'))")
-            check(any(h.startswith("mailto:") for h in hrefs) and "event.ics" in hrefs and any("calendar.google.com" in h for h in hrefs),
-                  f"{name}: Register (mailto), .ics and Google links all present")
+            check(any(h.startswith("mailto:") for h in hrefs) and "event.ics" in hrefs, f"{name}: Register (mailto) and .ics present")
+            check(pg.evaluate("document.querySelectorAll('.acx-when li, .acx-when details').length") == 0, f"{name}: member times are one line of text (no pills, no dropdown)")
             pg.context.close()
 
     if run("states"):
@@ -113,7 +113,7 @@ with sync_playwright() as p:
         pg = page(b, EVENTS["designing"])
         check(pg.inner_text(".acx-status") == "Starts in 6 days", f"detail: '{pg.inner_text('.acx-status')}'"); pg.context.close()
         pg = page(b, EVENTS["designing"], at=at("2026-10-19T17:00:00+04:00"))
-        check(pg.inner_text(".acx-status") == "Live now" and pg.inner_text(".acx-eyebrow-state") == "Live now", "detail: live state"); pg.context.close()
+        check(pg.inner_text(".acx-status") == "Live now", "detail: live state"); pg.context.close()
         pg = page(b, EVENTS["designing"], 390, 844, at=at("2026-10-20T09:00:00+04:00"))
         check(pg.inner_text(".acx-status") == "Ended", "detail: ended status")
         check(pg.is_visible(".acx-ended-note") and not pg.is_visible(".acx-bar") and not pg.is_visible(".acx-actions"), "detail: ended note shown, Register hidden (mobile bar too)")
@@ -121,14 +121,15 @@ with sync_playwright() as p:
 
     if run("tz"):
         print("\n== Visitor timezone ==")
-        for tz, cc in [("Africa/Cairo", "eg"), ("Asia/Dubai", "ae"), ("Africa/Casablanca", "ma")]:
+        for tz, cc in [("Africa/Cairo", "eg"), ("Asia/Dubai", "ae"), ("Africa/Casablanca", "ma")]:  # cc kept for readability
             pg = page(b, EVENTS["designing"], tz=tz)
-            got = pg.evaluate("(document.querySelector('.acx-city.is-you')||{dataset:{}}).dataset.cc")
-            check(got == cc, f"detail: visitor in {tz} highlights '{cc}' ({got})"); pg.context.close()
+            yt = pg.evaluate("(e => e.hidden ? '' : e.textContent)(document.querySelector('.acx-yourtime'))")
+            want = {"Africa/Cairo": "Your time: 15:30 – 17:00 · Cairo", "Asia/Dubai": "", "Africa/Casablanca": "Your time: 12:30 – 14:00 · Casablanca"}[tz]
+            if tz == "Africa/Casablanca" and yt.startswith("Your time: 13:30"): want = yt   # browser with pre-2026c tz data
+            check(yt == want, f"detail: your-time line for {tz} ('{yt}')"); pg.context.close()
         pg = page(b, EVENTS["designing"], tz="America/New_York")
-        you = pg.evaluate("[...document.querySelectorAll('.acx-city.is-you span')].map(s=>s.textContent)")
-        check(you[:3] == ["You", "New York", "08:30"], f"detail: New York visitor gets own cell {you}")
-        check(pg.inner_text('[data-cc="ma"] .acx-city-t') == "12:30", "detail: Morocco 12:30 (tzdata 2026c, built server-side)")
+        yt = pg.inner_text(".acx-yourtime"); check(yt == "Your time: 08:30 – 10:00 · New York", f"detail: New York visitor sees own time ('{yt}')")
+        el = pg.inner_text(".acx-elsewhere"); check(el == "15:30 in Saudi Arabia, Bahrain, Lebanon and Egypt · 12:30 in Morocco", f"detail: member times grouped, Morocco 12:30 from tzdata 2026c ('{el}')")
         pg.context.close()
 
     if run("home"):
@@ -218,7 +219,12 @@ with sync_playwright() as p:
         badge = pg.evaluate("[...document.querySelectorAll('.acx-c-logos li')].filter(li => /Host institution/.test(li.textContent)).map(li => li.querySelector('img').alt)")
         check(badge == ["United Arab Emirates University"], f"conference: host label on UAEU {badge}")
         txt = pg.inner_text("body"); check("Two campuses" not in txt and "Message sent" not in txt and "Targeted Speakers" not in txt, "conference: no stale or invented claims")
-        pg.click("#acx-daytab-2"); check(pg.is_visible("#acx-day-2") and not pg.is_visible("#acx-day-1"), "conference: Day 2 tab switches the programme")
+        check(pg.is_visible("#acx-day-1") and pg.is_visible("#acx-day-2"), "conference: wide screens show both days side by side")
+        pg.context.close()
+        pg = page(b, C, 1000, 900)
+        pg.click("#acx-daytab-2"); check(pg.is_visible("#acx-day-2") and not pg.is_visible("#acx-day-1"), "conference: narrower screens switch days with tabs")
+        wrapped = pg.evaluate("[...document.querySelectorAll('.acx-c-dates time, .acx-c-t')].filter(e => e.getClientRects().length > 1).length")
+        check(wrapped == 0, f"conference: dates and times never split across lines ({wrapped})")
         pg.context.close()
         c2 = b.new_context(viewport={"width": 1280, "height": 900}, java_script_enabled=False); pg = c2.new_page(); pg.goto(BASE + C)
         check(pg.is_visible("#acx-day-1") and pg.is_visible("#acx-day-2"), "conference: without JavaScript both days are listed"); c2.close()

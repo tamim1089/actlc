@@ -126,28 +126,13 @@
     var p = phase(now, t[0], t[1]);
     root.classList.add('is-' + p);
     var st = $('.acx-status', root); if (st) st.textContent = statusText(now, t[0], t[1], tz);
-    var ey = $('.acx-eyebrow-state', root);
-    if (ey && p === 'past') ey.textContent = 'Past webinar';
-    if (ey && p === 'live') ey.textContent = 'Live now';
 
-    // Highlight the visitor in the member-country clock, or add a cell for them.
-    var grid = $('.acx-world', root); if (!grid) return;
-    var cc = memberCode(tz), cell;
-    if (cc) { cell = $('[data-cc="' + cc + '"]', grid); }
-    else {
-      cell = document.createElement('li');
-      cell.className = 'acx-city';
-      [['acx-city-n', cityFromTz(tz)], ['acx-city-t', clock(t[0], tz)], ['acx-city-d', dayMarker(t[0], evTz, tz)]]
-        .forEach(function (x) {
-          var s = document.createElement('span'); s.className = x[0]; s.textContent = x[1]; cell.appendChild(s);
-        });
-      grid.appendChild(cell);
-    }
-    if (cell) {
-      cell.classList.add('is-you');
-      var you = document.createElement('span');
-      you.className = 'acx-you'; you.textContent = 'You';
-      cell.insertBefore(you, cell.firstChild);
+    // One line with the visitor's own time, only when it differs from the event's zone.
+    var yt = $('.acx-yourtime', root);
+    if (yt && clock(t[0], tz) !== clock(t[0], evTz)) {
+      var mark = dayMarker(t[0], evTz, tz);
+      yt.textContent = 'Your time: ' + clock(t[0], tz) + ' \u2013 ' + clock(t[1], tz) + ' \u00b7 ' + cityFromTz(tz) + (mark ? ' (' + mark.toLowerCase() + ')' : '');
+      yt.hidden = false;
     }
   }
 

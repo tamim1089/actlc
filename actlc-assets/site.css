@@ -16,7 +16,7 @@
   --tap: max(44px, calc(var(--t) * 2.4));             /* Apple minimum hit target: 44pt */
 
   --brand: #3dc1c8;   --teal: #0e7a83;  --teal-deep: #0b616a; --teal-tint: #e8f6f7; --teal-tint-2: #d8eff1;
-  --ink: #15242b;     --body: #374850;  --muted: #5a6b73;     --hairline: #e2ebed;
+  --ink: #15242b;     --body: #374850;  --muted: #52626a;   /* >= 4.5:1 on the #f6f8fa page ground */     --hairline: #e2ebed;
   --surface: #fff;    --ground: #f6f8fa; --track: #e7eef0;
   --red: #b42318;     --red-tint: #fdf3f2; --red-line: #f0c3be;
 
@@ -101,3 +101,41 @@
   .acx .acx-foot-col a { min-height: 44px; }      /* touch target */
 }
 @media (prefers-reduced-motion: reduce) { .acx * { transition: none !important; } }
+
+/* One wide column for the whole site: header, content and footer share the same edges */
+@media (min-width: 901px) {
+  .site-header .site-header-container { max-width: min(1400px, calc(100vw - 64px)) !important; width: 100%; padding-left: 0 !important; padding-right: 0 !important; }
+  .acx .acx-foot-in, .acx-list-root, .acx-detail, .acx-page-list .entry-header {
+    width: min(1400px, calc(100vw - 64px)) !important; max-width: none !important;
+    margin-left: calc(50% - min(700px, 50vw - 32px)) !important; margin-right: 0 !important; padding-left: 0; padding-right: 0;
+  }
+}
+
+/* Interactive hover button (CSS port of shadcn InteractiveHoverButton): the label slides out,
+   a dot grows into the fill, and the label returns with an arrow. Mouse only; off for reduced motion. */
+.acx .acx-btn[data-label], .site-header .button.signup[data-label] {
+  position: relative; overflow: hidden; isolation: isolate; border-radius: 999px !important;
+  --hb-fill: var(--teal-deep, #0b616a); --hb-ink: #fff;
+}
+.acx .acx-btn[data-label] .acx-btn-t, .site-header .button.signup[data-label] .acx-btn-t {
+  display: inline-flex; align-items: center; gap: .45em; transform: translateX(4px); transition: transform .3s ease, opacity .3s ease;
+}
+.acx .acx-btn[data-label]::before, .site-header .button.signup[data-label]::before {
+  content: ""; position: absolute; left: 14px; top: calc(50% - 4px); z-index: -1; width: 8px; height: 8px; border-radius: 8px;
+  background: var(--hb-fill); transition: all .3s ease;
+}
+.acx .acx-btn[data-label]::after, .site-header .button.signup[data-label]::after {
+  content: attr(data-label) "  \2192"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: var(--hb-ink); white-space: nowrap; opacity: 0; transform: translateX(48px); transition: all .3s ease;
+}
+.acx .acx-btn-filled[data-label], .acx .acx-btn:not(.acx-btn-light):not(.acx-btn-tint)[data-label] { --hb-fill: var(--teal-deep, #0b616a); }
+.acx .acx-btn-light[data-label] { --hb-fill: var(--teal, #0e7a83); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .acx .acx-btn[data-label]:hover .acx-btn-t, .site-header .button.signup[data-label]:hover .acx-btn-t { transform: translateX(48px); opacity: 0; }
+  .acx .acx-btn[data-label]:hover::after, .site-header .button.signup[data-label]:hover::after { transform: translateX(-4px); opacity: 1; }
+  .acx .acx-btn[data-label]:hover::before, .site-header .button.signup[data-label]:hover::before { left: 0; top: 0; width: 100%; height: 100%; transform: scale(1.8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acx .acx-btn[data-label]::before, .acx .acx-btn[data-label]::after, .site-header .button.signup[data-label]::before, .site-header .button.signup[data-label]::after { display: none; }
+}
+.acx .acx-btn[data-label], .site-header .button.signup[data-label] { padding-left: calc(var(--t, 17px) * 1.1 + 16px) !important; }

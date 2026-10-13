@@ -164,6 +164,20 @@ def build_conference():
     from conference_page import build_conference as _bc
     return _bc(ROOT, block_span, asset_version, EMAIL)
 
+def enhance_buttons(h):
+    """Interactive hover button (port of the shadcn InteractiveHoverButton, in CSS): wrap each text
+       button's label so it can slide out while the fill and an arrow slide in. Icon-only buttons are left alone."""
+    def wrap(m):
+        tag, attrs, inner = m.group(1), m.group(2), m.group(3)
+        if "acx-btn-t" in inner: return m.group(0)
+        label = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", inner)).strip()
+        if not label: return m.group(0)
+        attrs = attrs if "data-label=" in attrs else attrs + f' data-label="{esc(label)}"'
+        return f'<{tag}{attrs}><span class="acx-btn-t">{inner}</span></{tag}>'
+    h = re.sub(r'<(a|button)(\b[^>]*\bclass="[^"]*\bacx-btn\b[^"]*"[^>]*)>([\s\S]*?)</\1>', wrap, h)
+    h = re.sub(r'<(a)(\b[^>]*\bclass="button small signup"[^>]*)>([\s\S]*?)</a>', wrap, h)
+    return h
+
 def build_site():
     done = []
     for page in site_pages():
@@ -172,7 +186,10 @@ def build_site():
         h = open(p, encoding="utf-8").read()
         h = fix_events_nav(h, rel)
         h = fix_cloudflare_email(h)
+        # Member cards: the host label belongs to UAEU (it was baked into the PSU image)
+        h = h.replace("wp-content/uploads/2025/04/PSU.webp", "actlc-assets/logos/cards/PSU.webp").replace("wp-content/uploads/2025/04/UAEU.webp", "actlc-assets/logos/cards/UAEU.webp")
         h = drop_dead_font_links(h)
+        h = enhance_buttons(h)
         h, has_footer = replace_footer(h, rel)
         is_list, is_detail = page == "events/index.html", page.startswith("events-main/")
         h = ensure_head(h, rel, is_list or is_detail or page == "index.html",
@@ -209,7 +226,7 @@ def row(e, base):
 <h3 class="acx-title"><a{title_href}>{esc(e.title)}</a></h3>
 <ul class="acx-meta">
 <li>{I_PERSON}<span><b>{esc(e.speaker)}</b> · {esc(e.org)}</span></li>
-<li>{I_CLOCK}<span><span class="acx-tnum">{e.hm(e.s)} – {e.hm(e.e)}</span> {esc(e.zone_label)} · Online<span class="acx-live" hidden>Live now</span></span></li>
+<li>{I_CLOCK}<span><span class="acx-tnum">{e.hm(e.s)} – {e.hm(e.e)}</span> {esc(e.zone_label)}<span class="acx-live" hidden>Live now</span></span></li>
 </ul>
 </div>
 <div class="acx-act"><a class="acx-btn" href="{esc(link)}">{btn}</a><span class="acx-ended">{I_CLOCK}Ended</span></div>
@@ -225,6 +242,7 @@ def list_html():
         out.append(f'<section class="acx-month" aria-labelledby="acx-m-{key}"><h2 class="acx-h2" id="acx-m-{key}">{label}</h2>\n'
                    f'<ol class="acx-list">\n' + "\n".join(row(e, "../") for e in evs) + "\n</ol></section>")
     return f"""<div class="acx acx-list-root" id="acx-events">
+<p class="acx-list-note">All webinars are online.</p>
 <div class="acx-tabs" role="tablist" aria-label="Show events" hidden>
 <button class="acx-tab" type="button" role="tab" id="acx-tab-up" aria-controls="acx-panel-up" aria-selected="true">Upcoming <span class="acx-count" data-count="upcoming">{len(up)}</span></button>
 <button class="acx-tab" type="button" role="tab" id="acx-tab-past" aria-controls="acx-panel-past" aria-selected="false" tabindex="-1">Past <span class="acx-count" data-count="past">{len(past)}</span></button>
@@ -279,46 +297,43 @@ def detail_html(e):
     z = lambda d: d.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
     gcal = ("https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + quote(e.title) +
             f"&dates={z(e.s)}/{z(e.e)}&details=" + quote(f"ACTLC online webinar with {e.speaker}. {e.url}") + "&location=Online")
-    cities = []
+    # Member-country start times as one sentence, countries sharing a time grouped (event's own zone excluded)
+    groups = {}
     for name, tz in DATA["member_countries"]:
+        if tz == e.tz: continue
         lt = e.s.astimezone(ZoneInfo(tz)); dd = (lt.date() - e.s.date()).days
-        mark = "Next day" if dd > 0 else "Previous day" if dd < 0 else ""
-        cc = {"Asia/Dubai": "ae", "Asia/Riyadh": "sa", "Asia/Bahrain": "bh", "Asia/Beirut": "lb", "Africa/Cairo": "eg", "Africa/Casablanca": "ma"}[tz]
-        cities.append(f'<li class="acx-city" data-cc="{cc}"><span class="acx-city-n">{name}</span>'
-                      f'<span class="acx-city-t">{lt:%H:%M}</span><span class="acx-city-d">{mark}</span></li>')
+        key = lt.strftime("%H:%M") + (" next day" if dd > 0 else " previous day" if dd < 0 else "")
+        groups.setdefault(key, []).append(name)
+    join = lambda n: n[0] if len(n) == 1 else ", ".join(n[:-1]) + " and " + n[-1]
+    elsewhere = " · ".join(f"{k} in {join(v)}" for k, v in groups.items())
     lead, body = e.lead_and_body()
     paras = "\n".join(f'<p class="acx-p">{esc(p)}</p>' for p in body)
     return f"""<div class="acx acx-detail" data-start="{Ev.iso(e.s)}" data-end="{Ev.iso(e.e)}" data-tz="{e.tz}">
 <a class="acx-back" href="../../events/index.html">{I_CHEV}All events</a>
-<p class="acx-eyebrow"><span class="acx-eyebrow-state">Upcoming webinar</span></p>
 <h1 class="acx-h1">{esc(e.title)}</h1>
-<div class="acx-presenter"><span class="acx-mono" aria-hidden="true">{e.initials()}</span><span><span class="acx-pname">{esc(e.speaker)}</span><span class="acx-porg">{esc(e.org)}</span></span></div>
+<p class="acx-byline"><span class="acx-pname">{esc(e.speaker)}</span> · {esc(e.org)}</p>
 <section class="acx-when" aria-label="Date and time">
 <div class="acx-when-main">
 <div class="acx-when-info">
 <p class="acx-dateline"><time datetime="{e.s:%Y-%m-%d}">{e.long_date()}</time><span class="acx-status">Upcoming</span></p>
 <p class="acx-bigtime"><time datetime="{Ev.iso(e.s)}">{e.hm(e.s)}</time> – <time datetime="{Ev.iso(e.e)}">{e.hm(e.e)}</time></p>
 <p class="acx-when-sub">{esc(e.zone_label)} ({e.gmt()}) · {e.duration()} · Online</p>
+<p class="acx-elsewhere">{esc(elsewhere)}</p>
+<p class="acx-yourtime" hidden></p>
 </div>
 <div class="acx-actions">
-<div class="acx-actions-row"><a class="acx-btn acx-btn-filled" href="{esc(e.mailto)}">Register</a><a class="acx-btn" href="event.ics" download>{I_CALPLUS}Add to Calendar</a></div>
-<p class="acx-note">Register opens an email to {EMAIL} · <a class="acx-link" href="{esc(gcal)}" target="_blank" rel="noopener">Google Calendar</a></p>
+<div class="acx-actions-row"><a class="acx-btn acx-btn-filled" href="{esc(e.mailto)}" title="Opens an email to {EMAIL}">Register</a><a class="acx-btn" href="event.ics" download>{I_CALPLUS}Add to Calendar</a></div>
 </div>
 <div class="acx-ended-note" role="note"><strong>This session has ended</strong><span>It took place on {e.long_date()}.</span><a class="acx-link" href="../../events/index.html">See upcoming events &rarr;</a></div>
 </div>
-<div class="acx-when-world">
-<p class="acx-world-h" id="acx-world-h">Start time in member countries</p>
-<ul class="acx-world" aria-labelledby="acx-world-h">
-{chr(10).join(cities)}
-</ul>
-</div>
+
 </section>
 <section class="acx-about" aria-labelledby="acx-about-h">
 <h2 class="acx-h2" id="acx-about-h">About this session</h2>
 <p class="acx-lead">{esc(lead)}</p>
 {paras}
 </section>
-<div class="acx-bar"><a class="acx-btn acx-btn-filled" href="{esc(e.mailto)}">Register</a><a class="acx-btn" href="event.ics" download aria-label="Add to Calendar">{I_CALPLUS}</a></div>
+<div class="acx-bar"><a class="acx-btn acx-btn-filled" href="{esc(e.mailto)}" title="Opens an email to {EMAIL}">Register</a><a class="acx-btn" href="event.ics" download aria-label="Add to Calendar">{I_CALPLUS}</a></div>
 </div>"""
 
 def build_detail(e):
