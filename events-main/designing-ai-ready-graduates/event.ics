@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACTLC//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:designing-ai-ready-graduates@ac-tlc.org
+DTSTAMP:20261013T100916Z
+DTSTART:20261019T123000Z
+DTEND:20261019T140000Z
+SUMMARY:Designing AI-Ready Graduates: Aligning AI Competencies with Program
+  and Course Learning Outcomes
+DESCRIPTION:ACTLC online webinar with Dr. Narimane Hadj-Hamou (CLICKS). htt
+ ps://www.ac-tlc.org/events-main/designing-ai-ready-graduates/
+LOCATION:Online
+URL:https://www.ac-tlc.org/events-main/designing-ai-ready-graduates/
+END:VEVENT
+END:VCALENDAR

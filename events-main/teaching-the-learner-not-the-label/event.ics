@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACTLC//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:teaching-the-learner-not-the-label@ac-tlc.org
+DTSTAMP:20261013T100916Z
+DTSTART:20270114T120000Z
+DTEND:20270114T140000Z
+SUMMARY:Teaching the Learner\, Not the Label: Designing Inclusive Learning 
+ for Neurodiverse University Students
+DESCRIPTION:ACTLC online webinar with Dr. Mohammad Fteiha (Abu Dhabi Univer
+ sity). https://www.ac-tlc.org/events-main/teaching-the-learner-not-the-lab
+ el/
+LOCATION:Online
+URL:https://www.ac-tlc.org/events-main/teaching-the-learner-not-the-label/
+END:VEVENT
+END:VCALENDAR
