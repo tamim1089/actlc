@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Browser checks for the ACTLC pages we generate or restyle. Needs a local server:
      python3 -m http.server 8899 &
-     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font] [--shots DIR]
+     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font,conference] [--shots DIR]
    Prints CHECKS_PASSED only when every selected check passes."""
 import argparse, datetime as dt, sys
 from playwright.sync_api import sync_playwright
@@ -170,6 +170,8 @@ with sync_playwright() as p:
                 check("mailto:info@ac-tlc.org" in hrefs and "tel:+97143487445" in hrefs, f"{name} @{w}: tappable email and phone")
                 check(not [h for h in hrefs if h in ("#", "") or "email-protection" in h], f"{name} @{w}: no dead links in footer")
                 check(pg.evaluate("document.querySelector('.acx-foot-brand img').alt.length > 0"), f"{name} @{w}: logo has alt text")
+                pg.locator(".acx-foot-brand img").scroll_into_view_if_needed(); pg.wait_for_timeout(500)
+                check(pg.evaluate("(i => i.complete && i.naturalWidth > 0)(document.querySelector('.acx-foot-brand img'))"), f"{name} @{w}: footer logo actually loads")
                 bad = pg.evaluate(CONTRAST, ".acx-footer *"); check(not bad, f"{name} @{w}: footer contrast {[(c['t'], c['r']) for c in bad] or ''}")
                 if w == 390:
                     small = pg.evaluate("[...document.querySelectorAll('.acx-footer a')].filter(a=>a.getBoundingClientRect().height<44).length")
@@ -183,6 +185,57 @@ with sync_playwright() as p:
             pg = page(b, path, 1280, 800); pg.wait_for_timeout(400)
             ok = pg.evaluate("[...document.fonts].some(f => f.family.replace(/\"/g,'') === 'Inter' && f.status === 'loaded')")
             check(ok, f"{name}: local Inter webfont loaded"); pg.context.close()
+
+    if run("conference"):
+        print("\n== Conference page on the design system ==")
+        C = CHROME["conference"]
+        c = b.new_context(viewport={"width": 1920, "height": 1080}, java_script_enabled=False); pg = c.new_page(); pg.goto(BASE + C)
+        hidden = pg.evaluate("[...document.querySelectorAll('.conf-page [data-r], .conf-page [data-st] > *')].filter(e => getComputedStyle(e).opacity !== '1').length")
+        check(hidden == 0, f"conference: all content visible without JavaScript ({hidden} hidden)"); c.close()
+        for w, h in VIEWPORTS:
+            pg = page(b, C, w, h)
+            pg.evaluate("document.querySelectorAll('.conf-page [data-r], .conf-page [data-st]').forEach(e => e.classList.add('v'))"); pg.wait_for_timeout(900)
+            tag = f"conference @{w}"
+            sw = pg.evaluate("document.documentElement.scrollWidth"); check(sw <= w, f"{tag}: no horizontal scroll ({sw}px)")
+            fonts = pg.evaluate("""() => [...new Set([...document.querySelectorAll('.conf-page h1, .conf-page h2, .conf-page h3, .conf-page p, .conf-page .btn, .conf-page .eyebrow, .conf-page label, .conf-page li')]
+                .filter(e => e.offsetParent).map(e => getComputedStyle(e).fontFamily.split(',')[0].replace(/["']/g,'').trim()))]""")
+            check(fonts == ["Inter"], f"{tag}: one typeface {fonts}")
+            tiny = pg.evaluate("""() => [...document.querySelectorAll('.conf-page *')].filter(e => e.offsetParent && [...e.childNodes].some(n => n.nodeType===3 && n.textContent.trim()) && parseFloat(getComputedStyle(e).fontSize) < 13)
+                .map(e => e.textContent.trim().slice(0,24)).slice(0,6)""")
+            check(not tiny, f"{tag}: no text below 13px {tiny or ''}")
+            bad = pg.evaluate(CONTRAST, ".conf-page *")
+            check(not bad, f"{tag}: WCAG contrast {[(x['t'], x['r']) for x in bad][:8] or ''}")
+            small = pg.evaluate("[...document.querySelectorAll('.conf-page .btn')].filter(e => e.offsetParent && e.getBoundingClientRect().height < 44).length")
+            check(small == 0, f"{tag}: buttons >= 44px ({small} smaller)")
+            if w == 1920:
+                hh = pg.evaluate("Math.round(document.querySelector('.conf-page .hero').getBoundingClientRect().height)")
+                check(hh <= 860, f"{tag}: hero sized to its content ({hh}px, was 1080)")
+                if A.shots: pg.screenshot(path=f"{A.shots}/conference-{w}.png", full_page=True)
+            pg.context.close()
+        pg = page(b, C, 1920, 1080)
+        check(pg.evaluate("document.querySelectorAll('video').length") == 0, "conference: no autoplay background video (5.3 MB)")
+        check(not pg.is_visible("#cd"), "conference: no per-second countdown")
+        txt = pg.inner_text("body")
+        check("Two campuses" not in txt and "Two Days, Two Campuses" not in txt, "conference: no stale 'two campuses' copy")
+        dl = pg.evaluate("[...document.querySelectorAll('.dl-card')].map(a => a.tagName + ' ' + (a.getAttribute('href')||''))")
+        check(len(dl) == 2 and all(x.startswith("A https://") for x in dl), f"conference: both download cards are real links ({len(dl)})")
+        pg.hover(".mq")
+        check(pg.evaluate("getComputedStyle(document.querySelector('.mq__track')).animationPlayState") == "paused", "conference: logo marquee pauses on hover")
+        pg.click("#cf-btn")
+        err = pg.inner_text("#cf-ok"); check("valid email" in err and "sent" not in err.lower(), f"conference form: empty submit explains what to fix ('{err[:40]}')")
+        check(pg.evaluate("document.activeElement.id") == "cf-email", "conference form: focus moves to the field to fix")
+        pg.fill("#cf-first", "Test"); pg.fill("#cf-email", "test@example.org"); pg.select_option("#cf-type", "Sponsorship"); pg.fill("#cf-message", "Hello")
+        pg.evaluate("window.__nav=[]; const o=Object.getOwnPropertyDescriptor(window,'location');")
+        pg.route("**/*", lambda r: r.continue_())
+        pg.click("#cf-btn")
+        url = pg.evaluate("document.getElementById('cf-btn').getAttribute('data-mailto') || ''")
+        check(url.startswith("mailto:info@ac-tlc.org?subject=ACTLC%202027%20conference%3A%20Sponsorship") and "Hello" in url, "conference form: opens a real email to info@ac-tlc.org (no fake 'sent')")
+        check("email app" in pg.inner_text("#cf-ok"), "conference form: says what actually happens")
+        pg.context.close()
+        pg = page(b, C, 1280, 800, reduced_motion="reduce")
+        check(pg.evaluate("getComputedStyle(document.querySelector('.mq__track')).animationName") == "none", "conference: marquee still for reduced motion")
+        check(pg.evaluate("[...document.querySelectorAll('.conf-page [data-r]')].every(e => getComputedStyle(e).opacity === '1')"), "conference: reduced motion shows content without reveal")
+        pg.context.close()
 
     if run("motion"):
         print("\n== Reduced motion ==")

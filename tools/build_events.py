@@ -159,6 +159,50 @@ def build_home():
     open(p, "w", encoding="utf-8").write(h[:s] + home_html() + h[e:])
     return p
 
+def build_conference():
+    """Conference page fixes that need markup changes (styles live in actlc-assets/conference.css)."""
+    p = os.path.join(ROOT, "conference", "index.html"); h = open(p, encoding="utf-8").read()
+    def once(old, new, h):
+        if old in h: return h.replace(old, new)
+        assert new in h, f"conference: expected markup not found: {old[:60]!r}"
+        return h
+    # 1. Decorative 5.3 MB looping background video (YouTube download): remove so it is never fetched
+    h = re.sub(r'<video\b[^>]*class="hero__video"[\s\S]*?</video>\s*', "", h)
+    # 2. One venue now (UAEU, Al Ain): merge the two hero date tags and the two contact venue items
+    m = re.search(r'(<div class="hero__tag">[\s\S]*?<span>)2 Feb 2027 · United Arab Emirates University \(UAEU\)(</span>\s*</div>)\s*<div class="hero__tag">[\s\S]*?<span>3 Feb 2027 · United Arab Emirates University \(UAEU\)</span>\s*</div>', h)
+    if m: h = h[:m.start()] + m.group(1) + "2–3 February 2027 · United Arab Emirates University (UAEU), Al Ain" + m.group(2) + h[m.end():]
+    assert "2–3 February 2027 · United Arab Emirates University (UAEU), Al Ain" in h, "hero tags"
+    d2 = h.find('<div class="ci__lbl">Day 2 Venue</div>')
+    if d2 > 0:
+        s0 = h.rfind('<div class="ci">', 0, d2); s1, e1 = block_span(h, s0); h = h[:s1] + h[e1:]
+    h = once('<div class="ci__lbl">Day 1 Venue</div><div class="ci__val">United Arab Emirates University (UAEU), Al Ain<br/><span style="color:rgba(255,255,255,.3);font-size:var(--t-xs)">2 February 2027</span>',
+             '<div class="ci__lbl">Venue</div><div class="ci__val">United Arab Emirates University (UAEU), Al Ain<br/><span style="color:rgba(255,255,255,.78);font-size:var(--t-xs)">2–3 February 2027</span>', h)
+    # 3. Copy that described two ADU campuses
+    h = once("Two days. Two campuses. One goal: learning that changes what graduates can do.",
+             "Two days in Al Ain. One goal: learning that changes what graduates can do.", h)
+    h = once(">Two Days, Two Campuses<", ">Two Days in Al Ain<", h)
+    # 4. Contact form: real labels, autocomplete, honest button and message
+    for lbl, attrs, fid in [("First Name", 'placeholder="Your first name" type="text"', "cf-first"),
+                            ("Last Name", 'placeholder="Your last name" type="text"', "cf-last"),
+                            ("Email Address", 'placeholder="your@email.com" type="email"', "cf-email"),
+                            ("Institution / Organisation", 'placeholder="University or company name" type="text"', "cf-org")]:
+        ac = {"cf-first": "given-name", "cf-last": "family-name", "cf-email": "email", "cf-org": "organization"}[fid]
+        h = once(f'<label>{lbl}</label><input {attrs}/>', f'<label for="{fid}">{lbl}</label><input id="{fid}" name="{fid}" autocomplete="{ac}" {attrs}/>', h)
+    h = once('<label>Enquiry Type</label>\n<select>', '<label for="cf-type">Enquiry Type</label>\n<select id="cf-type" name="cf-type">', h)
+    h = once('<label>Message</label><textarea placeholder="How can we help?"></textarea>',
+             '<label for="cf-message">Message</label><textarea id="cf-message" name="cf-message" placeholder="How can we help?"></textarea>', h)
+    h = once('type="button">Send Message →</button>', 'type="button">Send by email →</button>', h)
+    h = once("""<div id="cf-ok" style="display:none;color:var(--c-teal);font-size:var(--t-sm);font-weight:600">Message sent — we'll be in touch shortly.</div>""",
+             """<div id="cf-ok" role="status" aria-live="polite" style="display:none;color:var(--c-teal);font-weight:600"></div>""", h)
+    # 5. Head: conference layer, honest form script, and the motion flag (reveal only when motion is allowed)
+    h = re.sub(r'<(?:link|script)\b[^>]*\bid="acx-(?:conf|conf-js|motion)"[^>]*>(?:[^<]*</script>)?\n?', "", h)
+    tags = ['<script id="acx-motion">if(!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches))document.documentElement.classList.add("acx-motion")</script>',
+            f'<link rel="stylesheet" id="acx-conf" href="../actlc-assets/conference.css?v={asset_version("conference.css")}"/>',
+            f'<script id="acx-conf-js" src="../actlc-assets/conference.js?v={asset_version("conference.js")}" defer></script>']
+    h = h.replace("</head>", "\n".join(tags) + "\n</head>", 1)
+    open(p, "w", encoding="utf-8").write(h)
+    return p
+
 def build_site():
     done = []
     for page in site_pages():
@@ -265,7 +309,7 @@ def ics(e):
     t = lambda s: s.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,")
     z = lambda d: d.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ACTLC//Events//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
-             "BEGIN:VEVENT", f"UID:{e.detail}@ac-tlc.org", "DTSTAMP:" + z(NOW), f"DTSTART:{z(e.s)}", f"DTEND:{z(e.e)}",
+             "BEGIN:VEVENT", f"UID:{e.detail}@ac-tlc.org", "DTSTAMP:" + z(dt.datetime.fromisoformat(DATA["published"].replace("Z", "+00:00"))), f"DTSTART:{z(e.s)}", f"DTEND:{z(e.e)}",
              "SUMMARY:" + t(e.title), "DESCRIPTION:" + t(f"ACTLC online webinar with {e.speaker} ({e.org}). {e.url}"),
              "LOCATION:Online", f"URL:{e.url}", "END:VEVENT", "END:VCALENDAR"]
     return "\r\n".join(fold(l) for l in lines) + "\r\n"
@@ -333,5 +377,6 @@ if __name__ == "__main__":
     for e in EVENTS:
         if e.detail: print("built", build_detail(e))
     print("built", build_home())
+    print("built", build_conference())
     for page in build_site(): print("site chrome", page)
     print(f"{len(EVENTS)} events, {sum(not e.past for e in EVENTS)} upcoming, {sum(e.past for e in EVENTS)} past (as of {NOW:%Y-%m-%d %H:%M} UTC)")

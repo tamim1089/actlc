@@ -1,0 +1,104 @@
+/* Conference page on the ACTLC design system.
+   The page has its own tokens (--font-*, --t-*, --c-*); we re-point them instead of
+   restyling 150 classes, then fix the behaviour problems. Generated link: tools/build_events.py */
+
+html body .conf-page {
+  --t: clamp(17px, calc(13.6px + 0.34vw), 21px);
+  --font-d: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-b: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Apple text-style ratios on one base size */
+  --t-xs: calc(var(--t) * 0.765);    /* footnote 13-16px (was 11.5px) */
+  --t-sm: calc(var(--t) * 0.882);    /* subhead 15-18px (was 13px)   */
+  --t-base: var(--t);                /* body 17-20px (was 15px)       */
+  --t-md: calc(var(--t) * 1.176);    /* title 3                        */
+  --t-lg: calc(var(--t) * 1.294);    /* title 2                        */
+  --t-xl: calc(var(--t) * 1.85);     /* section titles                 */
+  --t-h1: calc(var(--t) * 2.6);      /* page title                     */
+  /* same colours, accessible on light grounds */
+  --c-teal: #0e7a83; --c-teal-d: #0b616a; --c-teal-deep: #0b616a;
+  --c-teal-bg: rgba(14, 122, 131, .06); --c-teal-bd: rgba(14, 122, 131, .22);
+  --c-ink: #15242b; --c-ink-2: #374850; --c-ink-3: #5a6b73;
+  --c-bg: #f6f8fa; --c-bd-lt: #e2ebed;
+  font-family: var(--font-b);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+/* Dark sections keep the light brand teal for text and icons */
+html body .conf-page .hero, html body .conf-page .sec--dk, html body .conf-page .band, html body .conf-page .stats {
+  --c-teal: #3dc1c8; --c-teal-d: #6fd3d8; --c-teal-bg: rgba(61, 193, 200, .1); --c-teal-bd: rgba(61, 193, 200, .3);
+}
+
+/* Content is visible by default; it only waits for the scroll reveal when JS runs and motion is allowed */
+html body .conf-page [data-r], html body .conf-page [data-st] > * { opacity: 1; transform: none; }
+html.acx-motion body .conf-page [data-r]:not(.v) { opacity: 0; transform: translateY(16px); }
+html.acx-motion body .conf-page [data-st]:not(.v) > * { opacity: 0; transform: translateY(12px); }
+@media print { html body .conf-page [data-r], html body .conf-page [data-st] > * { opacity: 1 !important; transform: none !important; } }
+
+/* Hero: sized to its content, no decorative video, orbs or ticking seconds */
+html body .conf-page .hero { min-height: 0; padding: calc(var(--t) * 5.5) 0 calc(var(--t) * 4.5); }
+html body .conf-page .hero__orb, html body .conf-page .hero__video { display: none !important; }
+html body .conf-page .h1 { letter-spacing: -0.022em; line-height: 1.08; font-weight: 700; text-wrap: balance; }
+html body .conf-page .hero__sub { font-style: normal; color: rgba(255, 255, 255, .86); border-left: 0; padding-left: 0; font-size: var(--t-md); max-width: 34em; }
+html body .conf-page .cd { display: none; }   /* the dates already say when; a per-second timer is motion without meaning */
+html body .conf-page .hero__pill { font-size: var(--t-sm); color: rgba(255, 255, 255, .9); }
+
+/* Section labels: sentence case, no tracking, no decorative rule */
+html body .conf-page .eyebrow { font-size: var(--t-sm); font-weight: 600; letter-spacing: 0; text-transform: none; gap: 0; }
+html body .conf-page .eyebrow::before, html body .conf-page .eyebrow::after { display: none !important; }
+html body .conf-page .h2 { letter-spacing: -0.02em; line-height: 1.12; font-weight: 700; text-wrap: balance; }
+html body .conf-page .lead { font-size: var(--t-md); line-height: 1.5; color: var(--c-ink-2); }
+html body .conf-page .sec { padding: calc(var(--t) * 4.4) 0; }
+html body .conf-page .sec-hd { margin-bottom: calc(var(--t) * 2.2); }
+
+/* Stats: real labels in sentence case */
+html body .conf-page .stat__l { text-transform: none; letter-spacing: 0; font-size: var(--t-sm); color: rgba(255, 255, 255, .82); }
+
+/* Buttons: readable, 44px targets, one radius */
+html body .conf-page .btn { font-size: calc(var(--t) * 0.941); min-height: 44px; padding: 0 1.3em; border-radius: calc(var(--t) * 0.6); line-height: 1.2; }
+html body .conf-page .btn--fill { color: #fff; }
+html body .conf-page .hero .btn--fill, html body .conf-page .sec--dk .btn--fill, html body .conf-page .band .btn--fill { color: #06363a; }
+html body .conf-page .btn:active { transform: scale(.97); }
+
+/* Cards: no accent bars, quieter role badges */
+html body .conf-page .org-card__bar { display: none !important; }
+html body .conf-page .org-card__role-badge, html body .conf-page .rc__badge { text-transform: none; letter-spacing: 0; font-size: var(--t-xs); font-weight: 600; }
+html body .conf-page .spk__r, html body .conf-page .org-card__r { line-height: 1.45; }
+html body .conf-page .tl-s, html body .conf-page .cfp-d { text-transform: none; letter-spacing: 0; }
+html body .conf-page .ci__lbl, html body .conf-page .mq__lbl { text-transform: none; letter-spacing: 0; font-size: var(--t-xs); }
+html body .conf-page .sec--dk .ci__lbl { color: rgba(255, 255, 255, .78); }
+html body .conf-page .sec--dk .lead, html body .conf-page .sec--dk p { color: rgba(255, 255, 255, .86); }
+
+/* Form: readable fields, 44px controls */
+html body .conf-page .cf__f label { font-size: var(--t-xs); color: rgba(255, 255, 255, .86); letter-spacing: 0; text-transform: none; }
+html body .conf-page .cf__f input, html body .conf-page .cf__f select, html body .conf-page .cf__f textarea { font-size: var(--t-sm); min-height: 44px; }
+html body .conf-page #cf-ok { font-size: var(--t-sm); }
+html body .conf-page #cf-ok.is-error { color: #ffb4ab; }
+
+/* Logo marquee: pauses on hover or focus, and stands still for reduced motion */
+html body .conf-page .mq:hover .mq__track, html body .conf-page .mq:focus-within .mq__track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  html body .conf-page .mq__track { animation: none !important; flex-wrap: wrap; width: auto; justify-content: center; }
+  html body .conf-page * { transition: none !important; }
+}
+
+/* Floors for text the page sized in fixed units (desktop subtitle; the mobile block shrank text to 9-12px) */
+html body .conf-page .tl-sub { font-size: var(--t-xs); }
+@media (max-width: 760px) {
+  html body .conf-page .feat__t, html body .conf-page .pil__t, html body .conf-page .theme__t, html body .conf-page .spk__n,
+  html body .conf-page .cfp-block__t, html body .conf-page .rc__cat, html body .conf-page .tl-s, html body .conf-page .prog-tab { font-size: var(--t-sm); }
+  html body .conf-page .feat__d, html body .conf-page .pil__d, html body .conf-page .theme__s, html body .conf-page .theme__list li,
+  html body .conf-page .tl-t, html body .conf-page .tl-sub, html body .conf-page .tl-s span, html body .conf-page .spk__r, html body .conf-page .spk__i,
+  html body .conf-page .spk__c, html body .conf-page .org-card__r, html body .conf-page .org-card__i, html body .conf-page .org-card__c,
+  html body .conf-page .cfp-d, html body .conf-page .cfp-sub, html body .conf-page .cfp-block li, html body .conf-page .cfp-cta p,
+  html body .conf-page .cfp-cta strong, html body .conf-page .cfp-cta a, html body .conf-page .reg-note, html body .conf-page .reg-note strong,
+  html body .conf-page .sp-who-i, html body .conf-page .rc__cat small, html body .conf-page .hero__tag span, html body .conf-page .prog-hd p,
+  html body .conf-page ul li { font-size: var(--t-xs); }
+}
+
+/* Contrast on dark grounds; final band is one solid colour (no gradient) */
+html body .conf-page .sec--dk .eyebrow, html body .conf-page .hero .eyebrow { color: #a5e8ec; }
+html body .conf-page .band { background: #0b616a !important; background-image: none !important; }
+html body .conf-page .band::before, html body .conf-page .band::after { display: none !important; }
+html body .conf-page .band .btn--white { color: #0b616a; }
+html body .conf-page .band p { color: rgba(255, 255, 255, .9); }
+/* Inline-sized notes (".82em"/".85em" of an already small parent) */
+html body .conf-page span[style*="font-size:.82em"], html body .conf-page small[style*="font-size:.85em"] { font-size: max(13px, .9em) !important; }
