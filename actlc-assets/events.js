@@ -80,6 +80,8 @@
     moved.sort(function (a, b) { return times(a)[1] - times(b)[1]; }) // oldest first, each goes on top
          .forEach(function (li) {
            li.classList.add('is-past');
+           var w = $('.acx-w', li), d = $('.acx-date', li); // past rows show the year instead of the weekday
+           if (w && d) w.textContent = d.getAttribute('datetime').slice(0, 4);
            var a = $('.acx-title a[href^="mailto:"]', li); if (a) a.removeAttribute('href');
            pastList.insertBefore(li, pastList.firstChild);
          });

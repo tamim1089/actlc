@@ -41,7 +41,7 @@
    hairline instead of a shadow, readable 15px labels, quieter icons, accessible
    contrast for the current page and the Sign up button, rounded dropdowns. */
 .site-header {
-  background: rgba(255, 255, 255, .82) !important;
+  background: rgba(255, 255, 255, .95) !important;
   -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid rgba(16, 42, 48, .08) !important; box-shadow: none !important;
 }

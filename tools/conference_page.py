@@ -38,19 +38,31 @@ def bullets(items, extra=""):
     return '<ul class="acx-c-list"%s>' % extra + "".join("<li>%s</li>" % esc(x) for x in items) + "</ul>"
 
 
+def card(photo, name, line, link="", big=False):
+    return ('<li class="acx-c-person%s"><img class="acx-c-photo" src="%s" alt="" width="400" height="500" loading="lazy" decoding="async"/>'
+            '<div class="acx-c-cap"><p class="acx-c-pn">%s</p><p class="acx-c-pr">%s</p></div>%s</li>'
+            % (" is-lg" if big else "", esc(photo), esc(name), esc(line), link))
+
+
 def person(p):
-    line = ", ".join(x for x in (p["role"], p["org"]) if x)
     link = ""
     if p["linkedin"]:
         link = ('<a class="acx-c-lnk" href="%s" target="_blank" rel="noopener" aria-label="%s on LinkedIn">%s</a>'
                 % (esc(p["linkedin"]), esc(p["name"]), I_LINKEDIN))
-    return ('<li class="acx-c-person"><img class="acx-c-photo" src="%s" alt="" width="400" height="500" loading="lazy" decoding="async"/>'
-            '<p class="acx-c-pn"><span>%s</span>%s</p><p class="acx-c-pr">%s</p></li>' % (esc(p["photo"]), esc(p["name"]), link, esc(line)))
+    return card(p["photo"], p["name"], ", ".join(x for x in (p["role"], p["org"]) if x), link, p.get("featured"))
 
 
 def member(m):
-    return ('<li class="acx-c-person"><img class="acx-c-photo" src="%s" alt="" width="400" height="500" loading="lazy" decoding="async"/>'
-            '<p class="acx-c-pn"><span>%s</span></p><p class="acx-c-pr">%s · %s</p></li>' % (esc(m["photo"]), esc(m["name"]), esc(m["badge"]), esc(m["org"])))
+    return card(m["photo"], m["name"], "%s · %s" % (m["badge"], m["org"]))
+
+
+I_CHECK = '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>'
+I_STAR = '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2.8 2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>'
+
+# What each ticket includes, as short checklist lines (from each tier's "includes" text)
+PLAN = {"Regular Delegate": ("Non-founding member institutions", ["All conference sessions", "Conference materials", "Networking events"]),
+        "Presenter": ("For conference presenters", ["All conference sessions", "Your presentation slot", "Conference materials"]),
+        "Founding Member Delegate": ("After your 5 free places", ["All conference sessions", "Conference materials", "Networking events"])}
 
 
 def conference_html(c, email):
@@ -83,11 +95,11 @@ def conference_html(c, email):
 
     th = c["themes"]
     tracks = "".join(
-        '<details class="acx-c-track"><summary><span class="acx-c-tn">Track %d</span><span class="acx-c-tt">%s</span>'
-        '<span class="acx-c-ts">%s</span></summary><ul>%s</ul></details>'
-        % (int(t["n"]), esc(t["title"]), esc(t["short"]), "".join("<li>%s</li>" % esc(x) for x in t["points"]))
+        '<details class="acx-c-track"><summary><span class="acx-c-tn" aria-hidden="true">%d</span><span class="acx-c-tt"><span class="acx-vh">Track %d: </span>%s</span>'
+        '<span class="acx-c-ts">%s</span><span class="acx-c-tmore">%d topics</span></summary><ul>%s</ul></details>'
+        % (int(t["n"]), int(t["n"]), esc(t["title"]), esc(t["short"]), len(t["points"]), "".join("<li>%s</li>" % esc(x) for x in t["points"]))
         for t in th["items"])
-    o.append('<section class="acx-c-sec" id="tracks" aria-labelledby="acx-h-tracks"><div class="acx-c-in">%s'
+    o.append('<section class="acx-c-sec acx-c-band" id="tracks" aria-labelledby="acx-h-tracks"><div class="acx-c-in">%s'
              '<div class="acx-c-tracks">%s</div></div></section>' % (head(th, "acx-h-tracks"), tracks))
 
     pr = c["programme"]; tabs, days = [], []
@@ -96,10 +108,11 @@ def conference_html(c, email):
                     % (i, i, "true" if i == 1 else "false", "" if i == 1 else ' tabindex="-1"', esc(d["tab"])))
         items = []
         for it in d["items"]:
-            note = ' <span class="acx-c-note">%s</span>' % esc(it["note"]) if it["note"] else ""
+            kind = "is-break" if it["break"] else "is-par" if it["title"].startswith("Parallel") else "is-ses"
+            note = '<span class="acx-c-note">%s</span>' % esc(it["note"].strip("()")) if it["note"] else ""
             detail = '<span class="acx-c-sd">%s</span>' % esc(it["detail"]) if it["detail"] else ""
-            items.append('<li%s><time class="acx-c-t">%s</time><div><span class="acx-c-st">%s</span>%s%s</div></li>'
-                         % (' class="is-break"' if it["break"] else "", esc(it["time"]), esc(it["title"]), note, detail))
+            items.append('<li class="%s"><time class="acx-c-t">%s</time><div class="acx-c-slot"><span class="acx-c-st">%s</span>%s%s</div></li>'
+                         % (kind, esc(it["time"]), esc(it["title"]), note, detail))
         days.append('<div class="acx-c-day" id="acx-day-%d" aria-labelledby="acx-daytab-%d"><h3 class="acx-c-dayh">%s</h3>'
                     '<p class="acx-c-dayv">%s</p><ol class="acx-c-sched">%s</ol></div>' % (i, i, esc(d["date"]), esc(d["venue"]), "".join(items)))
     o.append('<section class="acx-c-sec" id="programme" aria-labelledby="acx-h-prog"><div class="acx-c-in">%s'
@@ -110,7 +123,7 @@ def conference_html(c, email):
     o.append('<section class="acx-c-sec" id="speakers" aria-labelledby="acx-h-spk"><div class="acx-c-in">%s'
              '<ul class="acx-c-people">%s</ul>'
              '<div class="acx-c-head acx-c-subhead"><h2 class="acx-c-h2" id="acx-h-team">%s</h2><p class="acx-c-lead">%s</p></div>'
-             '<ul class="acx-c-people" aria-labelledby="acx-h-team">%s</ul></div></section>'
+             '<ul class="acx-c-people acx-c-team" aria-labelledby="acx-h-team">%s</ul></div></section>'
              % (head(sp, "acx-h-spk"), "".join(person(p) for p in sp["people"]), esc(cm["title"]), esc(cm["lead"]),
                 "".join(member(m) for m in cm["people"])))
 
@@ -128,24 +141,31 @@ def conference_html(c, email):
                 "".join('<div><h3 class="acx-c-h3">%s</h3>%s</div>' % (esc(b["title"]), bullets(b["items"])) for b in cf["blocks"])))
 
     fe = c["fees"]
-    lines = {"Regular Delegate": "Delegates from non-member institutions", "Presenter": "Includes your presentation slot",
-             "Founding Member Delegate": "After the 5 free places each founding member receives"}
-    tiers = "".join('<div class="acx-c-fee%s"><h3>%s</h3><p class="acx-c-price"><span>AED</span>%s</p><p class="acx-c-q">%s</p></div>'
-                    % (" is-hi" if t["highlight"] else "", esc(t["name"]), esc(t["price"]), esc(lines.get(t["name"], t["qualifier"])))
-                    for t in fe["tiers"])
-    o.append('<section class="acx-c-sec" id="registration" aria-labelledby="acx-h-fees"><div class="acx-c-in">'
+    base = max(int(t["price"]) for t in fe["tiers"])
+    def plan(t):
+        sub, inc = PLAN[t["name"]]
+        hi = t["highlight"]
+        badge = '<p class="acx-c-plan-badge">%sSave AED %d</p>' % (I_STAR, base - int(t["price"])) if hi else ""
+        return ('<div class="acx-c-plan%s">%s<h3>%s</h3><p class="acx-c-plan-price"><b>AED %s</b><span>/ person</span></p>'
+                '<p class="acx-c-plan-sub">%s</p><ul class="acx-c-plan-inc">%s</ul>'
+                '<a class="acx-btn %s" href="%s" target="_blank" rel="noopener">Register</a></div>'
+                % (" is-hi" if hi else "", badge, esc(t["name"][0] + t["name"][1:].lower()), esc(t["price"]), esc(sub),
+                   "".join("<li>%s%s</li>" % (I_CHECK, esc(x)) for x in inc), "acx-btn-light" if hi else "acx-btn-ghost", reg))
+    o.append('<section class="acx-c-sec acx-c-band" id="registration" aria-labelledby="acx-h-fees"><div class="acx-c-in">'
              '<div class="acx-c-head"><h2 class="acx-c-h2" id="acx-h-fees">%s</h2>'
-             '<p class="acx-c-lead">Every ticket includes all sessions and materials. Prices exclude 5%% VAT.</p></div>'
-             '<div class="acx-c-fees">%s</div>'
-             '<div class="acx-c-feecta"><a class="acx-btn" href="%s" target="_blank" rel="noopener">Register</a></div></div></section>'
-             % (esc(fe["title"]), tiers, reg))
+             '<p class="acx-c-lead">Prices are per person and exclude 5%% VAT.</p></div>'
+             '<div class="acx-c-plans">%s</div></div></section>'
+             % (esc(fe["title"]), "".join(plan(t) for t in fe["tiers"])))
 
-    logos = "".join('<li><img src="../%s" alt="%s" width="%d" height="%d" loading="lazy" decoding="async"/>%s</li>'
-                    % (esc(l["logo"]), esc(l["name"]), l["w"], l["h"],
-                       '<span class="acx-c-lb">%s</span>' % esc(l["badge"]) if l["badge"] else "")
-                    for l in c["logos"])
+    def logos(copy):
+        # Same visual weight for wide and tall logos: scale height by sqrt(reference aspect / aspect)
+        return "".join('<li><img src="../%s" alt="%s" width="%d" height="%d" style="--k:%.2f" loading="lazy" decoding="async"/></li>'
+                       % (esc(l["logo"]), "" if copy else esc(l["name"]), l["w"], l["h"],
+                          min(1.15, max(.5, (1.5 / (l["w"] / l["h"])) ** .5))) for l in c["logos"])
     o.append('<section class="acx-c-sec" id="members" aria-labelledby="acx-h-mem"><div class="acx-c-in">'
-             '<h2 class="acx-c-h2" id="acx-h-mem">Founding member institutions</h2><ul class="acx-c-logos">%s</ul></div></section>' % logos)
+             '<h2 class="acx-c-h2" id="acx-h-mem">Founding member institutions</h2></div>'
+             '<div class="acx-c-marquee"><div class="acx-c-mtrack"><ul class="acx-c-logos">%s</ul>'
+             '<ul class="acx-c-logos" aria-hidden="true">%s</ul></div></div></section>' % (logos(False), logos(True)))
 
     so = c["sponsorship"]
     o.append('<section class="acx-c-sec" id="sponsorship" aria-labelledby="acx-h-spo"><div class="acx-c-in">%s'

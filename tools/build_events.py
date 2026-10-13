@@ -186,8 +186,9 @@ def build_site():
         h = open(p, encoding="utf-8").read()
         h = fix_events_nav(h, rel)
         h = fix_cloudflare_email(h)
-        # Member cards: the host label belongs to UAEU (it was baked into the PSU image)
-        h = h.replace("wp-content/uploads/2025/04/PSU.webp", "actlc-assets/logos/cards/PSU.webp").replace("wp-content/uploads/2025/04/UAEU.webp", "actlc-assets/logos/cards/UAEU.webp")
+        # Member cards: the host label belongs to ADU, Abu Dhabi Campus (it was baked into the PSU image)
+        h = h.replace("actlc-assets/logos/cards/UAEU.webp", "wp-content/uploads/2025/04/UAEU.webp")
+        h = h.replace("wp-content/uploads/2025/04/PSU.webp", "actlc-assets/logos/cards/PSU.webp").replace("wp-content/uploads/2025/04/ADU.webp", "actlc-assets/logos/cards/ADU.webp")
         h = drop_dead_font_links(h)
         h = enhance_buttons(h)
         h, has_footer = replace_footer(h, rel)
@@ -221,7 +222,7 @@ def row(e, base):
     title_href = "" if (e.past and not has_page) else f' href="{esc(link)}"'
     btn = "View details" if has_page else "Register"
     return f"""<li class="acx-ev{' is-past' if e.past else ''}" id="ev-{e.id}" data-start="{Ev.iso(e.s)}" data-end="{Ev.iso(e.e)}">
-<time class="acx-date" datetime="{e.s:%Y-%m-%d}"><span class="acx-d">{e.s.day}</span><span class="acx-m">{e.s:%B}</span><span class="acx-w">{e.s:%A}</span></time>
+<time class="acx-date" datetime="{e.s:%Y-%m-%d}"><span class="acx-d">{e.s.day}</span><span class="acx-m">{e.s:%B}</span><span class="acx-w">{e.s.year if e.past else format(e.s, "%A")}</span></time>
 <div class="acx-body">
 <h3 class="acx-title"><a{title_href}>{esc(e.title)}</a></h3>
 <ul class="acx-meta">
