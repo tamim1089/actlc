@@ -1,0 +1,157 @@
+{
+ "_about": "Single source of truth for the ACTLC events list and session pages. Times are local to 'tz'. Rebuild with: python3 tools/build_events.py",
+ "register_email": "info@ac-tlc.org",
+ "site": "https://www.ac-tlc.org",
+ "member_countries": [
+  [
+   "UAE",
+   "Asia/Dubai"
+  ],
+  [
+   "Saudi Arabia",
+   "Asia/Riyadh"
+  ],
+  [
+   "Bahrain",
+   "Asia/Bahrain"
+  ],
+  [
+   "Egypt",
+   "Africa/Cairo"
+  ],
+  [
+   "Morocco",
+   "Africa/Casablanca"
+  ]
+ ],
+ "events": [
+  {
+   "id": "7004",
+   "title": "Engaging Digital Natives in the Marketing Classroom",
+   "speaker": "Dr. Maryam Almahdi",
+   "org": "American University of Bahrain",
+   "start": "2026-10-05T14:00",
+   "end": "2026-10-05T15:00",
+   "tz": "Asia/Bahrain",
+   "zone_label": "Bahrain time",
+   "detail": null,
+   "overview": [
+    "Today’s university students may be digital natives, but familiarity with technology does not automatically translate into strategic digital competence. This webinar explores practical ways to transform students from passive users of digital platforms into critical, creative, and data-informed marketers. Participants will experience adaptable classroom activities and real-world campaign challenges. The session will also examine how professional certifications, client-based projects, analytics tools, and responsible AI use can be meaningfully embedded into teaching and assessment. Participants will leave with practical ideas and ready-to-adapt activities that can be applied across digital marketing and related courses."
+   ]
+  },
+  {
+   "id": "7005",
+   "title": "Gamification in the University Classroom",
+   "speaker": "Dr. Miriam Alily",
+   "org": "American University of Bahrain",
+   "start": "2026-10-15T16:00",
+   "end": "2026-10-15T17:00",
+   "tz": "Asia/Bahrain",
+   "zone_label": "Bahrain time",
+   "detail": null,
+   "overview": [
+    "This webinar shares practical experiences of using gamification with undergraduate and postgraduate students. Drawing on classroom examples ranging from Blooket quizzes to interactive economic and behavioral decision-making games, the session explores how simple game mechanics can increase participation, make abstract concepts more tangible, and create opportunities for discussion and reflection."
+   ]
+  },
+  {
+   "id": "7002",
+   "title": "Designing AI-Ready Graduates: Aligning AI Competencies with Program and Course Learning Outcomes",
+   "speaker": "Dr. Narimane Hadj-Hamou",
+   "org": "CLICKS",
+   "start": "2026-10-19T16:30",
+   "end": "2026-10-19T18:00",
+   "tz": "Asia/Dubai",
+   "zone_label": "UAE time",
+   "detail": "designing-ai-ready-graduates",
+   "overview": [
+    "What should graduates know, value, and be able to do in an AI-enabled world? Preparing AI-ready graduates requires more than introducing new technologies—it requires intentionally embedding and scaffolding AI competencies across the curriculum. This session explores how to integrate AI competencies within Program Learning Outcomes (PLOs) and Course Learning Outcomes (CLOs), align them with graduate attributes, and progressively develop these capabilities throughout the student learning journey. Participants will examine practical approaches to ensuring constructive alignment between graduate attributes, learning outcomes, curriculum, and assessment, enabling graduates to develop the knowledge, skills, ethical awareness, and human capabilities needed to thrive in an AI-enabled future."
+   ]
+  },
+  {
+   "id": "7006",
+   "title": "Building COIL from the Ground Up: What Virtual Exchange at AUS Has Taught Us",
+   "speaker": "Prof. Kristina Katsos",
+   "org": "American University of Sharjah",
+   "start": "2026-11-12T16:00",
+   "end": "2026-11-12T17:30",
+   "tz": "Asia/Dubai",
+   "zone_label": "UAE time",
+   "detail": null,
+   "overview": [
+    "Virtual exchange offers a sustainable way to connect students across geographies and cultures, preparing them as global citizens and employable graduates ready to tackle the challenges of the 21st century. Research confirms that Collaborative Online International Learning (COIL) improves student engagement, intercultural competence, and learning outcomes. It also builds the teamwork, digital communication, and cross cultural skills employers increasingly seek. But how does COIL grow from one classroom partnership into something an institution can sustain? This webinar traces the 8 year virtual exchange journey at the American University of Sharjah. The work began with single course partnerships and grew into a project spanning four universities, 40 courses, and more than 1,000 students working on the UN SDGs. It then expanded into a consortium linking institutions in the United States and the MENA region and keeps growing. Participants will learn both the \"why\" and the \"how,\" leaving with concrete lessons on partnerships, faculty training, course design and assessment."
+   ]
+  },
+  {
+   "id": "7007",
+   "title": "Student Engagement in an Era of Digital Fatigue",
+   "speaker": "Dr. Alia Mitchell",
+   "org": "Prince Sultan University",
+   "start": "2026-11-23T16:30",
+   "end": "2026-11-23T18:00",
+   "tz": "Asia/Riyadh",
+   "zone_label": "KSA time",
+   "detail": null,
+   "overview": [
+    "Student engagement has become an increasing challenge as learners navigate digital overload, changing expectations, and evolving learning environments. This workshop examines current research and innovative practices that help faculty create engaging, inclusive, and impactful learning experiences in face-to-face, online, and hybrid settings. Participants will explore active learning techniques, strategies for fostering belonging and motivation, and methods for using learning analytics to identify and support disengaged students. Through interactive activities and peer discussion, attendees will leave with practical approaches that can be immediately implemented to enhance student participation, success, and overall learning outcomes."
+   ]
+  },
+  {
+   "id": "7008",
+   "title": "Designing Authentic Assessment as a Learning Journey: Mapping Tasks to Outcomes in the Age of AI",
+   "speaker": "Dr. Sanaa Al Reiahy",
+   "org": "Abu Dhabi University",
+   "start": "2026-12-07T16:00",
+   "end": "2026-12-07T18:00",
+   "tz": "Asia/Dubai",
+   "zone_label": "UAE time",
+   "detail": null,
+   "overview": [
+    "Authentic assessment asks students to demonstrate learning through tasks that mirror real professional or intellectual practice, rather than through recall alone. Done well, it does two things at once: it gives faculty a clearer, more defensible line from course outcomes to the evidence that those outcomes were met, and it gives students assessment that functions as part of the learning process rather than a checkpoint at the end of it.",
+    "This session walks participants through a practical framework for backward-mapping assessment tasks to intended learning outcomes, then working forward to build formative checkpoints into the task itself so students get feedback while the work is still in progress.",
+    "Participants will leave with a mapping template they can apply to a course they currently teach, and we will spend part of the session discussing where generative AI tools complicate, and where they can strengthen, the authenticity of the tasks we design."
+   ]
+  },
+  {
+   "id": "7009",
+   "title": "AI-Assisted Learning: Practical Strategies for Enhancing Student Engagement and Learning",
+   "speaker": "Dr. Maqbool Khan",
+   "org": "American University of Bahrain",
+   "start": "2026-12-14T17:00",
+   "end": "2026-12-14T18:00",
+   "tz": "Asia/Bahrain",
+   "zone_label": "Bahrain time",
+   "detail": null,
+   "overview": [
+    "This webinar explores practical ways educators can integrate AI-assisted learning into higher education to enhance student engagement, participation, and learning outcomes. It will introduce accessible strategies for using generative AI to support active learning, personalized learning experiences, classroom activities, formative assessment, feedback, and critical thinking. The session will also highlight responsible and effective use of AI while maintaining the essential role of the educator in guiding meaningful learning."
+   ]
+  },
+  {
+   "id": "7001",
+   "title": "Teaching the Learner, Not the Label: Designing Inclusive Learning for Neurodiverse University Students",
+   "speaker": "Dr. Mohammad Fteiha",
+   "org": "Abu Dhabi University",
+   "start": "2027-01-14T16:00",
+   "end": "2027-01-14T18:00",
+   "tz": "Asia/Dubai",
+   "zone_label": "UAE time",
+   "detail": "teaching-the-learner-not-the-label",
+   "overview": [
+    "This webinar explores how faculty can move beyond labels and diagnoses to better understand and support diverse learners in higher education. It will introduce practical, inclusive teaching strategies grounded in neurodiversity and Universal Design for Learning, with a focus on reducing barriers, increasing engagement, and creating more flexible learning environments without compromising academic standards. The session aims to help faculty reflect on their current practice and identify simple, effective approaches that can support neurodiverse students while benefiting all learners."
+   ]
+  },
+  {
+   "id": "7010",
+   "title": "From Isolated to Connected: A Practical Model for Building Faculty Learning Communities (FLC)",
+   "speaker": "Dr. Sanaa Al Reiahy",
+   "org": "Abu Dhabi University",
+   "start": "2027-01-28T16:00",
+   "end": "2027-01-28T18:00",
+   "tz": "Asia/Dubai",
+   "zone_label": "UAE time",
+   "detail": null,
+   "overview": [
+    "Faculty in higher education often teach in isolation — a colleague down the hall may never see how another actually runs a class. Faculty Learning Communities (FLCs) address this directly: structured, year-long cohorts of 8 to 10 faculty who meet regularly around a shared teaching or learning question, drawing on the foundational work of Milton Cox at Miami University. The research shows the model works at two levels at once. At the faculty level, members report stronger teaching confidence, new pedagogical strategies actually implemented in their courses, and reduced isolation. At the institution level, FLCs build connective tissue that isn't there otherwise — early-career faculty paired with experienced ones, one department learning what another is doing, and collaboration that has been shown to extend into joint research and grant applications. This session lays out the protocol for standing one up: how to recruit a cohort, structure a meeting cadence that keeps momentum without becoming a burden, embed the program within a teaching and learning center so it survives beyond one champion, and close the year with a deliverable the institution can actually see and use. Participants will leave with a step-by-step implementation checklist they can adapt to their own university's size and culture."
+   ]
+  }
+ ]
+}

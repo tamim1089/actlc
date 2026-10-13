@@ -1,0 +1,103 @@
+/* ACTLC site layer: design tokens, header refinements, footer. Loaded on every page.
+   One typeface (Inter, served locally) because the theme already uses it in 126 places.
+   Type sizes are ratios of one base size (--t) that grows with the screen, after Apple's
+   text-style table: Body 17, Callout 16, Subhead 15, Footnote 13, Title 3 20, Title 2 22, Title 1 28. */
+
+.acx {
+  --t: clamp(17px, calc(13.6px + 0.34vw), 21px);      /* 17px at 1000px wide, 20px at 1920px */
+  --fs-large: calc(var(--t) * 2.05);
+  --fs-t1: calc(var(--t) * 1.647);
+  --fs-t2: calc(var(--t) * 1.294);
+  --fs-t3: calc(var(--t) * 1.176);
+  --fs-body: var(--t);
+  --fs-callout: calc(var(--t) * 0.941);
+  --fs-sub: calc(var(--t) * 0.882);
+  --fs-foot: calc(var(--t) * 0.765);
+  --tap: max(44px, calc(var(--t) * 2.4));             /* Apple minimum hit target: 44pt */
+
+  --brand: #3dc1c8;   --teal: #0e7a83;  --teal-deep: #0b616a; --teal-tint: #e8f6f7; --teal-tint-2: #d8eff1;
+  --ink: #15242b;     --body: #374850;  --muted: #5a6b73;     --hairline: #e2ebed;
+  --surface: #fff;    --ground: #f6f8fa; --track: #e7eef0;
+  --red: #b42318;     --red-tint: #fdf3f2; --red-line: #f0c3be;
+
+  --font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --display: var(--font);
+
+  font-family: var(--font);
+  font-size: var(--t);
+  line-height: 1.47;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.acx *, .acx *::before, .acx *::after { box-sizing: border-box; }
+.acx [hidden] { display: none !important; }
+.acx svg { flex: none; }
+.acx a { color: var(--teal); }
+.acx a:focus-visible, .acx button:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 10px; }
+
+/* Header ----------------------------------------------------------------
+   Same structure, menus and behaviour. Changes: a translucent material with a
+   hairline instead of a shadow, readable 15px labels, quieter icons, accessible
+   contrast for the current page and the Sign up button, rounded dropdowns. */
+.site-header {
+  background: rgba(255, 255, 255, .82) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(16, 42, 48, .08) !important; box-shadow: none !important;
+}
+.site-header #primary-menu > li > a {
+  min-height: 44px; display: flex; align-items: center;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 15px; font-weight: 500; letter-spacing: -0.005em; color: #1d2b33;
+}
+.site-header #primary-menu > li > a i { color: #5a6b73; }
+.site-header #primary-menu > li.current-menu-item > a,
+.site-header #primary-menu > li.current-menu-item > a span { color: #0e7a83 !important; font-weight: 600; }
+.site-header #primary-menu > li.current-menu-item > a i { color: #3dc1c8; }
+.site-header .bb-header-buttons .button { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; font-size: 15px; font-weight: 600; min-height: 40px; display: inline-flex; align-items: center; }
+.site-header .bb-header-buttons .button.signup { color: #06363a !important; }
+.site-header .bb-sub-menu {
+  padding: 6px !important; border: 1px solid rgba(16, 42, 48, .08) !important; border-radius: 14px !important;
+  box-shadow: 0 12px 32px rgba(16, 42, 48, .14), 0 2px 6px rgba(16, 42, 48, .06) !important;
+}
+.site-header .bb-sub-menu li a {
+  min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px !important; border-radius: 9px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; font-size: 15px; font-weight: 500; color: #1d2b33 !important;
+}
+/* The theme draws its own square card and arrow behind the dropdown; the rounded menu is the only surface. */
+.site-header .wrapper.ab-submenu { background: transparent !important; box-shadow: none !important; border: 0 !important; }
+.site-header .wrapper.ab-submenu::before { display: none !important; }
+.site-header .bb-sub-menu li a { transition: background-color .15s ease, color .15s ease; }
+@media (prefers-reduced-motion: no-preference) {
+  .site-header #primary-menu li:hover > .ab-submenu .bb-sub-menu,
+  .site-header #primary-menu li:focus-within > .ab-submenu .bb-sub-menu { animation: acx-menu .18s cubic-bezier(.2, .8, .2, 1); transform-origin: top left; }
+}
+@keyframes acx-menu { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (hover: hover) {
+  .site-header .bb-sub-menu li a:hover { background: #e8f6f7; color: #0b616a !important; }
+}
+
+/* Footer ------------------------------------------------------------------
+   Apple-style: a site map in quiet columns, contact you can tap, one legal line. */
+.footer-bottom.bb-footer { display: none; }   /* duplicate name strip; the brand now lives in the footer */
+.acx-footer { background: #f2f5f6; border-top: 1px solid var(--hairline); }
+.acx .acx-foot-in { max-width: 1140px; margin: 0 auto; padding: calc(var(--t) * 2.2) 20px calc(var(--t) * 1.4); }
+.acx .acx-foot-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: calc(var(--t) * 2); align-items: start; }
+.acx .acx-foot-brand { display: inline-block; }
+.acx .acx-foot-brand img { display: block; width: auto; height: calc(var(--t) * 3.2); }
+.acx .acx-foot-nav { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); column-gap: calc(var(--t) * 4); gap: calc(var(--t) * 1.5); }
+.acx .acx-foot-h { margin: 0 0 calc(var(--t) * 0.5); font: 600 var(--fs-foot)/1.4 var(--font); letter-spacing: 0; text-transform: none; color: var(--ink); }
+.acx .acx-foot-col ul { list-style: none; margin: 0; padding: 0; }
+.acx .acx-foot-col li { margin: 0; }
+.acx .acx-foot-col a { display: inline-flex; align-items: center; min-height: 32px; font-size: var(--fs-foot); color: var(--muted); text-decoration: none; }
+.acx .acx-foot-col address { margin: calc(var(--t) * 0.4) 0 0; font-style: normal; font-size: var(--fs-foot); line-height: 1.55; color: var(--muted); }
+@media (hover: hover) { .acx .acx-foot-col a:hover { color: var(--ink); text-decoration: underline; } }
+.acx .acx-foot-bottom { margin-top: calc(var(--t) * 1.6); padding-top: calc(var(--t) * 1); border-top: 1px solid var(--hairline); }
+.acx .acx-foot-bottom p { margin: 0; font-size: var(--fs-foot); color: var(--muted); }
+
+@media (max-width: 900px) {
+  .acx .acx-foot-top { grid-template-columns: minmax(0, 1fr); gap: calc(var(--t) * 1.4); }
+  .acx .acx-foot-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--t) * 1.2) calc(var(--t) * 1); }
+  .acx .acx-foot-col a { min-height: 44px; }      /* touch target */
+}
+@media (prefers-reduced-motion: reduce) { .acx * { transition: none !important; } }
