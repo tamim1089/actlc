@@ -292,12 +292,12 @@
     "featured": true
    },
    {
-    "name": "Dr. Mohammad Fteiha",
-    "role": "Director, Al Ain Campus & Centre for Faculty Development",
+    "name": "Prof. Barry O'Mahony",
+    "role": "Provost",
     "org": "Abu Dhabi University",
     "country": "UAE",
-    "photo": "../wp-content/uploads/2026/05/Fteiha.png",
-    "linkedin": "https://www.linkedin.com/in/mohammad-fteiha-pfhea-42434215/",
+    "photo": "../wp-content/uploads/2026/05/paul.png",
+    "linkedin": "https://www.linkedin.com/in/professor-barry-o-mahony-2b62501b/",
     "featured": true
    },
    {
@@ -388,15 +388,6 @@
     "country": "Morocco",
     "photo": "../wp-content/uploads/2026/05/karim.png",
     "linkedin": "https://www.linkedin.com/in/karim-moustaghfir-92a6bb49/",
-    "featured": false
-   },
-   {
-    "name": "Prof. Barry O'Mahony",
-    "role": "Provost",
-    "org": "Abu Dhabi University",
-    "country": "UAE",
-    "photo": "../wp-content/uploads/2026/05/paul.png",
-    "linkedin": "https://www.linkedin.com/in/professor-barry-o-mahony-2b62501b/",
     "featured": false
    }
   ]
