@@ -8,6 +8,7 @@
     '.acx-c-head', '.acx-c-2col > *', '.acx-c-track', '.acx-c-day', '.acx-c-person', '.acx-c-cta', '.acx-c-dlrow',
     '.acx-c-tl', '.acx-c-dates > li', '.acx-c-req > *', '.acx-c-plan', '.acx-c-marquee', '.acx-c-contact > div', '.acx-c-sec > .acx-c-in > .acx-c-h2',
     '.acx-list-root .acx-ev', '.acx-month > .acx-h2', '.acx-past-h', '.acx-detail > :not(.acx-bar)', '.acx-home-root .acx-ev',
+    '.acx-res-root .acx-res', '.acx-res-group > .acx-h2',
     '.acx-foot-in > *'
   ].join(',');
   var els = Array.prototype.slice.call(document.querySelectorAll(SEL));

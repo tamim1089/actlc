@@ -73,9 +73,10 @@ def asset_version(name):
 
 INTER_CSS = "wp-content/uploads/elementor/google-fonts/css/inter-local.css"
 
-def ensure_head(h, rel, events, body_class=None):
-    """(Re)write our <head> links. Versioned by content hash so browsers never keep a stale copy."""
-    h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter)"[^>]*>\n?', "", h)
+def ensure_head(h, rel, events, body_class=None, styles=()):
+    """(Re)write our <head> links. Versioned by content hash so browsers never keep a stale copy.
+       styles: extra stylesheets for pages that need no script (the resources page)."""
+    h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter|events|resources)"[^>]*>\n?', "", h)
     h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal)"[^>]*></script>\n?', "", h)
     h = re.sub(r'<link\b[^>]*inter-local\.css[^>]*>\n?', "", h)          # old link at a wrong depth
     tags = [f'<link rel="stylesheet" id="acx-inter" href="{rel}{INTER_CSS}"/>',
@@ -84,6 +85,7 @@ def ensure_head(h, rel, events, body_class=None):
     if events:
         tags += [f'<link rel="stylesheet" id="acx-css" href="{rel}actlc-assets/events.css?v={asset_version("events.css")}"/>',
                  f'<script id="acx-js" src="{rel}actlc-assets/events.js?v={asset_version("events.js")}" defer></script>']
+    tags += [f'<link rel="stylesheet" id="acx-{n[:-4]}" href="{rel}actlc-assets/{n}?v={asset_version(n)}"/>' for n in styles]
     h = h.replace("</head>", "\n".join(tags) + "\n</head>", 1)
     if body_class:
         m = re.search(r'<body class="([^"]*)"', h)
@@ -165,6 +167,11 @@ def build_conference():
     from conference_page import build_conference as _bc
     return _bc(ROOT, block_span, asset_version, EMAIL)
 
+def build_resources():
+    import sys; sys.path.insert(0, os.path.join(ROOT, "tools"))
+    from resources_page import build_resources as _br
+    return _br(ROOT, block_span, EMAIL)
+
 def enhance_buttons(h):
     """Interactive hover button (port of the shadcn InteractiveHoverButton, in CSS): wrap each text
        button's label so it can slide out while the fill and an arrow slide in. Icon-only buttons are left alone."""
@@ -193,9 +200,10 @@ def build_site():
         h = drop_dead_font_links(h)
         h = enhance_buttons(h)
         h, has_footer = replace_footer(h, rel)
-        is_list, is_detail = page == "events/index.html", page.startswith("events-main/")
+        is_list, is_detail, is_res = page == "events/index.html", page.startswith("events-main/"), page == "resources/index.html"
         h = ensure_head(h, rel, is_list or is_detail or page == "index.html",
-                        "acx-page-list" if is_list else "acx-page-detail" if is_detail else None)
+                        "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else None,
+                        ("events.css", "resources.css") if is_res else ())
         open(p, "w", encoding="utf-8").write(h)
         done.append(f"{page}{'' if has_footer else ' (no theme footer)'}")
     return done
@@ -352,5 +360,6 @@ if __name__ == "__main__":
         if e.detail: print("built", build_detail(e))
     print("built", build_home())
     print("built", build_conference())
+    print("built", build_resources())
     for page in build_site(): print("site chrome", page)
     print(f"{len(EVENTS)} events, {sum(not e.past for e in EVENTS)} upcoming, {sum(e.past for e in EVENTS)} past (as of {NOW:%Y-%m-%d %H:%M} UTC)")

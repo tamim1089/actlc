@@ -1,0 +1,54 @@
+/* ACTLC resources page. Tokens come from site.css; buttons, headings and list rows from events.css.
+   Generated markup: tools/resources_page.py */
+
+/* Page title and column: the same as the events list */
+.acx-page-res .entry-header { max-width: 1140px; margin-left: auto; margin-right: auto; }
+.acx-page-res .entry-header .entry-title {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: clamp(34px, calc(24px + 1.25vw), 48px) !important;
+  font-weight: 700 !important; letter-spacing: -0.022em; line-height: 1.08; -webkit-font-smoothing: antialiased;
+}
+@media (min-width: 901px) {
+  .acx-res-root, .acx-page-res .entry-header {
+    width: min(1400px, calc(100vw - 64px)) !important; max-width: none !important;
+    margin-left: calc(50% - min(700px, 50vw - 32px)) !important; margin-right: 0 !important; padding-left: 0; padding-right: 0;
+  }
+}
+.acx-res-root { padding: 0 0 calc(var(--t) * 4); }
+
+.acx .acx-res-lead { margin: 0; max-width: 40em; font-size: var(--fs-t3); line-height: 1.45; color: var(--body); }
+.acx .acx-res-group { margin-top: calc(var(--t) * 2.4); }
+
+/* One document per row: first page, what it is, how to get it */
+.acx .acx-res {
+  display: grid; grid-template-columns: calc(var(--t) * 6.5) minmax(0, 1fr) auto;
+  column-gap: calc(var(--t) * 2); align-items: start;
+  margin: 0; padding: calc(var(--t) * 1.5) 0; border-top: 1px solid var(--hairline);
+}
+.acx .acx-res-list > .acx-res:first-child { border-top: 0; }
+.acx .acx-res-thumb {
+  display: block; overflow: hidden; border-radius: 4px; background: #fff;
+  box-shadow: 0 0 0 1px rgba(16, 42, 48, .10), 0 6px 18px rgba(16, 42, 48, .08);
+}
+.acx .acx-res-thumb img { display: block; width: 100%; height: auto; }
+.acx .acx-res-kind { margin: 0 0 0.35em; font: 600 var(--fs-sub)/1.3 var(--font); color: var(--teal-deep); }
+.acx .acx-res-by { margin: 0.45em 0 0; font-size: var(--fs-callout); font-weight: 500; line-height: 1.4; color: var(--ink); }
+.acx .acx-res-src { margin: 0.2em 0 0; font-size: var(--fs-callout); line-height: 1.4; color: var(--muted); }
+.acx .acx-res-src a { text-decoration: none; }
+.acx .acx-res-sum { margin: 0.7em 0 0; max-width: 66ch; font-size: var(--fs-body); line-height: 1.55; color: var(--body); }
+.acx .acx-res .acx-act { display: grid; justify-items: end; align-self: center; }
+.acx .acx-res-dl { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--fs-sub); color: var(--teal); text-decoration: none; }
+.acx .acx-res-more { margin: calc(var(--t) * 3) 0 0; font-size: var(--fs-body); color: var(--body); }
+@media (hover: hover) {
+  .acx .acx-res-dl:hover, .acx .acx-res-src a:hover { text-decoration: underline; }
+}
+
+.acx .acx-res-src a { white-space: nowrap; }   /* never split a DOI */
+
+/* Phones: a small first page with the text wrapping around it, actions underneath */
+@media (max-width: 720px) {
+  .acx .acx-res { display: block; padding: calc(var(--t) * 1.25) 0; }
+  .acx .acx-res-thumb { float: left; width: calc(var(--t) * 4.4); margin: 0.2em calc(var(--t) * 0.9) calc(var(--t) * 0.5) 0; }
+  .acx .acx-res .acx-act { clear: both; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25em 1em; padding-top: calc(var(--t) * 0.8); }
+  .acx .acx-res-sum { font-size: var(--fs-callout); }
+}

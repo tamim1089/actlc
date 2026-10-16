@@ -1,0 +1,49 @@
+{
+  "lead": "Best practices and published research from ACTLC member universities. Each document opens as a PDF in your browser.",
+  "items": [
+    {
+      "file": "aubh-research-integrated-teaching.pdf",
+      "institution": "American University of Bahrain",
+      "kind": "Best practice",
+      "title": "Research-Integrated Teaching: Bridging Scholarship, Leadership Practice, and Student Research",
+      "authors": "Dr. Amal Ahmadi",
+      "source": null,
+      "doi": null,
+      "pages": 2,
+      "summary": "How Dr. Ahmadi teaches her own published research on the leadership knowing-doing gap in the MBA course MGMT 513, and how the session led two students to build their theses on it."
+    },
+    {
+      "file": "aubh-scholarship-of-teaching-and-learning.pdf",
+      "institution": "American University of Bahrain",
+      "kind": "Teaching portfolio",
+      "title": "Scholarship of Teaching and Learning: Teaching Innovations, Learning Resources, and Publications",
+      "authors": "Prof. María del Mar de Fez Laso",
+      "source": null,
+      "doi": null,
+      "pages": 5,
+      "summary": "Her teaching methods, including the Inquiry–Reflection–Communication framework, Stand-Up Teaching and Learning Checkpoints, plus College Algebra exercise banks and science outreach publications. Each entry links to the full text."
+    },
+    {
+      "file": "aus-codesigns-education-for-sustainable-development.pdf",
+      "institution": "American University of Sharjah",
+      "kind": "Journal article",
+      "title": "CoDesignS Education for Sustainable Development: A Framework for Embedding Education for Sustainable Development in Curriculum Design",
+      "authors": "Norita Ahmad, Maria Toro-Troconis, Mohammed Ibahrine, Rose Armour, Victoria Tait, Katharine Reedy, Romas Malevicius, Vicki Dale, Nathalie Tasler and Yuma Inzolia",
+      "source": "Sustainability 15 (23), 16460 · November 2023 · Open access",
+      "doi": "10.3390/su152316460",
+      "pages": 24,
+      "summary": "A framework for building sustainability into university courses in any subject. It was tested with academics, curriculum designers, students and government officials, who found it easy to use."
+    },
+    {
+      "file": "aus-generative-ai-and-the-education-sector.pdf",
+      "institution": "American University of Sharjah",
+      "kind": "Journal article",
+      "title": "Generative Artificial Intelligence and the Education Sector",
+      "authors": "Norita Ahmad, San Murugesan and Nir Kshetri",
+      "source": "Computer 56 (6), 72–76 · IEEE Computer Society · June 2023",
+      "doi": "10.1109/MC.2023.3263576",
+      "pages": 5,
+      "summary": "What ChatGPT and other large language models mean for universities: how institutions are responding, ways to deal with plagiarism, and assessment strategies that still work."
+    }
+  ]
+}

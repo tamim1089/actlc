@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Browser checks for the ACTLC pages we generate or restyle. Needs a local server:
      python3 -m http.server 8899 &
-     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font,conference] [--shots DIR]
+     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font,conference,resources] [--shots DIR]
    Prints CHECKS_PASSED only when every selected check passes."""
 import argparse, datetime as dt, sys
 from playwright.sync_api import sync_playwright
@@ -97,7 +97,8 @@ with sync_playwright() as p:
         at = lambda s: dt.datetime.fromisoformat(s)
         pg = page(b, EVENTS["list"])
         check(not pg.query_selector(".acx-tabs") and pg.is_visible("#past .acx-ev"), "list: no tabs; past webinars are visible below upcoming")
-        check(pg.evaluate("document.querySelectorAll('#acx-panel-up .acx-ev').length") == 8 and pg.inner_text('[data-count="past"]') == "13", "list: 8 upcoming / 13 past on 13 Oct (12 webinars from 2025-26 restored)")
+        n = pg.evaluate("[document.querySelectorAll('#acx-panel-up .acx-ev').length, +document.querySelector('[data-count=\"past\"]').textContent]")
+        check(sum(n) == 21 and n[1] == pg.evaluate("document.querySelectorAll('#past .acx-ev').length"), f"list: all 21 webinars listed, past count matches its rows {n}")
         old = pg.evaluate("['5678','5683','5686','5697','5695','5702','5704','6727','5706','5708','5710','5712'].filter(i => document.querySelector('#past #ev-' + i)).length")
         check(old == 12, f"list: the 12 earlier webinars are back under Past ({old}/12)")
         yrs = pg.evaluate("[...document.querySelectorAll('#past .acx-w')].map(e => e.textContent.trim())")
@@ -109,8 +110,8 @@ with sync_playwright() as p:
         check(pg.evaluate("document.querySelector('#past .acx-ev').id") == "ev-7005", "list: newest past event first")
         check(pg.evaluate("!document.querySelector('#ev-7005 .acx-title a').hasAttribute('href')"), "list: ended mailto title is no longer a link")
         pg.context.close()
-        pg = page(b, EVENTS["list"], at=at("2026-10-15T16:20:00+03:00"))
-        check(pg.is_visible("#ev-7005 .acx-live"), "list: 'Live now' during Gamification"); pg.context.close()
+        pg = page(b, EVENTS["list"], at=at("2026-10-19T17:00:00+04:00"))
+        check(pg.is_visible("#ev-7002 .acx-live"), "list: 'Live now' during Designing AI-Ready Graduates"); pg.context.close()
         pg = page(b, EVENTS["list"], at=at("2027-02-01T09:00:00+04:00"))
         check(pg.is_visible("#acx-panel-up .acx-empty"), "list: empty state when nothing is upcoming"); pg.context.close()
         pg = page(b, EVENTS["designing"])
@@ -139,7 +140,7 @@ with sync_playwright() as p:
         print("\n== Homepage upcoming list ==")
         pg = page(b, CHROME["home"], 1920, 1080)
         ids = pg.evaluate("[...document.querySelectorAll('.acx-home-root .acx-ev')].map(e=>e.id)")
-        check(ids == ["ev-7005", "ev-7002", "ev-7006"], f"home: next three sessions on 13 Oct {ids}")
+        check(ids == ["ev-7002", "ev-7006", "ev-7007"], f"home: next three sessions {ids}")
         check("24" not in pg.inner_text(".acx-home-root .acx-d") if pg.query_selector(".acx-home-root .acx-d") else False, "home: stale '24 September' date gone")
         pg.context.close()
         pg = page(b, CHROME["home"], 1920, 1080, at=dt.datetime(2026, 10, 16, 9, 0, tzinfo=UAE))
@@ -262,6 +263,27 @@ with sync_playwright() as p:
         pg.hover("#menu-item-5079 > a")
         check(pg.evaluate("getComputedStyle(document.querySelector('#menu-item-5079 .bb-sub-menu')).animationName") == "acx-menu", "motion: dropdown pops open")
         check(pg.evaluate("getComputedStyle(document.querySelector('#menu-item-5079 .ab-submenu')).backgroundColor") == "rgba(0, 0, 0, 0)", "dropdown: no second background behind the menu")
+        pg.context.close()
+    if run("resources"):
+        print("\n== Resources ==")
+        R = "/resources/index.html"
+        for w, h in VIEWPORTS:
+            pg = page(b, R, w, h); tag = f"resources @{w}"
+            sw = pg.evaluate("document.documentElement.scrollWidth"); check(sw <= w, f"{tag}: no horizontal scroll ({sw}px)")
+            low = pg.evaluate(CONTRAST, ".acx-res-root *"); check(not low, f"{tag}: text contrast {low[:3]}")
+            split = pg.evaluate("[...document.querySelectorAll('.acx-res-src a')].filter(e => e.getClientRects().length > 1).length")
+            check(split == 0, f"{tag}: DOIs never split across lines ({split})")
+            pg.context.close()
+        pg = page(b, R)
+        docs = pg.evaluate("[...document.querySelectorAll('.acx-res')].map(li => [li.querySelector('.acx-title a').getAttribute('href'), li.querySelector('.acx-res-thumb img').naturalWidth > 0])")
+        check(len(docs) == 4 and all(ok for _, ok in docs), f"resources: 4 documents, each with its first page shown {docs}")
+        codes = [pg.request.get(BASE + "/resources/" + href).status for href, _ in docs]
+        types = [pg.request.get(BASE + "/resources/" + href).headers.get("content-type") for href, _ in docs]
+        check(codes == [200] * 4 and all(t == "application/pdf" for t in types), f"resources: every PDF is served {codes} {set(types)}")
+        heads = pg.evaluate("[...document.querySelectorAll('.acx-res-group > .acx-h2')].map(e => e.textContent)")
+        check(heads == ["American University of Bahrain", "American University of Sharjah"], f"resources: grouped by university {heads}")
+        check(pg.evaluate("document.querySelector('#primary-menu > li.current-menu-item a span').textContent") == "Resources", "resources: menu marks Resources as the current page")
+        check(pg.evaluate("!document.querySelector('form[action*=\"wp-login\"], #loginform')"), "resources: no dead WordPress login form")
         pg.context.close()
     b.close()
 
