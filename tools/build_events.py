@@ -77,11 +77,12 @@ def ensure_head(h, rel, events, body_class=None, styles=()):
     """(Re)write our <head> links. Versioned by content hash so browsers never keep a stale copy.
        styles: extra stylesheets for pages that need no script (the resources page)."""
     h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter|events|resources)"[^>]*>\n?', "", h)
-    h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal)"[^>]*></script>\n?', "", h)
+    h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal|search)"[^>]*></script>\n?', "", h)
     h = re.sub(r'<link\b[^>]*inter-local\.css[^>]*>\n?', "", h)          # old link at a wrong depth
     tags = [f'<link rel="stylesheet" id="acx-inter" href="{rel}{INTER_CSS}"/>',
             f'<link rel="stylesheet" id="acx-site" href="{rel}actlc-assets/site.css?v={asset_version("site.css")}"/>',
-            f'<script id="acx-reveal" src="{rel}actlc-assets/reveal.js?v={asset_version("reveal.js")}" defer></script>']
+            f'<script id="acx-reveal" src="{rel}actlc-assets/reveal.js?v={asset_version("reveal.js")}" defer></script>',
+            f'<script id="acx-search" src="{rel}actlc-assets/search.js?v={asset_version("search.js")}" data-index="{rel}actlc-assets/search-index.json?v={asset_version("search-index.json")}" defer></script>']
     if events:
         tags += [f'<link rel="stylesheet" id="acx-css" href="{rel}actlc-assets/events.css?v={asset_version("events.css")}"/>',
                  f'<script id="acx-js" src="{rel}actlc-assets/events.js?v={asset_version("events.js")}" defer></script>']
@@ -361,5 +362,7 @@ if __name__ == "__main__":
     print("built", build_home())
     print("built", build_conference())
     print("built", build_resources())
+    from search_index import build_index
+    print("built %s (%d records)" % build_index(ROOT, EVENTS))
     for page in build_site(): print("site chrome", page)
     print(f"{len(EVENTS)} events, {sum(not e.past for e in EVENTS)} upcoming, {sum(e.past for e in EVENTS)} past (as of {NOW:%Y-%m-%d %H:%M} UTC)")

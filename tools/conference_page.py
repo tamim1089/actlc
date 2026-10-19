@@ -1,6 +1,6 @@
 """Conference page generator: tools/conference.json -> conference/index.html body.
    Follows tools/DESIGN-RULES.md. Called from tools/build_events.py."""
-import html, json, os, re
+import html, json, os, re, unicodedata
 from urllib.parse import quote
 
 esc = lambda s: html.escape(s or "", quote=True)
@@ -39,9 +39,10 @@ def bullets(items, extra=""):
 
 
 def card(photo, name, line, link="", big=False):
-    return ('<li class="acx-c-person%s"><img class="acx-c-photo" src="%s" alt="" width="400" height="500" loading="lazy" decoding="async"/>'
+    pid = re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().lower()).strip("-")
+    return ('<li class="acx-c-person%s" id="p-%s"><img class="acx-c-photo" src="%s" alt="" width="400" height="500" loading="lazy" decoding="async"/>'
             '<div class="acx-c-cap"><p class="acx-c-pn">%s</p><p class="acx-c-pr">%s</p></div>%s</li>'
-            % (" is-lg" if big else "", esc(photo), esc(name), esc(line), link))
+            % (" is-lg" if big else "", pid, esc(photo), esc(name), esc(line), link))
 
 
 def person(p):
@@ -95,9 +96,9 @@ def conference_html(c, email):
 
     th = c["themes"]
     tracks = "".join(
-        '<li class="acx-c-track"><span class="acx-c-tn" aria-hidden="true">%d</span><div><h3 class="acx-c-tt"><span class="acx-vh">Track %d: </span>%s</h3>'
+        '<li class="acx-c-track" id="track-%d"><span class="acx-c-tn" aria-hidden="true">%d</span><div><h3 class="acx-c-tt"><span class="acx-vh">Track %d: </span>%s</h3>'
         '<p class="acx-c-ts">%s</p><ul class="acx-c-topics">%s</ul></div></li>'
-        % (int(t["n"]), int(t["n"]), esc(t["title"]), esc(t["short"]), "".join("<li>%s</li>" % esc(x) for x in t["points"]))
+        % (int(t["n"]), int(t["n"]), int(t["n"]), esc(t["title"]), esc(t["short"]), "".join("<li>%s</li>" % esc(x) for x in t["points"]))
         for t in th["items"])
     o.append('<section class="acx-c-sec" id="tracks" aria-labelledby="acx-h-tracks"><div class="acx-c-in">%s'
              '<ol class="acx-c-tracks">%s</ol></div></section>' % (head(th, "acx-h-tracks"), tracks))
@@ -153,7 +154,7 @@ def conference_html(c, email):
              '<div class="acx-c-req"><div><h3 class="acx-c-h3">Your proposal, in this order <span class="acx-c-reqm">500–1,000 words</span></h3><ol class="acx-c-parts">%s</ol></div>'
              '<div class="acx-c-specs">%s</div></div>'
              '</div></section>'
-             % (head(cf, "acx-h-cfp"), esc(mail), download(dl["Call for Best Practices"]["href"], "Download the full call for best practices", "PDF · 1.9 MB"),
+             % (head(cf, "acx-h-cfp"), esc(mail), download(dl["Call for Best Practices"]["href"], "Download the full call for best practices", dl["Call for Best Practices"]["meta"]),
                 t0.isoformat(), t1.isoformat(), months, ticks, dates, parts, "".join(spec(g) for g in cf["specs"])))
 
     o.append(fees_section(c))
@@ -165,7 +166,7 @@ def conference_html(c, email):
              '<div class="acx-c-actions acx-c-spcta"><a class="acx-btn" href="mailto:%s?subject=%s">Email about sponsorship</a>'
              '</div>%s</div></section>'
              % (head(so, "acx-h-spo"), esc(so["who_title"]), bullets(so["who"], ' style="columns:2;column-gap:2.5em"'),
-                email, quote("ACTLC 2027 sponsorship"), download(dl["Sponsorship Package"]["href"], "Download the sponsorship package", "PDF · 4.0 MB")))
+                email, quote("ACTLC 2027 sponsorship"), download(dl["Sponsorship Package"]["href"], "Download the sponsorship package", dl["Sponsorship Package"]["meta"])))
 
     ct = c["contact"]
 
@@ -188,6 +189,8 @@ def conference_html(c, email):
 
 def build_conference(root, block_span, asset_version, email):
     c = json.load(open(os.path.join(root, "tools", "conference.json"), encoding="utf-8"))
+    for d in c["downloads"]:   # file size shown on the download links, read from the PDFs we host
+        d["meta"] = "PDF · %.1f MB" % (os.path.getsize(os.path.join(root, "conference", d["href"])) / 1e6)
     p = os.path.join(root, "conference", "index.html")
     h = open(p, encoding="utf-8").read()
     m = re.search(r'<div class="acx acx-conf">', h)

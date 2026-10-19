@@ -355,10 +355,10 @@
     "featured": false
    },
    {
-    "name": "Dr. Sabri Hamdan",
-    "role": "Vice President for Academic Affairs",
-    "org": "Abu Dhabi University- Abu Dhabi Campus",
-    "country": "UAE",
+    "name": "Dr. Sabri Dogan",
+    "role": "Associate Professor of Psychology",
+    "org": "American University of Bahrain",
+    "country": "Bahrain",
     "photo": "../wp-content/uploads/2026/05/Sabri.png",
     "linkedin": "",
     "featured": false
@@ -638,12 +638,12 @@
   {
    "title": "Call for Best Practices",
    "text": "Full submission guidelines, sub-themes, proposal structure, and key dates",
-   "href": "https://raw.githubusercontent.com/tamim1089/tamim1089.github.io/main/Call%20For%20Best%20Practices%20%20ACTLC%20(2).pdf"
+   "href": "files/call-for-best-practices.pdf"
   },
   {
    "title": "Sponsorship Package",
    "text": "Gold, Silver, and Bronze partnership tiers, benefits, and contact details",
-   "href": "https://raw.githubusercontent.com/tamim1089/tamim1089.github.io/main/_Sponsorship%20Package%20%20ACTLC.pdf"
+   "href": "files/sponsorship-package.pdf"
   }
  ],
  "logos": [

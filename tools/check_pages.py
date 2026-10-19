@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Browser checks for the ACTLC pages we generate or restyle. Needs a local server:
      python3 -m http.server 8899 &
-     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font,conference,resources] [--shots DIR]
+     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font,conference,resources,search] [--shots DIR]
    Prints CHECKS_PASSED only when every selected check passes."""
 import argparse, datetime as dt, sys
 from playwright.sync_api import sync_playwright
@@ -284,6 +284,48 @@ with sync_playwright() as p:
         check(heads == ["American University of Bahrain", "American University of Sharjah"], f"resources: grouped by university {heads}")
         check(pg.evaluate("document.querySelector('#primary-menu > li.current-menu-item a span').textContent") == "Resources", "resources: menu marks Resources as the current page")
         check(pg.evaluate("!document.querySelector('form[action*=\"wp-login\"], #loginform')"), "resources: no dead WordPress login form")
+        pg.context.close()
+    if run("search"):
+        print("\n== Site search ==")
+        pg = page(b, EVENTS["list"], 1440, 900); reqs = []
+        pg.on("request", lambda r: reqs.append(r.url))
+        pg.wait_for_timeout(300)
+        check(not any("search-index" in u for u in reqs), "search: index is not loaded until someone goes to search")
+        pg.click(".header-search-link >> visible=true"); pg.wait_for_selector(".acx-sd[open]")
+        check(pg.evaluate("document.activeElement.classList.contains('acx-sd-q')"), "search: the search button opens the panel with the cursor in the box")
+        pg.wait_for_function("acxSearch.engine()")
+        def top(q):
+            return pg.evaluate("""(q) => { const r = acxSearch.engine().search(q); return r ? r.list.slice(0, 3).map(d => [d.t, d.u]) : []; }""", q)
+        for q, want in [("barry", "Prof. Barry O'Mahony"), ("bary", "Prof. Barry O'Mahony"), ("omahony", "Prof. Barry O'Mahony"),
+                        ("ghasan aouad", "Prof. Ghassan Aouad"), ("deadline", "Proposal Submission Deadline"), ("gamification", "Gamification in the University Classroom")]:
+            r = top(q); check(r and r[0][0] == want, f"search: '{q}' finds {want} first ({r[0][0] if r else None})")
+        r = top("maria"); check(r and "de Fez Laso" in pg.evaluate("(q) => acxSearch.engine().search(q).list[0].s", "maria"), "search: 'maria' (no accent) finds Prof. María del Mar de Fez Laso")
+        r = top("toolkit dashboard"); check(r and r[0][1].endswith(".pdf#page=20"), f"search: words inside a PDF open that PDF at the right page ({r[0][1] if r else None})")
+        speed = pg.evaluate("""() => { const e = acxSearch.engine(), qs = ['a', 'as', 'ass', 'asse', 'asses', 'assess', 'assessm', 'assessment', 'assessment rei', 'bary', 'zzzz'];
+            const t0 = performance.now(); for (let i = 0; i < 20; i++) qs.forEach(q => e.search(q)); return (performance.now() - t0) / (20 * qs.length); }""")
+        check(speed < 5, f"search: under 5 ms per keystroke ({speed:.3f} ms)")
+        pg.keyboard.type("assessment"); pg.wait_for_timeout(100)
+        n = pg.evaluate("document.querySelectorAll('.acx-sd-r').length"); check(n >= 5, f"search: results appear as you type ({n})")
+        pg.keyboard.press("ArrowDown")
+        check(pg.evaluate("document.querySelector('.acx-sd-q').getAttribute('aria-activedescendant')") == "acx-sd-o1", "search: arrow keys move through results")
+        low = pg.evaluate(CONTRAST, ".acx-sd *"); check(not low, f"search: text contrast {low[:3]}")
+        pg.keyboard.press("Escape"); check(not pg.is_visible(".acx-sd"), "search: Esc closes the panel")
+        pg.keyboard.press("/"); pg.wait_for_selector(".acx-sd[open]"); pg.keyboard.press("Control+a"); pg.keyboard.type("barry"); pg.wait_for_timeout(100)
+        pg.keyboard.press("Enter"); pg.wait_for_load_state("load"); pg.wait_for_timeout(600)
+        check(pg.url.endswith("/conference/index.html#p-prof-barry-o-mahony"), f"search: '/' opens search, Enter goes to the result ({pg.url.split('8899')[-1]})")
+        IN_VIEW = "(t => t && t.getBoundingClientRect().top >= document.getElementById('masthead').getBoundingClientRect().bottom && t.getBoundingClientRect().top < innerHeight / 2)(document.querySelector(':target'))"
+        try: pg.wait_for_function(IN_VIEW, timeout=3000); ok = True
+        except Exception: ok = False
+        tgt = pg.evaluate("(t => t && [Math.round(t.getBoundingClientRect().top), innerHeight])(document.querySelector(':target'))")
+        check(ok, f"search: the result settles in the top half of the screen, below the sticky header [top, height] = {tgt}")
+        check(not any("ac-tlc.org/?s=" in u or "admin-ajax" in u for u in reqs), "search: nothing is sent to the WordPress site")
+        pg.context.close()
+        pg = page(b, CHROME["home"], 390, 844, has_touch=True, is_mobile=True)
+        pg.tap(".header-search-link >> visible=true"); pg.wait_for_selector(".acx-sd[open]"); pg.wait_for_function("acxSearch.engine()")
+        pg.keyboard.type("assessment"); pg.wait_for_timeout(100)
+        box = pg.evaluate("(r => [r.width, r.height])(document.querySelector('.acx-sd').getBoundingClientRect())")
+        check(box == [390, 844] and pg.evaluate("document.documentElement.scrollWidth") <= 390, f"search @390: full-screen panel, no sideways scroll {box}")
+        check(pg.evaluate("parseFloat(getComputedStyle(document.querySelector('.acx-sd-q')).fontSize)") >= 16, "search @390: box text 16px or more, so iOS does not zoom")
         pg.context.close()
     b.close()
 
