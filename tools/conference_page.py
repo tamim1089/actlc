@@ -133,11 +133,12 @@ def conference_html(c, email):
     import datetime as _dt
     day = lambda s: _dt.datetime.strptime(s, "%d %B %Y").date()
     ds = [day(x["date"]) for x in cf["dates"]]; opens = _dt.date(2027, 2, 2)
-    t0, t1 = _dt.date(ds[0].year, ds[0].month, 1), opens
+    m0 = ds[0].year * 12 + ds[0].month - 1 - 2           # axis starts two months before the first deadline
+    t0, t1 = _dt.date(m0 // 12, m0 % 12 + 1, 1), opens
     pos = lambda d: 100 * (d - t0).days / (t1 - t0).days
     ticks = "".join('<li style="left:%.2f%%"><span>%s</span></li>' % (pos(d), "%d %s" % (d.day, d.strftime("%b"))) for d in ds + [opens])
     months = "".join('<span style="left:%.2f%%">%s</span>' % (pos(m), m.strftime("%b")) for m in
-                     [_dt.date(t0.year + (t0.month - 1 + k) // 12, (t0.month - 1 + k) % 12 + 1, 1) for k in range(1, 5)])
+                     [_dt.date(t0.year + (t0.month - 1 + k) // 12, (t0.month - 1 + k) % 12 + 1, 1) for k in range(1, 12)] if m < t1)
     dates = "".join('<li data-date="%s"><time datetime="%s">%s</time><b>%s</b><span class="acx-c-rel" hidden></span></li>'
                     % (d.isoformat(), d.isoformat(), esc(x["date"]), esc(x["title"])) for d, x in zip(ds, cf["dates"]))
     parts = "".join('<li><b>%s</b><span>%s</span></li>' % (esc(x["name"]), esc(x["text"])) for x in cf["parts"])
