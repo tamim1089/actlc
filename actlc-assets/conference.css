@@ -77,10 +77,14 @@
 
 /* Tracks: everything visible; number, title, one line, then the topics. No boxes. */
 .acx .acx-c-tracks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--t) * 2.4) calc(var(--t) * 3.5); }
-.acx .acx-c-track { display: grid; grid-template-columns: calc(var(--t) * 2.2) minmax(0, 1fr); gap: calc(var(--t) * .8); padding-top: calc(var(--t) * 1.1); border-top: 2px solid var(--teal); }
-.acx .acx-c-tn { font-size: calc(var(--t) * 1.9); line-height: 1; font-weight: 500; letter-spacing: -.03em; color: var(--teal); font-variant-numeric: tabular-nums; }
+/* Each track is a <details> that stays open here (phones fold them); the number sits in a 2.2t column beside the text */
+.acx .acx-c-track { position: relative; padding: calc(var(--t) * 1.1) 0 0 calc(var(--t) * 3); border-top: 2px solid var(--teal); }
+.acx .acx-c-tsum { display: block; list-style: none; }
+.acx .acx-c-tsum::-webkit-details-marker { display: none; }
+@media (min-width: 761px) { .acx .acx-c-tsum { pointer-events: none; } }
+.acx .acx-c-tn { position: absolute; left: 0; top: calc(var(--t) * 1.1); font-size: calc(var(--t) * 1.9); line-height: 1; font-weight: 500; letter-spacing: -.03em; color: var(--teal); font-variant-numeric: tabular-nums; }
 .acx .acx-c-tt { font-size: var(--fs-t3); font-weight: 600; line-height: 1.3; color: var(--ink); }
-.acx .acx-c-ts { margin-top: .2em !important; font-size: var(--fs-callout); color: var(--muted); }
+.acx .acx-c-ts { display: block; margin-top: .2em !important; font-size: var(--fs-callout); color: var(--muted); }
 .acx .acx-c-topics { margin-top: calc(var(--t) * .8) !important; }
 .acx .acx-c-topics li { padding: .5em 0; border-top: 1px solid var(--hairline); font-size: var(--fs-callout); line-height: 1.45; color: var(--body); }
 
@@ -294,3 +298,215 @@
 
 /* Inside the original conference page: the new sections follow its content column */
 .conf-page .wrap > .acx-c-in { width: auto; max-width: none; margin: 0; padding: 0; }
+
+/* ───────── Phones (max 760px): iOS patterns on the same tokens. Wider screens only ever see the line below. ───────── */
+.acx .acx-local-cur, .acx .acx-local-sheet, .acx .acx-c-seg, .acx .acx-c-swnav { display: none; }
+@media (max-width: 760px) {
+  /* One 16px gutter: the conference column runs edge to edge on the grey ground, the content keeps 16px */
+  .acx.acx-conf { box-sizing: border-box; width: 100vw; max-width: none; flex: none; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); padding-left: 0 !important; padding-right: 0 !important;
+    background: var(--ground) !important; }
+  .acx .acx-c-in { padding: 0 16px; }
+  .acx-conf [id] { scroll-margin-top: 60px; }   /* html already keeps the top bar clear; this clears the section bar too */
+  .acx .acx-c-sec { padding: 32px 0; }
+  .acx .acx-c-h2 { font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; }
+  .acx .acx-c-head { margin-bottom: 20px; }
+  .acx .acx-c-lead { margin-top: 8px; font-size: var(--fs-body); line-height: 1.45; }
+  .acx .acx-c-h3 { margin-bottom: 10px; font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; }
+  .acx .acx-c-subhead { margin-top: 40px !important; }
+
+  /* K1 Section bar: where you are, a Sections sheet with every section, and Register */
+  .acx .acx-local { border-bottom: 0; clip-path: none; box-shadow: 0 1px 0 rgba(16, 42, 48, .08);
+    background: rgba(255, 255, 255, .84); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
+  .acx .acx-local-in { gap: 6px; padding: 4px 12px 4px 16px; }
+  .acx .acx-local-title, .acx .acx-local-links { display: none; }
+  .acx .acx-local-cur { display: grid; flex: 1; min-width: 0; margin: 0; line-height: 1.25; }
+  .acx .acx-local-k { font-size: var(--fs-foot); font-weight: 500; color: var(--muted); }
+  .acx .acx-local-cur b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-body); font-weight: 600; letter-spacing: -.01em; color: var(--ink); }
+  .acx .acx-local-sheet, .acx .acx-local .acx-btn { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px;
+    border: 4px solid transparent; border-radius: 22px; background-clip: padding-box; font-size: var(--fs-sub); font-weight: 600; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  .acx .acx-local-sheet { background-color: var(--teal-tint-2); color: var(--teal-deep); }
+  .acx .acx-local-sheet:active { background-color: var(--track); }
+  .acx .acx-local-sheet svg { width: 18px; height: 18px; }
+  .acx .acx-local .acx-btn[data-label] { padding: 0 14px !important; }
+  /* The sheet: mobile.css draws it; the row for the section on screen carries a check mark */
+  .acx .acx-c-sheet .acx-m-group { margin-top: 4px; }
+  .acx .acx-c-sheet .acx-m-row[aria-current] { font-weight: 600; color: var(--teal-deep); }
+  .acx .acx-c-sheet .acx-m-row[aria-current] .acx-m-chev { width: 13px; height: 7px; margin: -4px 2px 0 0; border: solid var(--teal); border-width: 0 0 2.5px 2.5px; transform: rotate(-45deg); }
+
+  /* K2 Hero */
+  .acx .acx-c-hero { padding: 28px 0 32px; }
+  .acx .acx-c-herogrid { gap: 24px; }
+  .acx .acx-c-kicker { margin-bottom: 8px; font-size: var(--fs-sub); }
+  .acx .acx-c-h1 { font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; }
+  .acx .acx-c-sub { margin-top: 12px; font-size: var(--fs-body); line-height: 1.45; }
+  .acx .acx-c-when { margin-top: 20px; font-size: var(--fs-body); line-height: 1.35; }
+  .acx .acx-c-facts { margin-top: 4px; font-size: var(--fs-sub); }
+  .acx .acx-c-actions { gap: 8px 20px; margin-top: 20px; }
+  .acx .acx-c-count { padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .16); }
+  .acx .acx-c-count-h { font-size: var(--fs-sub); }
+  .acx .acx-c-count-n { gap: 28px; }
+  .acx .acx-c-count-n b { font-size: 40px; font-weight: 600; letter-spacing: -.02em; }
+  .acx .acx-c-count-n span { margin-top: 4px; font-size: var(--fs-sub); }
+
+  /* About: what to expect as a grouped list */
+  .acx .acx-c-2col { gap: 24px; }
+  .acx .acx-c-prose p { margin-top: 12px; }
+  .acx .acx-c-rows { overflow: hidden; border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-rows li, .acx .acx-c-rows li:first-child { position: relative; padding: 12px 16px; border: 0; }
+  .acx .acx-c-rows li + li::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-rows span { margin-top: 2px; }
+
+  /* K3 Tracks: one disclosure row per track (number, title, one line); the topics open underneath */
+  .acx .acx-c-tracks { display: block; overflow: hidden; border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-track { padding: 0; border: 0; }
+  .acx .acx-c-track + .acx-c-track::before { content: ""; position: absolute; top: 0; left: 64px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-tsum { display: grid; grid-template-columns: 36px minmax(0, 1fr) 16px; column-gap: 12px; align-items: center; min-height: 52px; padding: 14px 16px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .acx .acx-c-tsum:active { background: var(--track); }
+  .acx .acx-c-tsum:focus-visible { outline: 3px solid var(--teal); outline-offset: -3px; }
+  .acx .acx-c-tn { position: static; grid-row: 1 / span 2; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px;
+    background: var(--teal-tint-2); color: var(--teal-deep); font-size: var(--fs-body); font-weight: 700; letter-spacing: 0; }
+  .acx .acx-c-tt { grid-column: 2; font-size: var(--fs-body); line-height: 1.3; letter-spacing: -.01em; }
+  .acx .acx-c-ts { grid-column: 2; margin-top: 2px !important; font-size: var(--fs-sub); line-height: 1.35; }
+  .acx .acx-c-tsum::after { content: ""; grid-column: 3; grid-row: 1 / span 2; justify-self: center; width: 8px; height: 8px;
+    border: solid var(--muted); border-width: 2px 2px 0 0; transform: rotate(45deg); }
+  .acx .acx-c-tdet[open] > .acx-c-tsum::after { transform: rotate(135deg); }
+  .acx .acx-c-topics { margin: 0 !important; padding: 0 16px 8px 64px !important; }
+  .acx .acx-c-topics li { padding: 10px 0; font-size: var(--fs-callout); line-height: 1.4; }
+
+  /* K4 Programme: Day 1 / Day 2 segmented control, each day a time-and-title list */
+  .acx .acx-c-seg:not([hidden]) { isolation: isolate; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); height: 36px; margin: 4px 0 24px; padding: 0 2px;
+    border-radius: 9px; background: var(--track); }
+  .acx .acx-c-seg [role="tab"] { position: relative; height: 44px; margin: -4px 0; padding: 0 8px; border: 0; background: none; cursor: pointer;
+    font: 500 var(--fs-sub)/1.2 var(--font); color: var(--ink); -webkit-tap-highlight-color: transparent; }
+  .acx .acx-c-seg [role="tab"]::before { content: ""; position: absolute; z-index: -1; inset: 6px 0; border-radius: 7px; }
+  .acx .acx-c-seg [aria-selected="true"] { font-weight: 600; }
+  .acx .acx-c-seg [aria-selected="true"]::before { background: var(--surface); box-shadow: 0 1px 3px rgba(16, 42, 48, .16), 0 0 0 .5px rgba(16, 42, 48, .08); }
+  .acx .acx-c-seg [role="tab"]:focus-visible { outline: none; }
+  .acx .acx-c-seg [role="tab"]:focus-visible::before { box-shadow: 0 0 0 3px var(--teal); }
+  .acx .acx-c-days { gap: 32px; }
+  .acx .acx-c-days.is-seg .acx-c-day:not(.is-on) { display: none; }
+  .acx .acx-c-dayh { font-size: 20px; line-height: 1.3; }
+  .acx .acx-c-dayv { margin: 2px 0 12px !important; font-size: var(--fs-sub); }
+  .acx .acx-c-cal { overflow: hidden; border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-blk { position: relative; display: grid; grid-template-columns: 48px minmax(0, 1fr); column-gap: 14px; align-items: start; min-height: 0;
+    margin: 0; padding: 12px 16px; border-radius: 0; background: none; box-shadow: none; }
+  .acx .acx-c-blk + .acx-c-blk::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-t { grid-row: 1 / span 3; display: grid; white-space: normal; }
+  .acx .acx-c-t span { font-size: var(--fs-sub); line-height: 1.4; font-weight: 600; color: var(--ink); }
+  .acx .acx-c-t span:last-child { font-weight: 400; color: var(--muted); }
+  .acx .acx-c-t .acx-c-to { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* still read: "09:00 – 09:30" */
+  .acx .acx-c-st, .acx .acx-c-blk.is-par .acx-c-st { grid-column: 2; font-size: var(--fs-body); line-height: 1.3; letter-spacing: -.01em; }
+  .acx .acx-c-note { grid-column: 2; margin-top: 2px; font-size: var(--fs-sub); }
+  .acx .acx-c-sd { grid-column: 2; margin-top: 4px; font-size: var(--fs-sub); line-height: 1.4; }
+  .acx .acx-c-blk.is-par { background: var(--teal-tint); box-shadow: none; }
+  .acx .acx-c-blk.is-break { padding-top: 8px; padding-bottom: 8px; box-shadow: none; }
+  .acx .acx-c-blk.is-break .acx-c-t span { font-size: var(--fs-foot); font-weight: 500; color: var(--muted); }
+  .acx .acx-c-blk.is-break .acx-c-st { align-self: center; font-size: var(--fs-sub); font-weight: 500; color: var(--muted); }
+
+  /* K5 Speakers: a swipe row of cards with previous / next; the committee as list rows */
+  .acx .acx-c-swnav:not([hidden]) { display: flex; align-items: center; gap: 8px; margin: -8px 0 8px; }
+  .acx .acx-c-swc { flex: 1; font-size: var(--fs-sub); color: var(--muted); }
+  .acx .acx-c-swb { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+    background: var(--surface); color: var(--teal-deep); box-shadow: 0 0 0 1px var(--hairline); -webkit-tap-highlight-color: transparent; }
+  .acx .acx-c-swb svg { width: 22px; height: 22px; }
+  .acx .acx-c-swb:active { background: var(--track); }
+  .acx .acx-c-swb:disabled { visibility: hidden; }
+  .acx .acx-c-swb:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .acx .acx-c-people { display: flex; align-items: flex-start; gap: 12px; margin: 0 -16px; padding: 2px 16px 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px;
+    overscroll-behavior-x: contain; scrollbar-width: none; }
+  .acx .acx-c-people::-webkit-scrollbar { display: none; }
+  .acx .acx-c-person, .acx .acx-c-person.is-lg { flex: 0 0 min(260px, 72vw); display: flex; flex-direction: column; overflow: hidden; scroll-snap-align: start;
+    border-radius: 14px; background: var(--surface); box-shadow: 0 0 0 1px rgba(16, 42, 48, .06); }
+  .acx .acx-c-photo { flex: none; height: auto; aspect-ratio: 1; border-radius: 0; }
+  .acx .acx-c-cap { padding: 12px 14px 16px; }
+  .acx .acx-c-pn { font-size: var(--fs-body); line-height: 1.3; letter-spacing: -.01em; }
+  .acx .acx-c-pr { margin-top: 4px !important; font-size: var(--fs-sub); line-height: 1.4; }
+  .acx .acx-c-lnk { top: 8px; right: 8px; width: 44px; height: 44px; padding: 0; box-sizing: border-box; border-radius: 50%;
+    background: rgba(255, 255, 255, .94); color: var(--teal-deep); box-shadow: 0 2px 8px rgba(10, 25, 30, .18); }
+  .acx .acx-c-lnk::before, .acx .acx-c-lnk::after { display: none; }
+  .acx .acx-c-team { display: block; margin: 0; padding: 0; overflow: hidden; scroll-snap-type: none; border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-team .acx-c-person { position: relative; display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 12px; align-items: center;
+    min-height: 72px; padding: 10px 16px; border-radius: 0; box-shadow: none; }
+  .acx .acx-c-team .acx-c-person + .acx-c-person::before { content: ""; position: absolute; top: 0; left: 84px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-team .acx-c-photo { grid-area: 1 / 1; width: 56px; height: 56px; aspect-ratio: auto; border-radius: 50%; }
+  .acx .acx-c-team .acx-c-cap { grid-area: 1 / 2; padding: 0; }
+  .acx .acx-c-team .acx-c-pr { margin-top: 2px !important; }
+
+  /* K6 Call for proposals: full-width actions, key dates without the outer glass frame, the proposal as numbered rows, specs as grouped rows */
+  .acx .acx-c-cta { display: grid; gap: 8px; }
+  .acx .acx-c-cta .acx-btn, .acx .acx-c-spcta .acx-btn, .acx .acx-c-contactcta .acx-btn { width: 100%; min-height: 50px; font-size: var(--fs-body); }
+  .acx .acx-c-hint { font-size: var(--fs-sub); text-align: center; }
+  .acx .acx-c-dlrow { display: block; }
+  .acx .acx-c-dl { display: flex; box-sizing: border-box; width: 100%; min-height: 60px; margin-top: 16px; gap: 12px; padding: 10px 16px; border: 0; border-radius: 12px; }
+  .acx .acx-c-dl svg { width: 20px; height: 20px; padding: 8px; box-sizing: content-box; border-radius: 10px; background: var(--teal-tint-2); color: var(--teal-deep); }
+  .acx .acx-c-dl b { font-size: var(--fs-body); line-height: 1.3; }
+  .acx .acx-c-dl small { margin-top: 2px; font-size: var(--fs-sub); }
+  .acx .acx-c-datesh { margin-top: 32px !important; }
+  .acx .acx-c-kd { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 0; padding: 0; border-radius: 0; background: none; }
+  .acx .acx-c-kd .acx-glass { border: 0; border-radius: 12px; background: var(--surface); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .acx .acx-c-kd .acx-c-kd-next { gap: 2px; padding: 16px; background: var(--teal-tint); }
+  .acx .acx-c-kd-next .acx-c-kd-k { font-size: var(--fs-sub); }
+  .acx .acx-c-kd-next .acx-c-kd-n { font-size: 34px; font-weight: 700; }
+  .acx .acx-c-kd-next .acx-c-kd-t { margin-top: 4px; font-size: var(--fs-body); }
+  .acx .acx-c-dates time { font-size: var(--fs-body); }
+  .acx .acx-c-dates b { font-size: var(--fs-sub); }
+  .acx .acx-c-rel { font-size: var(--fs-sub); }
+  .acx .acx-c-req { gap: 28px; margin-top: 32px; }
+  .acx .acx-c-reqm { display: block; margin: 2px 0 0; font-size: var(--fs-sub); }
+  .acx .acx-c-parts { overflow: hidden; margin-top: 0 !important; border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-parts li { position: relative; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; padding: 12px 16px; border: 0; }
+  .acx .acx-c-parts li + li::after { content: ""; position: absolute; top: 0; left: 56px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-parts li::before { width: 28px; height: 28px; border-radius: 50%; background: var(--teal-tint-2); color: var(--teal-deep);
+    font-size: var(--fs-sub); line-height: 28px; font-weight: 700; text-align: center; }
+  .acx .acx-c-parts b { font-size: var(--fs-body); line-height: 1.3; }
+  .acx .acx-c-parts span { margin-top: 2px; font-size: var(--fs-sub); }
+  .acx .acx-c-specs { gap: 24px; }
+  .acx .acx-c-specg h4 { margin: 0 0 8px; font-size: 20px; line-height: 1.3; letter-spacing: -.01em; }
+  .acx .acx-c-specg dl { display: block; overflow: hidden; border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-specg dl div { position: relative; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 13px 16px; border: 0; }
+  .acx .acx-c-specg dl div + div::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-specg dt { flex: none; font-size: var(--fs-body); color: var(--ink); }
+  .acx .acx-c-specg dd { margin: 0; font-size: var(--fs-body); color: var(--body); text-align: right; white-space: normal; }
+  .acx .acx-c-specg dd b { font-size: inherit; font-weight: 400; letter-spacing: 0; color: inherit; }
+  .acx .acx-c-specg p { margin: 8px 16px 0 !important; font-size: var(--fs-sub); line-height: 1.4; color: var(--muted); }
+
+  /* K7 Fees: the presenter rate first, its badge inside the card; one filled button, the others outlined */
+  .acx .acx-c-plans { display: flex; flex-direction: column; align-items: stretch; gap: 12px; max-width: none; padding-top: 0; }
+  .acx .acx-c-plan, .acx .acx-c-plan.is-hi { align-items: stretch; padding: 18px; border-radius: 16px; text-align: left; box-shadow: none; }
+  .acx .acx-c-plan.is-hi { order: -1; }
+  .acx .acx-c-plan-badge { position: static; align-self: flex-start; transform: none; margin-bottom: 10px; padding: 4px 10px; box-shadow: none; }
+  .acx .acx-c-plan h3 { font-size: var(--fs-body); }
+  .acx .acx-c-plan-price b { font-size: 34px; }
+  .acx .acx-c-plan-inc { gap: 6px; margin: 14px 0 !important; padding-bottom: 14px !important; }
+  .acx .acx-c-plan-inc li { font-size: var(--fs-sub); }
+
+  /* K8 Founding members: a still grid of white logo tiles (the marquee's second copy is not shown) */
+  .acx .acx-c-marquee { margin-top: 20px; padding: 0 16px; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .acx .acx-c-mtrack { display: block; width: auto; animation: none !important; transform: none; }
+  .acx .acx-c-logos[aria-hidden] { display: none; }
+  .acx .acx-c-logos { flex-wrap: wrap; justify-content: center; gap: 8px; padding: 0; }
+  .acx .acx-c-logos li { flex: 0 0 calc((100% - 16px) / 3); display: grid; place-items: center; box-sizing: border-box; aspect-ratio: 3 / 2; padding: 10px;
+    border-radius: 12px; background: #fff; }
+  .acx .acx-c-logos img { width: auto; height: auto; max-width: 100%; max-height: calc(46px * var(--k, 1)); }
+
+  /* K9 Sponsorship list with markers; contact as a grouped list */
+  .acx .acx-c-list, .acx .acx-c-list[style] { columns: 1 !important; padding-left: 1.3em; list-style: disc; }
+  .acx .acx-c-list li { padding: 4px 0; font-size: var(--fs-body); line-height: 1.4; color: var(--body); }
+  .acx .acx-c-list li::marker { color: var(--teal); }
+  .acx .acx-c-spcta { margin-top: 24px; }
+  .acx .acx-c-contact { display: block; overflow: hidden; border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-contact > div { position: relative; padding: 10px 16px 0; }
+  .acx .acx-c-contact > div + div::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-contact dt { font-size: var(--fs-sub); font-weight: 500; line-height: 1.35; }
+  .acx .acx-c-contact dd { margin: 0; padding-bottom: 10px; font-size: var(--fs-body); line-height: 1.35; }
+  .acx .acx-c-contact dd a { display: flex; align-items: center; min-height: 44px; margin: -11px 0 -10px; -webkit-tap-highlight-color: transparent; }
+  .acx .acx-c-contactcta { margin-top: 24px; }
+}
+@media (max-width: 359px) {
+  .acx .acx-local-sheet span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .acx .acx-local-sheet { padding: 0 9px; }
+}
+@media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
+  .acx .acx-c-tsum::after { transition: transform .2s ease; }
+}
