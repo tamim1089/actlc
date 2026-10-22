@@ -26,11 +26,13 @@ def check(cond, msg):
     if not cond: fails.append(msg)
 
 SETTLE = """async () => { document.documentElement.classList.remove('acx-rv');
+  document.documentElement.style.scrollBehavior = 'auto';   // the theme scrolls smoothly, which kept this loop at the top of the page
   for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo(0, y); await new Promise(r => setTimeout(r, 80)); }
   scrollTo(0, 0);
   const waiting = () => [...document.images].filter(i => i.getClientRects().length && getComputedStyle(i).visibility !== 'hidden')
     .filter(i => !i.complete || !i.currentSrc || !i.naturalWidth);   // a lazy image without its real source yet counts as waiting
   for (let t = 0; t < 150 && waiting().length; t++) await new Promise(r => setTimeout(r, 100));   // up to 15s
+  await Promise.all([...document.images].filter(i => i.getClientRects().length && i.currentSrc).map(i => i.decode().catch(() => {})));
   document.querySelectorAll('.swiper, .swiper-container').forEach(e => { const s = e.swiper; if (!s) return;   // autoplaying carousels hold still on their first slide
     if (s.autoplay) s.autoplay.stop(); if (s.params && s.params.loop) s.slideToLoop(0, 0, false); else s.slideTo(0, 0, false); });
   await new Promise(r => setTimeout(r, 200));
@@ -58,7 +60,7 @@ with sync_playwright() as p:
 
     if A.desktop_diff:
         from PIL import Image, ImageChops
-        tmp = A.desktop_diff.rstrip("/") + "-now"; desktop_shots(b, tmp)
+        tmp = A.desktop_diff.rstrip("/") + f"-now-{os.getpid()}"; desktop_shots(b, tmp)   # per run: parallel checkouts must not share it
         for name in PAGES:
             a, c = Image.open(os.path.join(A.desktop_diff, f"{name}.png")).convert("RGB"), Image.open(os.path.join(tmp, f"{name}.png")).convert("RGB")
             if a.size != c.size:

@@ -1,0 +1,103 @@
+/* Phone layer: linked with media="(max-width: 760px)", so nothing here reaches tablets or desktops.
+   iOS patterns on the site's own tokens (site.css): a translucent navigation bar with the logo and search,
+   a tab bar at the bottom for the five places people go, and a sheet for everything else.
+   Page-specific phone layouts live with their page CSS; this file owns the chrome and shared patterns. */
+
+:root { --m-top: calc(56px + env(safe-area-inset-top)); --m-tabs: calc(60px + env(safe-area-inset-bottom)); }
+html { scroll-padding-top: calc(var(--m-top) + 12px); }
+body { padding-top: var(--m-top) !important; padding-bottom: var(--m-tabs) !important; }
+
+/* The theme header and its slide-out panel give way to the bars below */
+#masthead, .site-header, .bb-mobile-panel-wrapper, .header-search-wrap { display: none !important; }
+#content.site-content, .site-content { padding-top: 0 !important; }
+.progress-wrap { display: none !important; }                     /* back-to-top button: the tab bar sits there */
+/* Overflow guard: Smart Slider paints its background 8px past both edges. A page wider than the screen makes the
+   phone zoom out, which pushes the fixed tab bar's labels below the screen edge (the Values carousel did too). */
+.n2-section-smartslider, .n2-ss-slider, .elementor-widget-n-carousel { overflow: hidden !important; max-width: 100%; }
+
+.acx.acx-m { display: block; }
+
+/* Navigation bar */
+.acx .acx-m-top {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1200; height: var(--m-top);
+  display: flex; align-items: center; justify-content: space-between; padding: env(safe-area-inset-top) 6px 0 16px;
+  background: rgba(255, 255, 255, .84); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(16, 42, 48, .08);
+}
+.acx .acx-m-logo { display: flex; align-items: center; min-height: 44px; }
+.acx .acx-m-logo { overflow: hidden; height: 40px; }
+.acx .acx-m-logo img { display: block; width: auto; height: 68px; margin: -14px 0 0 -4px; }   /* art fills the bar; the PNG's empty margin is cut */
+.acx .acx-m-search { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 22px; color: var(--ink); }
+.acx .acx-m-search[hidden] { display: none; }
+.acx .acx-m-search:active { background: var(--track); }
+
+/* Tab bar: icon over label; the current place gets a tinted pill behind its icon and a heavier label */
+.acx .acx-m-tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1200; height: var(--m-tabs);
+  display: grid; grid-template-columns: repeat(5, minmax(max-content, 1fr)); padding: 5px 0 env(safe-area-inset-bottom);   /* columns never narrower than their label, so "Conference" fits at 320px */
+  background: rgba(255, 255, 255, .88); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid rgba(16, 42, 48, .08);
+}
+.acx .acx-m-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 1px; min-height: 50px; padding: 0;
+  font-size: var(--fs-foot); font-weight: 500; letter-spacing: -.02em; line-height: 1.25; color: var(--muted); text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.acx .acx-m-tab span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acx .acx-m-ic { width: 54px; height: 30px; padding: 3px 15px; border-radius: 15px; }
+.acx .acx-m-tab.is-cur { color: var(--teal-deep); }
+.acx .acx-m-tab.is-cur span { font-weight: 650; }
+.acx .acx-m-tab.is-cur .acx-m-ic { background: var(--teal-tint-2); }
+.acx .acx-m-tab:active .acx-m-ic { background: var(--track); }
+
+/* Sheet (More): a native dialog from the bottom; without JS the link opens it with :target */
+.acx .acx-m-sheet {
+  position: fixed; inset: auto 0 0 0; z-index: 1300; width: 100%; max-width: none; max-height: 88dvh; margin: 0; padding: 0;
+  border: 0; border-radius: 16px 16px 0 0; background: var(--ground); color: var(--ink); overflow: auto; overscroll-behavior: contain;
+  box-shadow: 0 -12px 40px rgba(10, 25, 30, .2);
+}
+.acx .acx-m-sheet:target { display: block; }
+.acx .acx-m-sheet::backdrop { background: rgba(10, 25, 30, .38); }
+.acx .acx-m-sheet-in { padding: 6px 16px calc(28px + env(safe-area-inset-bottom)); }
+.acx .acx-m-sheet-top { position: relative; display: flex; align-items: center; justify-content: center; min-height: 54px; }
+.acx .acx-m-grab { position: absolute; top: 2px; left: 50%; width: 36px; height: 5px; margin-left: -18px; border-radius: 3px; background: #c3ced1; }
+.acx .acx-m-sheet h2 { margin: 6px 0 0; font: 600 var(--fs-body)/1.3 var(--font); letter-spacing: -.01em; color: var(--ink); }
+.acx .acx-m-close { position: absolute; right: -4px; top: 6px; display: flex; align-items: center; min-height: 44px; padding: 0 8px; font-weight: 600; color: var(--teal); text-decoration: none; }
+
+/* Grouped inset list: the shared pattern for settings-like data */
+.acx .acx-m-gh { margin: 22px 16px 7px; font: 500 var(--fs-foot)/1.3 var(--font); letter-spacing: 0; text-transform: none; color: var(--muted); }
+.acx .acx-m-group { list-style: none; margin: 0; padding: 0; overflow: hidden; border-radius: 12px; background: var(--surface); }
+.acx .acx-m-group > li { position: relative; margin: 0; }
+.acx .acx-m-group > li + li::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+.acx .acx-m-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 10px 16px;
+  font-size: var(--fs-body); line-height: 1.3; color: var(--ink); text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.acx .acx-m-row:active { background: var(--track); }
+.acx .acx-m-val { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-sub); color: var(--muted); }
+.acx .acx-m-chev { flex: none; width: 9px; height: 9px; margin-right: 3px; border-top: 2px solid #aab8bc; border-right: 2px solid #aab8bc; transform: rotate(45deg); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .acx .acx-m-sheet[open] { animation: acx-m-up .26s cubic-bezier(.2, .8, .2, 1); }
+  .acx .acx-m-sheet[open]::backdrop { animation: acx-m-fade .26s ease; }
+}
+@keyframes acx-m-up { from { transform: translateY(100%); } }
+@keyframes acx-m-fade { from { opacity: 0; } }
+
+/* Footer: the tab bar already carries the site map, so the phone footer is contact as a grouped list plus the legal line */
+.acx-footer { padding-bottom: 8px; }
+.acx .acx-foot-in { padding: 8px 16px 20px; }
+.acx .acx-foot-top { display: block; }
+.acx .acx-foot-brand, .acx .acx-foot-nav > .acx-foot-col:first-child { display: none; }
+.acx .acx-foot-nav { display: block; }
+.acx .acx-foot-h { margin: 22px 16px 7px; font-weight: 500; color: var(--muted); }
+.acx .acx-foot-col ul { overflow: hidden; border-radius: 12px; background: var(--surface); }
+.acx .acx-foot-col li { position: relative; }
+.acx .acx-foot-col li + li::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+.acx .acx-foot-col a { display: flex; min-height: 52px; padding: 0 16px; font-size: var(--fs-body); color: var(--teal); }
+.acx .acx-foot-col address { margin: 12px 16px 0; font-size: var(--fs-sub); color: var(--body); }
+.acx .acx-foot-bottom { margin: 18px 16px 0; padding-top: 14px; }
+.acx .acx-foot-bottom p { color: var(--body); }
+
+/* Bars from page layers sit clear of the chrome */
+.acx .acx-bar { bottom: var(--m-tabs) !important; }
+.acx-conf .acx-local { top: var(--m-top) !important; }

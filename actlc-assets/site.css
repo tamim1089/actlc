@@ -42,9 +42,12 @@
    contrast for the current page and the Sign up button, rounded dropdowns. */
 .site-header {
   background: rgba(255, 255, 255, .95) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid rgba(16, 42, 48, .08) !important; box-shadow: none !important;
 }
+/* Blur only where the theme has no slide-out panel: a blurred parent becomes the box its fixed children
+   size against, which shrank the phone menu panel to the 76px header (the menu was there but cut off). */
+@media (min-width: 800px) { .site-header { -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); } }
+.acx.acx-m { display: none; }   /* phone chrome (tools/mobile_chrome.py), shown by mobile.css at <= 760px */
 .site-header #primary-menu > li > a {
   min-height: 44px; display: flex; align-items: center;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -139,6 +142,12 @@
   .acx .acx-btn[data-label]::before, .acx .acx-btn[data-label]::after, .site-header .button.signup[data-label]::before, .site-header .button.signup[data-label]::after { display: none; }
 }
 .acx .acx-btn[data-label], .site-header .button.signup[data-label] { padding-left: calc(var(--t, 17px) * .7 + 16px) !important; }
+/* Touch screens never hover: no dot, no slide, even padding */
+@media (hover: none) {
+  .acx .acx-btn[data-label]::before, .acx .acx-btn[data-label]::after { display: none; }
+  .acx .acx-btn[data-label] .acx-btn-t { transform: none; }
+  .acx .acx-btn[data-label] { padding-left: calc(var(--t, 17px) * 1.15) !important; padding-right: calc(var(--t, 17px) * 1.15) !important; }
+}
 
 /* Scroll reveal (actlc-assets/reveal.js): fade and rise into place, fade back out when leaving.
    Expo-out easing, short stagger; nothing is hidden unless the script is running. */

@@ -11,10 +11,13 @@ import datetime as dt, hashlib, html, json, os, re, sys
 from urllib.parse import quote
 from zoneinfo import ZoneInfo
 from images import picture_images
+from mobile_chrome import replace_mobile_chrome
+from home_mobile import home_mobile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = json.load(open(os.path.join(ROOT, "tools", "events.json"), encoding="utf-8"))
 SITE, EMAIL = DATA["site"], DATA["register_email"]
+PHONE = "+971 43 487 445"
 UTC = dt.timezone.utc
 NOW = dt.datetime.now(UTC)
 
@@ -77,13 +80,15 @@ INTER_CSS = "wp-content/uploads/elementor/google-fonts/css/inter-local.css"
 def ensure_head(h, rel, events, body_class=None, styles=()):
     """(Re)write our <head> links. Versioned by content hash so browsers never keep a stale copy.
        styles: extra stylesheets for pages that need no script (the resources page)."""
-    h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter|events|resources)"[^>]*>\n?', "", h)
-    h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal|search)"[^>]*></script>\n?', "", h)
+    h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter|events|resources|mobile|mobile-home|mobile-forms)"[^>]*>\n?', "", h)
+    h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal|search|mobile-js)"[^>]*></script>\n?', "", h)
     h = re.sub(r'<link\b[^>]*inter-local\.css[^>]*>\n?', "", h)          # old link at a wrong depth
     tags = [f'<link rel="stylesheet" id="acx-inter" href="{rel}{INTER_CSS}"/>',
             f'<link rel="stylesheet" id="acx-site" href="{rel}actlc-assets/site.css?v={asset_version("site.css")}"/>',
             f'<script id="acx-reveal" src="{rel}actlc-assets/reveal.js?v={asset_version("reveal.js")}" defer></script>',
-            f'<script id="acx-search" src="{rel}actlc-assets/search.js?v={asset_version("search.js")}" data-index="{rel}actlc-assets/search-index.json?v={asset_version("search-index.json")}" defer></script>']
+            f'<script id="acx-search" src="{rel}actlc-assets/search.js?v={asset_version("search.js")}" data-index="{rel}actlc-assets/search-index.json?v={asset_version("search-index.json")}" defer></script>',
+            f'<link rel="stylesheet" id="acx-mobile" href="{rel}actlc-assets/mobile.css?v={asset_version("mobile.css")}" media="(max-width: 760px)"/>',
+            f'<script id="acx-mobile-js" src="{rel}actlc-assets/mobile.js?v={asset_version("mobile.js")}" defer></script>']
     if events:
         tags += [f'<link rel="stylesheet" id="acx-css" href="{rel}actlc-assets/events.css?v={asset_version("events.css")}"/>',
                  f'<script id="acx-js" src="{rel}actlc-assets/events.js?v={asset_version("events.js")}" defer></script>']
@@ -122,7 +127,7 @@ def footer_html(rel):
 <nav class="acx-foot-nav" aria-label="Footer">
 {col("Explore", [("Home", "index.html"), ("Webinars", "events/index.html"), ("Conference", "conference/index.html"), ("Registration", "registration/index.html")])}
 <div class="acx-foot-col"><h2 class="acx-foot-h">Contact</h2><ul>
-<li><a href="tel:+97143487445">+971 43 487 445</a></li>
+<li><a href="tel:+97143487445">{PHONE}</a></li>
 <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
 </ul><address>Centre for Faculty Development and Learning Innovation<br/>Abu Dhabi University, P.O. Box 59911<br/>Khalifa City, Abu Dhabi, UAE</address></div>
 </nav>
@@ -166,7 +171,7 @@ def home_html(limit=3):
     return (f'<div class="acx acx-home-root" data-limit="{limit}">\n<ol class="acx-list">\n' +
             "\n".join(row(e, "") for e in up) + "\n</ol>\n" +
             f'<p class="acx-empty"{" hidden" if up else ""}>No upcoming webinars right now.</p>\n'
-            f'<p class="acx-home-more"><a class="acx-link" href="events/index.html">See all upcoming webinars &rarr;</a></p>\n</div>')
+            f'<p class="acx-home-more"><a class="acx-link" href="events/index.html"><span class="acx-more-d">See all upcoming webinars &rarr;</span><span class="acx-more-m">See all webinars</span></a></p>\n</div>')
 
 def build_home():
     p = os.path.join(ROOT, "index.html"); h = open(p, encoding="utf-8").read()
@@ -215,12 +220,14 @@ def build_site():
         h = drop_dead_font_links(h)
         h = enhance_buttons(h)
         h, has_footer = replace_footer(h, rel)
+        h = replace_mobile_chrome(h, rel, page, EMAIL, PHONE)
+        if page == "index.html": h = home_mobile(h)
         h = version_images(h, page)
         h = picture_images(h, page)
         is_list, is_detail, is_res = page == "events/index.html", page.startswith("events-main/"), page == "resources/index.html"
         h = ensure_head(h, rel, is_list or is_detail or page == "index.html",
-                        "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else None,
-                        ("events.css", "resources.css") if is_res else ())
+                        "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else "acx-page-reg" if page.startswith("registration/") else None,
+                        ("events.css", "resources.css") if is_res else ("mobile-home.css",) if page == "index.html" else ("mobile-forms.css",) if page.startswith("registration/") else ())
         open(p, "w", encoding="utf-8").write(h)
         done.append(f"{page}{'' if has_footer else ' (no theme footer)'}")
     return done
@@ -287,13 +294,13 @@ def row(e, base):
     link = f"{base}events-main/{e.detail}/index.html" if has_page else e.mailto
     title_href = "" if (e.past and not has_page) else f' href="{esc(link)}"'
     btn = "View details" if has_page else "Register"
-    return f"""<li class="acx-ev{' is-past' if e.past else ''}" id="ev-{e.id}" data-start="{Ev.iso(e.s)}" data-end="{Ev.iso(e.e)}">
-<time class="acx-date" datetime="{e.s:%Y-%m-%d}"><span class="acx-d">{e.s.day}</span><span class="acx-m">{e.s:%B}</span><span class="acx-w">{e.s.year if e.past else format(e.s, "%A")}</span></time>
+    return f"""<li class="acx-ev{' is-past' if e.past else ''}{' has-page' if has_page else ''}" id="ev-{e.id}" data-start="{Ev.iso(e.s)}" data-end="{Ev.iso(e.e)}">
+<time class="acx-date" datetime="{e.s:%Y-%m-%d}"><span class="acx-d">{e.s.day}</span><span class="acx-m">{e.s:%B}</span><span class="acx-ms">{e.s:%b}</span><span class="acx-w">{e.s.year if e.past else format(e.s, "%A")}</span></time>
 <div class="acx-body">
 <h3 class="acx-title"><a{title_href}>{esc(e.title)}</a></h3>
 <ul class="acx-meta">
 <li>{I_PERSON}<span><b>{esc(e.speaker)}</b> · {esc(e.org)}</span></li>
-<li>{I_CLOCK}<span><span class="acx-tnum">{e.hm(e.s)} – {e.hm(e.e)}</span> {esc(e.zone_label)}<span class="acx-live" hidden>Live now</span></span></li>
+<li>{I_CLOCK}<span><span class="acx-wd">{e.s:%a} · </span><span class="acx-tnum">{e.hm(e.s)} – {e.hm(e.e)}</span> {esc(e.zone_label)}<span class="acx-live" hidden>Live now</span></span></li>
 </ul>
 </div>
 <div class="acx-act"><a class="acx-btn" href="{esc(link)}">{btn}</a><span class="acx-ended">{I_CLOCK}Ended</span></div>
@@ -316,7 +323,7 @@ def list_html():
 </section>
 <section class="acx-panel acx-panel-past" id="past" data-panel="past" aria-labelledby="acx-past-h">
 <h2 class="acx-h2 acx-past-h" id="acx-past-h">Past webinars <span class="acx-count" data-count="past">{len(past)}</span></h2>
-<ol class="acx-list">
+<ol class="acx-list" id="acx-past-list">
 {chr(10).join(row(e, "../") for e in past)}
 </ol>
 </section>
@@ -361,12 +368,18 @@ def detail_html(e):
     gcal = ("https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + quote(e.title) +
             f"&dates={z(e.s)}/{z(e.e)}&details=" + quote(f"ACTLC online webinar with {e.speaker}. {e.url}") + "&location=Online")
     # Member-country start times as one sentence, countries sharing a time grouped (event's own zone excluded)
-    groups = {}
+    groups, rows = {}, []
     for name, tz in DATA["member_countries"]:
         if tz == e.tz: continue
         lt = e.s.astimezone(ZoneInfo(tz)); dd = (lt.date() - e.s.date()).days
-        key = lt.strftime("%H:%M") + (" next day" if dd > 0 else " previous day" if dd < 0 else "")
-        groups.setdefault(key, []).append(name)
+        day = " next day" if dd > 0 else " previous day" if dd < 0 else ""
+        groups.setdefault(lt.strftime("%H:%M") + day, []).append(name)
+        rows.append((name, f'{lt:%H:%M} – {e.e.astimezone(ZoneInfo(tz)):%H:%M}{day}'))
+    # Phones: the same times as a grouped list, one country per row (the sentence above stays on wider screens)
+    elsewhere_m = ('<div class="acx-elsewhere-m"><h2 class="acx-m-gh" id="acx-else-h">In other member countries</h2>'
+                   '<ul class="acx-m-group" aria-labelledby="acx-else-h">' +
+                   "".join(f'<li><div class="acx-m-row"><span>{esc(n)}</span><span class="acx-m-val acx-tnum">{t}</span></div></li>' for n, t in rows) +
+                   '</ul></div>')
     join = lambda n: n[0] if len(n) == 1 else ", ".join(n[:-1]) + " and " + n[-1]
     elsewhere = " · ".join(f"{k} in {join(v)}" for k, v in groups.items())
     lead, body = e.lead_and_body()
@@ -374,7 +387,7 @@ def detail_html(e):
     return f"""<div class="acx acx-detail" data-start="{Ev.iso(e.s)}" data-end="{Ev.iso(e.e)}" data-tz="{e.tz}">
 <a class="acx-back" href="../../events/index.html">{I_CHEV}All events</a>
 <h1 class="acx-h1">{esc(e.title)}</h1>
-<p class="acx-byline"><span class="acx-pname">{esc(e.speaker)}</span> · {esc(e.org)}</p>
+<p class="acx-byline"><span class="acx-pname">{esc(e.speaker)}</span><span class="acx-bsep"> · </span><span class="acx-borg">{esc(e.org)}</span></p>
 <section class="acx-when" aria-label="Date and time">
 <div class="acx-when-main">
 <div class="acx-when-info">
@@ -387,10 +400,11 @@ def detail_html(e):
 <div class="acx-actions">
 <div class="acx-actions-row"><a class="acx-btn acx-btn-filled" href="{esc(e.mailto)}" title="Opens an email to {EMAIL}">Register</a><a class="acx-btn" href="event.ics" download>{I_CALPLUS}Add to Calendar</a></div>
 </div>
-<div class="acx-ended-note" role="note"><strong>This session has ended</strong><span>It took place on {e.long_date()}.</span><a class="acx-link" href="../../events/index.html">See upcoming events &rarr;</a></div>
+<div class="acx-ended-note" role="note"><strong>This session has ended</strong><span>It took place on {e.long_date()}.</span><a class="acx-link" href="../../events/index.html">See upcoming events<span class="acx-arr"> &rarr;</span></a></div>
 </div>
 
 </section>
+{elsewhere_m}
 <section class="acx-about" aria-labelledby="acx-about-h">
 <h2 class="acx-h2" id="acx-about-h">About this session</h2>
 <p class="acx-lead">{esc(lead)}</p>
