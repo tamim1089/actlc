@@ -38,6 +38,7 @@
 .acx .acx-res-sum { margin: 0.7em 0 0; max-width: 66ch; font-size: var(--fs-body); line-height: 1.55; color: var(--body); }
 .acx .acx-res .acx-act { display: grid; justify-items: end; align-self: center; }
 .acx .acx-res-dl { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--fs-sub); color: var(--teal); text-decoration: none; }
+.acx .acx-res-meta { white-space: pre-wrap; }   /* a flex item: keeps the space before the dot */
 .acx .acx-res-more { margin: calc(var(--t) * 3) 0 0; font-size: var(--fs-body); color: var(--body); }
 @media (hover: hover) {
   .acx .acx-res-dl:hover, .acx .acx-res-src a:hover { text-decoration: underline; }
@@ -45,10 +46,53 @@
 
 .acx .acx-res-src a { white-space: nowrap; }   /* never split a DOI */
 
-/* Phones: a small first page with the text wrapping around it, actions underneath */
-@media (max-width: 720px) {
-  .acx .acx-res { display: block; padding: calc(var(--t) * 1.25) 0; }
-  .acx .acx-res-thumb { float: left; width: calc(var(--t) * 4.4); margin: 0.2em calc(var(--t) * 0.9) calc(var(--t) * 0.5) 0; }
-  .acx .acx-res .acx-act { clear: both; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25em 1em; padding-top: calc(var(--t) * 0.8); }
-  .acx .acx-res-sum { font-size: var(--fs-callout); }
+/* Phones (the phone layer's width): each university is a grouped inset list on the grey ground. A row puts the
+   first page beside kind and title in a two-column grid (no float, so the title keeps one left edge), then
+   full-width lines: authors (ten names would make a tall thin column beside the page), the citation, the DOI
+   as its own tappable line, the summary, and the two actions side by side. */
+@media (max-width: 760px) {
+  body.acx-page-res { background: #f6f8fa; }                                   /* --ground: white groups read on it */
+  .acx-page-res #content.site-content { padding-left: 0 !important; padding-right: 0 !important; }
+  .acx-page-res #primary { padding: 20px 16px 32px !important; }
+  .acx-page-res .entry-header { margin: 0 0 8px !important; }
+  .acx-page-res .entry-header .entry-title { font-size: 30px !important; letter-spacing: -0.02em; line-height: 1.15; }
+  .acx-res-root { padding-bottom: 8px; }
+
+  .acx .acx-res-lead { font-size: var(--fs-body); line-height: 1.47; }
+  .acx .acx-res-group { margin-top: 32px; }
+  .acx .acx-res-group > .acx-h2 { margin: 0 4px 10px; font-size: var(--fs-t3); font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; }
+  .acx .acx-res-list { overflow: hidden; border-radius: 12px; background: var(--surface); }
+
+  .acx .acx-res { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 14px; align-items: start; padding: 16px; border-top: 0; }
+  .acx .acx-res + .acx-res::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-res-body { display: contents; }
+  .acx .acx-res-thumb { grid-column: 1; grid-row: 1 / 3; width: 64px; border-radius: 8px; box-shadow: 0 0 0 1px rgba(16, 42, 48, .10); }
+  .acx .acx-res-kind { grid-column: 2; grid-row: 1; }
+  .acx .acx-res .acx-title { grid-column: 2; grid-row: 2; min-width: 0; }                 /* the 1fr row takes any height the page adds */
+  .acx .acx-res-by, .acx .acx-res-src, .acx .acx-res-sum, .acx .acx-res .acx-act { grid-column: 1 / -1; }
+
+  .acx .acx-res-kind { margin: 0 0 3px; font-size: var(--fs-foot); line-height: 1.3; }
+  .acx .acx-res .acx-title { font-size: var(--fs-body); line-height: 1.3; letter-spacing: -0.01em; text-wrap: pretty; }
+  .acx .acx-res .acx-title a { padding: 11px 0; }                              /* the hit area grows, the lines don't move */
+  .acx .acx-res-by { margin: 12px 0 0; font-size: var(--fs-sub); font-weight: 500; line-height: 1.4; color: var(--ink); overflow-wrap: anywhere; }
+
+  .acx .acx-res-src { margin: 12px 0 0; font-size: var(--fs-sub); line-height: 1.4; }
+  .acx .acx-res-sep { display: none; }
+  .acx .acx-res-cite { display: block; }
+  .acx .acx-res-src a { display: flex; align-items: center; min-height: 44px; margin-bottom: -6px; font-weight: 500; }
+  .acx .acx-res-sum { margin: 10px 0 0; max-width: none; font-size: var(--fs-callout); line-height: 1.5; }
+  .acx .acx-res-by + .acx-res-sum { margin-top: 12px; }
+
+  .acx .acx-res .acx-act { display: flex; flex-wrap: wrap; justify-self: stretch; gap: 10px; margin-top: 16px; }
+  .acx .acx-res .acx-act > a { flex: 1 1 auto; min-height: 44px; padding: 0 18px !important; border-radius: 22px; font: 600 var(--fs-callout)/1.2 var(--font); justify-content: center; text-decoration: none; }
+  .acx .acx-res .acx-btn { background: var(--teal); color: #fff; }
+  .acx .acx-res-dl { display: inline-flex; align-items: center; background: var(--teal-tint); color: var(--teal-deep); white-space: nowrap; }
+  .acx .acx-res-meta { font-weight: 500; }
+  .acx .acx-res-pages { display: none; }
+  .acx .acx-res .acx-btn:active, .acx .acx-res-dl:active { transform: scale(.97); }
+  @media (prefers-reduced-motion: no-preference) { .acx .acx-res-dl { transition: transform .16s ease; } }
+  @media (prefers-reduced-motion: reduce) { .acx .acx-res-dl:active { transform: none; } }
+
+  .acx .acx-res-more { margin: 32px 4px 0; font-size: var(--fs-callout); line-height: 1.5; }
+  .acx .acx-res-more a { padding: 13px 0; font-weight: 500; overflow-wrap: anywhere; }   /* 44px hit area inside the sentence */
 }

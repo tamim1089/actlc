@@ -1,0 +1,80 @@
+/* Phone layout for the account form (registration/index.html, body.acx-page-reg). Linked on that page only.
+   The form is the live BuddyPress sign-up; nothing here changes its fields, names or action, only how it looks.
+   The page sits outside .acx, so the site tokens (site.css) are written out here with their token names. */
+@media (max-width: 760px) {
+  body.acx-page-reg, .acx-page-reg #page { background: #f6f8fa !important; }              /* --ground */
+
+  /* The cropped illustration and the second logo repeat what the top bar already shows */
+  .acx-page-reg .login-split, .acx-page-reg .register-section-logo { display: none !important; }
+
+  .acx-page-reg #primary { width: 100%; padding: 20px 16px 32px !important; }
+  .acx-page-reg #primary article.bp_register { width: auto !important; max-width: none !important; margin: 0 !important; }
+  .acx-page-reg #primary,
+  .acx-page-reg #primary h1, .acx-page-reg #primary p, .acx-page-reg #primary label, .acx-page-reg #primary legend,
+  .acx-page-reg #primary span, .acx-page-reg #primary a, .acx-page-reg #primary input, .acx-page-reg #primary select {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Large title, with the way back to sign-in right under it */
+  .acx-page-reg .entry-header { display: block !important; margin: 0 0 24px !important; padding: 0 !important; text-align: left !important; }
+  .acx-page-reg .entry-header .entry-title {
+    margin: 0 !important; font-size: 28px !important; font-weight: 700 !important; line-height: 1.15 !important;
+    letter-spacing: -0.02em !important; color: #15242b !important;                         /* --ink */
+  }
+  .acx-page-reg .entry-header > span {
+    display: block; margin: 2px 0 0; font-size: 17px !important; line-height: 1.47; text-transform: none !important; color: #374850 !important;   /* --body */
+  }
+  .acx-page-reg .entry-header > span a {
+    display: inline-block; min-height: 44px; padding: 10px 2px; margin: -10px -2px; line-height: 24px;
+    font-weight: 600; text-transform: none !important; color: #0e7a83 !important; text-decoration: none;   /* --teal */
+  }
+
+  /* Fields: label over a 48px box with 16px text (iOS zooms into anything smaller) */
+  .acx-page-reg #signup-form { margin: 0 !important; padding: 0 !important; }
+  .acx-page-reg #signup-form .bb-signup-field, .acx-page-reg #signup-form .editfield { margin: 0 0 20px !important; padding: 0 !important; }
+  .acx-page-reg #signup-form fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+  .acx-page-reg #signup-form label, .acx-page-reg #signup-form legend {
+    display: block !important; float: none; width: 100%; margin: 0 0 6px !important; padding: 0 !important;
+    font-size: 15px !important; font-weight: 600 !important; line-height: 1.35 !important; color: #15242b !important;
+  }
+  .acx-page-reg #signup-form .bp-optional-field-label { font-weight: 400; color: #52626a !important; }   /* --muted */
+  .acx-page-reg #signup-form p.description {
+    margin: -2px 0 8px !important; font-size: 15px !important; line-height: 1.4 !important; color: #52626a !important;
+  }
+  .acx-page-reg #signup-form input[type="email"], .acx-page-reg #signup-form input[type="text"],
+  .acx-page-reg #signup-form input[type="password"], .acx-page-reg #signup-form select {
+    display: block; width: 100% !important; height: 48px !important; min-height: 48px; margin: 0 !important; padding: 0 14px !important;
+    font-size: 16px !important; line-height: 1.25 !important; color: #15242b !important;
+    background-color: #fff !important; border: 1px solid #c3ced1 !important; border-radius: 10px !important; box-shadow: none !important;
+    -webkit-appearance: none; appearance: none;
+  }
+  .acx-page-reg #signup-form select { padding-right: 44px !important; }
+  .acx-page-reg #signup-form input:focus, .acx-page-reg #signup-form select:focus {
+    outline: none !important; border-color: #0e7a83 !important; box-shadow: 0 0 0 3px #d8eff1 !important;   /* --teal, --teal-tint-2 */
+  }
+
+  /* Password: the show/hide button is a full 44px target inside the field */
+  .acx-page-reg #signup-form .bb-password-wrap { position: relative; }
+  .acx-page-reg #signup-form .bb-password-wrap input { padding-right: 52px !important; }
+  .acx-page-reg #signup-form .bb-toggle-password {
+    position: absolute; top: 2px !important; right: 2px !important; z-index: 1; display: flex; align-items: center; justify-content: center;
+    width: 44px !important; height: 44px !important; border-radius: 10px; color: #52626a !important;
+  }
+  .acx-page-reg #signup-form .bb-toggle-password:active { background: #e7eef0; }          /* --track */
+
+  /* Terms line: the link keeps its place in the sentence; padding grows its hit area to 44px */
+  .acx-page-reg #signup-form .register-privacy-info { margin: 4px 0 0 !important; font-size: 15px !important; line-height: 1.47 !important; color: #374850 !important; }
+  .acx-page-reg #signup-form .register-privacy-info a { padding: 13px 0; font-weight: 600; color: #0e7a83 !important; text-decoration: none; }
+
+  /* Submit: full width, white on --teal-deep (7.2:1) */
+  .acx-page-reg #signup-form .submit { margin: 0 !important; padding: 24px 0 0 !important; }
+  .acx-page-reg #signup-form #signup_submit {
+    display: block; width: 100% !important; height: auto !important; min-height: 52px; margin: 0 !important; padding: 0 20px !important;
+    border: 0 !important; border-radius: 26px !important; background: #0b616a !important; color: #fff !important;
+    font-size: 17px !important; font-weight: 600 !important; line-height: 52px !important; letter-spacing: -0.01em;
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+  }
+  .acx-page-reg #signup-form #signup_submit:active { background: #0e7a83 !important; }
+  .acx-page-reg #signup-form #signup_submit:focus-visible { outline: 3px solid #0e7a83; outline-offset: 3px; }
+}
