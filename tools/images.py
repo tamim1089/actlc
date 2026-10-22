@@ -26,6 +26,7 @@ SHOWN = [(r"\bbb-(?:mobile-)?logo\b", 200, 150),          # header logo (one cop
          (r"\bacx-mh-ph\b", 96, 96),                       # home: board photos (phone)
          (r"\bacx-mh-role-ic\b", 40, 40),                  # home: what-we-do icons (phone)
          (r"uploads/2025/04/icon-", 114, 108),             # home: what-we-do icons (desktop)
+         (r"actlc-wordmark", 98, 98),                      # phone top bar logo (trimmed, 34px tall)
          (r"actlc-assets/logos/", 360, 290),               # conference: member logos (small files, capped at their own width)
          (r"files/thumbs/", 114, 75),                      # resources: document covers
          (r"ACTLC-Logo-03-300x157", 154, 149),             # footer logo
@@ -42,7 +43,7 @@ PICTURE_BOX = [r'<li class="acx-mh-logo">']
 # Pictures cropped into a fixed box (object-fit: cover), with the box's height/width at 1440 and at 390, measured.
 # A wide photo fills the box by its height, so it needs more pixels across than the box is wide.
 BOXED = [(r'\bclass="[^"]*\bacx-c-photo\b', 383 / 333, 260 / 260),   # 333x383 desktop, 260x260 phone
-         (r'\bclass="[^"]*\bacx-mh-ph\b', 1, 1),                       # 96x96
+         (r'\bclass="[^"]*\bacx-mh-ph\b', 90 / 72, 90 / 72),               # 72x90 portrait
          (r'\bsrc="[^"]*slider/cache/', 900 / 1440, 522 / 390)]       # slider 1440x900 desktop; phone hero 390x522
 PHOTO_Q, GRAPHIC_Q, WEBP_Q = 65, 70, 82   # AVIF quality: opaque pictures / logos and art with transparency (kept, full chroma); WebP
 # CSS backgrounds: (text the page must contain, selector of the rule that sets the picture, source file, width of the copy).

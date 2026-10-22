@@ -29,8 +29,7 @@ body { padding-top: var(--m-top) !important; padding-bottom: var(--m-tabs) !impo
   border-bottom: 1px solid rgba(16, 42, 48, .08);
 }
 .acx .acx-m-logo { display: flex; align-items: center; min-height: 44px; }
-.acx .acx-m-logo { overflow: hidden; height: 40px; }
-.acx .acx-m-logo img { display: block; width: auto; height: 68px; margin: -14px 0 0 -4px; }   /* art fills the bar; the PNG's empty margin is cut */
+.acx .acx-m-logo img { display: block; width: auto; height: 34px; }   /* trimmed file, centred in the bar with air above and below */
 .acx .acx-m-search { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 22px; color: var(--ink); }
 .acx .acx-m-search[hidden] { display: none; }
 .acx .acx-m-search:active { background: var(--track); }

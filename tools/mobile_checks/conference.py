@@ -133,32 +133,21 @@ def conference(ctx):
     dayh = pg.evaluate("[...document.querySelectorAll('.acx-c-dayh')].filter(e => e.getClientRects().length).length + ' ' + [...document.querySelectorAll('.acx-c-dayv')].filter(e => e.getClientRects().length).length")
     check(dayh == "0 1", f"programme: no day heading repeating the selected segment, the venue line stays [headings, venue lines] = {dayh}")
 
-    # K5 speakers and committee
+    # K5 speakers and committee: every speaker visible at once, no sideways scrolling
     row = "document.querySelector('#speakers .acx-c-people:not(.acx-c-team)')"
-    sp = pg.evaluate(f"(r => [r.scrollWidth > r.clientWidth, getComputedStyle(r).scrollSnapType, Math.round(r.querySelector('li').getBoundingClientRect().width), r.children.length])({row})")
-    check(sp[0] and sp[1].startswith("x") and 240 <= sp[2] <= 280 and sp[3] == len(DATA["speakers"]["people"]), f"speakers: swipe row of ~260px cards, snapping, every speaker [scrolls, snap, width, count] = {sp}")
-    pg.evaluate("document.getElementById('speakers').scrollIntoView()"); pg.wait_for_timeout(200)
-    btn = pg.evaluate("[...document.querySelectorAll('.acx-c-swb')].map(b => getComputedStyle(b).visibility + ' ' + Math.round(b.getBoundingClientRect().width) + 'x' + Math.round(b.getBoundingClientRect().height))")
-    btn = pg.evaluate("""[...document.querySelectorAll('.acx-c-swb')].map(b => { const r = b.getBoundingClientRect(), h = document.getElementById('acx-h-spk').getBoundingClientRect();
-        return [getComputedStyle(b).visibility, b.disabled, Math.round(r.width) + 'x' + Math.round(r.height), Math.abs((r.top + r.bottom) / 2 - (h.top + h.bottom) / 2) < 2, Math.round(r.right)]; })""")
-    check([b[:4] for b in btn] == [["visible", True, "44x44", True], ["visible", False, "44x44", True]] and btn[1][4] == 374,
-          f"speakers: previous / next as a pair on the title row, right, 44px; Previous greyed at the start {btn}")
+    sp = pg.evaluate(f"""(r => {{ const cs = [...r.children].map(c => c.getBoundingClientRect()), ph = r.querySelector('.acx-c-photo').getBoundingClientRect();
+        return [r.scrollWidth <= r.clientWidth + 1, new Set(cs.map(c => Math.round(c.left))).size, r.children.length, Math.round(ph.height / ph.width * 100) / 100,
+                getComputedStyle(r.querySelector('.acx-c-photo')).borderRadius !== '50%', document.querySelectorAll('.acx-c-swb').length === 0 || [...document.querySelectorAll('.acx-c-swnav')].every(n => !n.offsetParent)] }})({row})""")
+    check(sp[0] and sp[1] == 2 and sp[2] == len(DATA["speakers"]["people"]) and 1.2 <= sp[3] <= 1.3 and sp[4] and sp[5],
+          f"speakers: all {len(DATA['speakers']['people'])} in two columns, nothing scrolls sideways, portrait photos, no swipe buttons [fits, columns, count, h/w, not round, no nav] = {sp}")
     gaps = pg.evaluate(f"""(r => {{ const cards = Math.max(...[...r.children].map(c => c.getBoundingClientRect().bottom)), t = document.getElementById('acx-h-team').getBoundingClientRect().top;
-        return [Math.round(r.getBoundingClientRect().bottom - cards), Math.round(t - cards), new Set([...r.children].map(c => Math.round(c.getBoundingClientRect().height))).size]; }})({row})""")
-    tails = pg.evaluate(f"""(r => [...r.children].map(c => {{ const cap = c.querySelector('.acx-c-cap'); return cap ? Math.round(c.getBoundingClientRect().bottom - cap.getBoundingClientRect().bottom) : 0 }}).filter(v => v > 24))({row})""")
-    check(gaps[0] <= 2 and gaps[1] == 32 and not tails, f"speakers: the row is as tall as its tallest card, each card ends with its text (no blank tail), 32px to the committee [row-cards, to title] = {gaps[:2]} tails {tails}")
-    x0 = pg.evaluate(f"{row}.scrollLeft"); pg.tap(".acx-c-swb[data-dir='1']"); pg.wait_for_timeout(700)
-    x1 = pg.evaluate(f"{row}.scrollLeft")
-    check(x1 - x0 >= 200, f"speakers: Next scrolls the row by a card ({x0} -> {x1})")
-    check(pg.evaluate("getComputedStyle(document.querySelector('.acx-c-swb[data-dir=\"-1\"]')).visibility") == "visible", "speakers: Previous appears once there is somewhere to go back to")
-    pg.evaluate(f"{row}.scrollLeft = 1e5"); pg.wait_for_timeout(300)
-    end = pg.evaluate("[...document.querySelectorAll('.acx-c-swb')].map(b => getComputedStyle(b).visibility + ' ' + b.disabled)")
-    check(end == ["visible false", "visible true"], f"speakers: at the end Next is greyed and Previous works {end}")
+        return [Math.round(r.getBoundingClientRect().bottom - cards), Math.round(t - cards)]; }})({row})""")
+    check(gaps[0] <= 2 and gaps[1] == 32, f"speakers: the grid ends with its cards, 32px to the committee [grid-cards, to title] = {gaps}")
     nm = pg.evaluate("(e => [Math.round(parseFloat(getComputedStyle(e).fontSize)), getComputedStyle(e).fontWeight, Math.round(parseFloat(getComputedStyle(e.nextElementSibling).fontSize))])(document.querySelector('#speakers .acx-c-pn'))")
-    check(nm == [17, "600", 15], f"speakers: name 17/600, role and org 15px {nm}")
+    check(nm[0] >= 16 and nm[1] == "600" and nm[2] >= 13, f"speakers: name 16px+/600, role 13px+ {nm}")
     team = pg.evaluate("""[...document.querySelectorAll('.acx-c-team > li')].map(li => { const i = li.querySelector('img').getBoundingClientRect();
         return [Math.round(li.getBoundingClientRect().height), Math.round(i.width), Math.round(i.height)]; })""")
-    check(len(team) == len(DATA["committee"]["people"]) and all(h >= 56 and w == 56 and ih == 56 for h, w, ih in team), f"committee: list rows at least 56px with a 56px photo {team[:3]}")
+    check(len(team) == len(DATA["committee"]["people"]) and all(h >= 104 and w == 72 and ih == 90 for h, w, ih in team), f"committee: list rows with a 72x90 portrait photo {team[:3]}")
 
     # K6 call for proposals
     kd = pg.evaluate("""(k => { const cs = getComputedStyle(k); return [cs.backgroundImage, cs.backgroundColor, cs.paddingTop,

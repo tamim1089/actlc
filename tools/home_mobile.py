@@ -248,7 +248,7 @@ def board(h):
         role = squash(b.text()) if b is not None else ""
         lines = [squash(l).rstrip(",") for l in (desc.text() if desc is not None else "").split("\n")]
         lines = [l for l in lines if l and l != role]
-        ph = (f'<img class="acx-mh-ph" src="{esc(pick_src(img, 112))}" width="56" height="56" alt="" loading="lazy" decoding="async"/>'
+        ph = (f'<img class="acx-mh-ph" src="{esc(pick_src(img, 112))}" width="72" height="90" alt="" loading="lazy" decoding="async"/>'
               if img is not None else '<span class="acx-mh-ph" aria-hidden="true"></span>')
         people.append(f'<li class="acx-mh-person">{ph}<div class="acx-mh-who"><h3 class="acx-mh-name">{esc(squash(name.text()))}</h3>'
                       + (f'<p class="acx-mh-role-t">{esc(role)}</p>' if role else "")

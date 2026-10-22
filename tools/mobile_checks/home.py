@@ -105,7 +105,7 @@ def home(ctx):
     check(len(board) == 7 and board == legacy_board, f"board: {len(board)} people in the page's order {board}")
     ph = pg.evaluate("[...document.querySelectorAll('.acx-mh-people > li')].map(li => { const i = li.querySelector('.acx-mh-ph'); const r = i.getBoundingClientRect();"
                      " return [Math.round(r.width), Math.round(r.height), getComputedStyle(i).borderRadius] })")
-    check(len(ph) == 7 and all(p[0] == 56 and p[1] == 56 and p[2] in ("50%", "28px") for p in ph), f"board: list rows with a 56px round photo {ph[:2]}")
+    check(len(ph) == 7 and all(p[0] == 72 and p[1] == 90 and p[2] == "14px" for p in ph), f"board: list rows with a 72x90 portrait photo {ph[:2]}")
     sizes = pg.evaluate("[...document.querySelectorAll('.acx-mh-name, .acx-mh-role-t, .acx-mh-org')].map(e => [e.className, parseFloat(getComputedStyle(e).fontSize), getComputedStyle(e).fontWeight])")
     check(all((c == "acx-mh-name" and abs(s - 17) < .2 and w == "600") or (c != "acx-mh-name" and abs(s - 15) < .2) for c, s, w in sizes),
           "board: name 17px/600, role and organisation 15px")

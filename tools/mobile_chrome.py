@@ -3,7 +3,7 @@ a top bar (logo, search), a bottom tab bar (Home, Events, Conference, Resources,
 The block sits right after <body> between <!--acx-m--> markers, so a rebuild replaces it in place."""
 import re
 
-LOGO = "wp-content/uploads/2024/03/ACTLC-Logo-03-300x157.png"
+LOGO = "actlc-assets/logos/actlc-wordmark.png"   # the logo trimmed to its art (no empty margin), 389x136
 
 # 24px outline icons, one stroke weight; the current tab is marked by a pill behind the icon and a heavier label
 ICONS = {
@@ -44,7 +44,7 @@ def chrome_html(rel, page, email, phone):
                f'<li><a class="acx-m-row" href="tel:{re.sub(r"[^+0-9]", "", phone)}"><span>Phone</span><span class="acx-m-val">{phone}</span></a></li></ul>')
     more_cur = cur == "more"
     return f"""<!--acx-m--><div class="acx acx-m">
-<header class="acx-m-top"><a class="acx-m-logo" href="{rel}index.html"><img src="{rel}{LOGO}" width="300" height="157" alt="Arab Teaching and Learning Consortium, home" decoding="async"/></a>
+<header class="acx-m-top"><a class="acx-m-logo" href="{rel}index.html"><img src="{rel}{LOGO}" width="389" height="136" alt="Arab Teaching and Learning Consortium, home" decoding="async"/></a>
 <a class="acx-m-search header-search-link" href="#" aria-label="Search the site" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></a></header>
 <nav class="acx-m-tabs" aria-label="Main">{"".join(tab(*t) for t in TABS)}<a class="acx-m-tab acx-m-more-open{' is-cur' if more_cur else ''}" href="#acx-more" aria-haspopup="dialog"{' aria-current="page"' if more_cur else ''}>{icon("more")}<span>More</span></a></nav>
 <dialog class="acx-m-sheet" id="acx-more" aria-labelledby="acx-more-h"><div class="acx-m-sheet-in">

@@ -444,10 +444,10 @@
     background: rgba(255, 255, 255, .94); color: var(--teal-deep); box-shadow: 0 2px 8px rgba(10, 25, 30, .18); }
   .acx .acx-c-lnk::before, .acx .acx-c-lnk::after { display: none; }
   .acx .acx-c-team { display: block; margin: 0; padding: 0; overflow: hidden; scroll-snap-type: none; border-radius: 12px; background: var(--surface); }
-  .acx .acx-c-team .acx-c-person { position: relative; display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 12px; align-items: center;
-    min-height: 72px; padding: 10px 16px; border-radius: 0; box-shadow: none; }
-  .acx .acx-c-team .acx-c-person + .acx-c-person::before { content: ""; position: absolute; top: 0; left: 84px; right: 0; height: 1px; background: var(--hairline); }
-  .acx .acx-c-team .acx-c-photo { grid-area: 1 / 1; width: 56px; height: 56px; aspect-ratio: auto; border-radius: 50%; }
+  .acx .acx-c-team .acx-c-person { position: relative; display: grid; grid-template-columns: 80px minmax(0, 1fr); column-gap: 14px; align-items: start;
+    min-height: 104px; padding: 12px 16px; border-radius: 0; box-shadow: none; }
+  .acx .acx-c-team .acx-c-person + .acx-c-person::before { content: ""; position: absolute; top: 0; left: 110px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-c-team .acx-c-photo { grid-area: 1 / 1; width: 80px; height: 80px; aspect-ratio: auto; border-radius: 16px; }   /* rounded square, same as the home board */
   .acx .acx-c-team .acx-c-cap { grid-area: 1 / 2; padding: 0; }
   .acx .acx-c-team .acx-c-pr { margin-top: 2px !important; }
 
@@ -553,4 +553,18 @@
   .acx .acx-c-kd-next .acx-c-kd-t { display: none; }                                  /* the first step right below names the deadline */
   .acx .acx-c-plan-badge svg { display: none; }                                       /* the star only decorated "Save AED 75" */
   .acx .acx-c-contactcta { display: none; }                                           /* the list above already has the email to tap */
+
+  /* Speakers: every speaker on screen at once, two columns of portrait cards; nothing to swipe */
+  .acx #speakers .acx-c-people:not(.acx-c-team) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+    margin: 0; padding: 0 0 2px; overflow: visible; scroll-snap-type: none; align-items: start; }   /* 2px keeps the 32px section rhythm the row had */
+  .acx #speakers .acx-c-people:not(.acx-c-team) .acx-c-person { flex: none; width: auto; border-radius: 16px; box-shadow: none; }
+  .acx #speakers .acx-c-people:not(.acx-c-team) .acx-c-photo { aspect-ratio: 4 / 5; object-position: 50% 20%; }
+  .acx #speakers .acx-c-people:not(.acx-c-team) .acx-c-cap { padding: 10px 12px 14px; }
+  .acx #speakers .acx-c-people:not(.acx-c-team) .acx-c-pn { font-size: var(--fs-callout); }
+  .acx #speakers .acx-c-people:not(.acx-c-team) .acx-c-pr { font-size: var(--fs-foot); color: var(--body); }
+  .acx .acx-c-swnav { display: none !important; }
+  /* Committee rows: the same portrait shape as the speakers and the home board */
+  .acx .acx-c-team .acx-c-person { grid-template-columns: 72px minmax(0, 1fr); min-height: 114px; }
+  .acx .acx-c-team .acx-c-person + .acx-c-person::before { left: 102px; }
+  .acx .acx-c-team .acx-c-photo { width: 72px; height: 90px; border-radius: 14px; object-position: 50% 20%; }
 }
