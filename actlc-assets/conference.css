@@ -321,6 +321,9 @@
   /* Filled buttons: one colour on phones, teal with white text (5.3:1); pressed is the deeper teal */
   .acx.acx-conf .acx-btn, .acx.acx-conf .acx-btn-light { background-color: var(--teal); color: #fff; box-shadow: none; }
   .acx.acx-conf .acx-btn:active, .acx.acx-conf .acx-btn-light:active { background-color: var(--teal-deep); }
+  /* on the dark bands a teal button would vanish into the ground: white with teal text there */
+  .acx.acx-conf .acx-c-band .acx-btn, .acx.acx-conf .acx-c-hero .acx-btn { background-color: #fff; color: var(--teal-deep); }
+  .acx.acx-conf .acx-c-band .acx-btn:active, .acx.acx-conf .acx-c-hero .acx-btn:active { background-color: var(--teal-tint); }
 
   /* K1 Section bar: where you are, a Sections sheet with every section, and Register */
   /* Solid white (a translucent bar washed out over the dark Fees band). It follows the site top bar: when that bar slides away

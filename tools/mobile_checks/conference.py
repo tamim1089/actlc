@@ -10,6 +10,10 @@ LEFT = "(s => Math.round(document.querySelector(s).getBoundingClientRect().left)
 BARS = "Math.round(document.querySelector('.acx-local').getBoundingClientRect().bottom)"
 
 
+def touch(pg, sel):
+    """Tap where the element is, like a finger; Playwright's tap() first scrolls the target into view."""
+    bb = pg.query_selector(sel).bounding_box(); pg.touchscreen.tap(bb["x"] + bb["width"] / 2, bb["y"] + bb["height"] / 2)
+
 def conference(ctx):
     check = ctx.check
     path = ctx.PAGES["conference"]
@@ -27,14 +31,14 @@ def conference(ctx):
     check(bar[0] == top and 44 <= bar[1] <= 56 and bar[2] == 390, f"section bar: pinned under the top bar, full width, compact [top, height, width] = {bar} (top bar ends {top})")
     solid = pg.evaluate("(cs => [cs.backgroundColor, cs.backdropFilter])(getComputedStyle(document.querySelector('.acx-local')))")
     check(solid == ["rgb(255, 255, 255)", "none"], f"section bar: solid white, nothing shows through over the dark bands {solid}")
-    # when the site top bar slides away (mobile.js sets --m-top-live: 0px), the section bar moves up into the space
-    pg.evaluate("scrollTo({top: 2000, behavior: 'instant'})"); pg.wait_for_timeout(300)
-    pg.evaluate("document.documentElement.style.setProperty('--m-top-live', '0px')"); pg.wait_for_timeout(350)
-    up = pg.evaluate(BARS + " - Math.round(document.querySelector('.acx-local').getBoundingClientRect().height)")
-    pg.evaluate("document.documentElement.style.removeProperty('--m-top-live')"); pg.wait_for_timeout(350)
+    # reading down slides the site top bar away (mobile.js) and the section bar moves up into the space; scrolling up brings both back
+    pg.evaluate("scrollTo({top: 1600, behavior: 'instant'})"); pg.wait_for_timeout(120)
+    pg.evaluate("scrollTo({top: 2000, behavior: 'instant'})"); pg.wait_for_timeout(450)
+    up = pg.evaluate("Math.round(document.querySelector('.acx-local').getBoundingClientRect().top)")
+    pg.evaluate("scrollTo({top: 1900, behavior: 'instant'})"); pg.wait_for_timeout(450)
     back = pg.evaluate("Math.round(document.querySelector('.acx-local').getBoundingClientRect().top)")
     pg.evaluate("scrollTo({top: 0, behavior: 'instant'})"); pg.wait_for_timeout(400)
-    check(up == 0 and back == top, f"section bar: follows --m-top-live (top {up}px with the top bar hidden, {back}px when it returns)")
+    check(up == 0 and back == top, f"section bar: moves to the top while the top bar is slid away ({up}px) and back under it on scroll up ({back}px)")
 
     # One rhythm: 32px between sections (to a dark band's edge, then 32px inside it), 8px from a title to its content
     rhythm = pg.evaluate("""(() => { const R = e => e.getBoundingClientRect(), vis = e => e.getClientRects().length && R(e).height > 0 && getComputedStyle(e).visibility !== 'hidden';
@@ -56,7 +60,7 @@ def conference(ctx):
     check(cur() == "Overview", f"section bar: names the section on screen at the top ({cur()!r})")
     pg.evaluate("scrollTo({top: document.getElementById('programme').getBoundingClientRect().top + scrollY - 100, behavior: 'instant'})"); pg.wait_for_timeout(300)
     check(cur() == "Programme", f"section bar: the name follows the scroll ({cur()!r} at the programme)")
-    pg.tap(".acx-local-sheet"); pg.wait_for_timeout(400)
+    touch(pg, ".acx-local-sheet"); pg.wait_for_timeout(400)
     rows = pg.evaluate("[...document.querySelectorAll('#acx-secs .acx-m-row > span:first-child')].map(s => s.textContent)")
     check(pg.evaluate("document.getElementById('acx-secs').open") and rows == SHEET, f"sheet: opens with every section {rows}")
     marked = pg.evaluate("[...document.querySelectorAll('#acx-secs .acx-m-row[aria-current]')].map(a => a.textContent)")
@@ -67,7 +71,7 @@ def conference(ctx):
     check(not pg.evaluate("document.getElementById('acx-secs').open"), "sheet: Esc closes it")
     bad = []
     for i, label in enumerate(SHEET):
-        pg.tap(".acx-local-sheet"); pg.wait_for_timeout(350)
+        touch(pg, ".acx-local-sheet"); pg.wait_for_timeout(350)
         pg.tap(f"#acx-secs li:nth-child({i + 1}) .acx-m-row"); pg.wait_for_timeout(700)
         got = pg.evaluate("""(i => { const a = document.querySelectorAll('#acx-secs .acx-m-row')[i], t = document.getElementById(a.dataset.sec);
             const h = t.matches('h1, h2') ? t : t.querySelector('h1, h2'), r = h.getBoundingClientRect();
@@ -183,11 +187,20 @@ def conference(ctx):
     reg = pg.evaluate("document.querySelector('.acx-local .acx-btn').href")
     plans = pg.evaluate("""[...document.querySelectorAll('.acx-c-plan .acx-btn')].map(a => { const cs = getComputedStyle(a), r = a.getBoundingClientRect();
         return [a.closest('.is-hi') ? 'hi' : 'other', cs.backgroundColor, Math.round(r.height), a.href, a.textContent.trim()]; })""")
-    ok = all((p[1] == "rgb(14, 122, 131)" if p[0] == "hi" else p[1] == "rgba(0, 0, 0, 0)") and p[2] >= 44 and p[3] == reg and p[4] == "Register" for p in plans)
+    ok = all((p[1] == "rgb(255, 255, 255)" if p[0] == "hi" else p[1] == "rgba(0, 0, 0, 0)") and p[2] >= 44 and p[3] == reg and p[4] == "Register" for p in plans)
     check(len(plans) == 3 and ok, f"fees: only the presenter card has a filled button; the others end in a quiet 44px 'Register' link to the same page {[p[:3] for p in plans]}")
     filled = pg.evaluate("""[...document.querySelectorAll('.acx-conf .acx-btn')].filter(a => a.getClientRects().length && getComputedStyle(a).backgroundColor !== 'rgba(0, 0, 0, 0)')
-        .map(a => getComputedStyle(a).backgroundColor + ' ' + getComputedStyle(a).color)""")
-    check(filled and set(filled) == {"rgb(14, 122, 131) rgb(255, 255, 255)"}, f"buttons: every filled button is teal with white text {sorted(set(filled))}")
+        .map(a => (a.closest('.acx-c-band, .acx-c-hero') ? 'dark ' : 'light ') + getComputedStyle(a).backgroundColor + ' ' + getComputedStyle(a).color)""")
+    want = {"light rgb(14, 122, 131) rgb(255, 255, 255)", "dark rgb(255, 255, 255) rgb(11, 97, 106)"}
+    check(filled and set(filled) <= want, f"buttons: teal with white text on light ground, white with teal text on the dark bands {sorted(set(filled))}")
+    # a button must stand out from the ground behind it (WCAG 1.4.11 non-text contrast >= 3:1)
+    weak = pg.evaluate("""(() => { const rgb = c => c.match(/[\\d.]+/g).slice(0, 3).map(Number);
+        const L = c => { const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4) }; const [r, g, b] = rgb(c); return .2126 * f(r) + .7152 * f(g) + .0722 * f(b) };
+        const ground = el => { for (let e = el.parentElement; e; e = e.parentElement) { const cs = getComputedStyle(e), g = cs.backgroundImage.match(/rgba?\\([^)]+\\)/);
+          if (g) return g[0]; const c = cs.backgroundColor, a = (c.match(/[\\d.]+/g) || [])[3]; if (c !== 'rgba(0, 0, 0, 0)' && (a === undefined || +a > .5)) return c } return 'rgb(255, 255, 255)' };   // skip see-through tints   // a gradient ground counts by its first colour
+        return [...document.querySelectorAll('.acx-conf .acx-btn')].filter(a => a.getClientRects().length && getComputedStyle(a).backgroundColor !== 'rgba(0, 0, 0, 0)')
+          .map(a => { const x = L(getComputedStyle(a).backgroundColor), y = L(ground(a)); return [a.textContent.trim().slice(0, 16), +((Math.max(x, y) + .05) / (Math.min(x, y) + .05)).toFixed(2)] }).filter(p => p[1] < 3) })()""")
+    check(not weak, f"buttons: every filled button stands out from its ground by at least 3:1 {weak}")
     regs = pg.evaluate("[...document.querySelectorAll('.acx-conf .acx-btn')].filter(a => a.getClientRects().length && a.textContent.trim() === 'Register' && getComputedStyle(a).backgroundColor !== 'rgba(0, 0, 0, 0)').length")
     check(regs == 3, f"buttons: three filled Register buttons on the page (section bar, hero, presenter card), not five ({regs})")
 
