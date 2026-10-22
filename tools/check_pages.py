@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 """Browser checks for the ACTLC pages we generate or restyle. Needs a local server:
      python3 -m http.server 8899 &
-     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font,conference,resources,search] [--shots DIR]
+     python3 tools/check_pages.py [--only layout,states,tz,motion,header,footer,panel,home,font,conference,resources,search,board,fresh] [--shots DIR]
    Prints CHECKS_PASSED only when every selected check passes."""
-import argparse, datetime as dt, sys
+import argparse, datetime as dt, os, sys
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_events import EVENTS as ALL_EVENTS, NOW
 
 ap = argparse.ArgumentParser(); ap.add_argument("--only", default=""); ap.add_argument("--shots")
 A = ap.parse_args(); ONLY = set(filter(None, A.only.split(",")))
 run = lambda s: not ONLY or s in ONLY
 
 BASE = "http://localhost:8899"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EVENTS = {"list": "/events/index.html",
           "designing": "/events-main/designing-ai-ready-graduates/index.html",
           "teaching": "/events-main/teaching-the-learner-not-the-label/index.html"}
 CHROME = {"home": "/index.html", "conference": "/conference/index.html", **EVENTS}
 VIEWPORTS = [(1920, 1080), (1280, 800), (390, 844)]
 UAE = dt.timezone(dt.timedelta(hours=4))
-TODAY = dt.datetime(2026, 10, 13, 14, 0, tzinfo=UAE)
+TODAY = NOW.astimezone(UAE)                       # the clock the pages were built at; time checks follow the data
+UP = sorted((e for e in ALL_EVENTS if not e.past), key=lambda e: e.s)
+N_PAST = sum(e.past for e in ALL_EVENTS)
+DET = next(e for e in UP if e.detail)            # next session that has its own page
+DET_PATH = f"/events-main/{DET.detail}/index.html"
 fails = []
 
 def check(cond, msg):
@@ -80,7 +87,8 @@ with sync_playwright() as p:
     if run("panel"):
         print("\n== Session panel: compact and complete ==")
         for name in ("designing", "teaching"):
-            pg = page(b, EVENTS[name], 1920, 1080)
+            ev = next(e for e in ALL_EVENTS if e.detail and EVENTS[name].endswith(f"/{e.detail}/index.html"))
+            pg = page(b, EVENTS[name], 1920, 1080, at=ev.s - dt.timedelta(days=6))   # the panel as a visitor sees it before the session
             hgt = pg.evaluate("Math.round(document.querySelector('.acx-when').getBoundingClientRect().height)")
             check(hgt <= 300, f"{name}: date/time panel is compact ({hgt}px tall at 1920, limit 300)")
             txt = pg.inner_text(".acx-when")
@@ -104,21 +112,23 @@ with sync_playwright() as p:
         yrs = pg.evaluate("[...document.querySelectorAll('#past .acx-w')].map(e => e.textContent.trim())")
         check(yrs and all(len(y) == 4 and y.isdigit() for y in yrs), f"list: past rows show the year {sorted(set(yrs))}")
         pg.context.close()
-        pg = page(b, EVENTS["list"], at=at("2026-10-16T09:00:00+04:00"))
-        check(pg.evaluate("document.querySelectorAll('#acx-panel-up .acx-ev').length") == 7 and pg.inner_text('[data-count="past"]') == "14", "list: after 15 Oct, Gamification moves to Past (7/14)")
-        check(pg.inner_text("#ev-7005 .acx-w") == "2026", "list: a row moved to Past shows its year")
-        check(pg.evaluate("document.querySelector('#past .acx-ev').id") == "ev-7005", "list: newest past event first")
-        check(pg.evaluate("!document.querySelector('#ev-7005 .acx-title a').hasAttribute('href')"), "list: ended mailto title is no longer a link")
+        u0 = UP[0]
+        pg = page(b, EVENTS["list"], at=u0.e + dt.timedelta(hours=1))
+        n_up = pg.evaluate("document.querySelectorAll('#acx-panel-up .acx-ev').length"); n_past = pg.inner_text('[data-count="past"]')
+        check(n_up == len(UP) - 1 and n_past == str(N_PAST + 1), f"list: after '{u0.title[:30]}' ends it moves to Past ({n_up}/{n_past})")
+        check(pg.inner_text(f"#ev-{u0.id} .acx-w") == str(u0.s.year), "list: a row moved to Past shows its year")
+        check(pg.evaluate("document.querySelector('#past .acx-ev').id") == f"ev-{u0.id}", "list: newest past event first")
+        check(pg.evaluate("document.querySelectorAll('#past .acx-title a[href^=mailto]').length") == 0, "list: ended mailto titles are no longer links")
         pg.context.close()
-        pg = page(b, EVENTS["list"], at=at("2026-10-19T17:00:00+04:00"))
-        check(pg.is_visible("#ev-7002 .acx-live"), "list: 'Live now' during Designing AI-Ready Graduates"); pg.context.close()
-        pg = page(b, EVENTS["list"], at=at("2027-02-01T09:00:00+04:00"))
+        pg = page(b, EVENTS["list"], at=u0.s + dt.timedelta(minutes=30))
+        check(pg.is_visible(f"#ev-{u0.id} .acx-live"), f"list: 'Live now' during '{u0.title[:30]}'"); pg.context.close()
+        pg = page(b, EVENTS["list"], at=UP[-1].e + dt.timedelta(days=1))
         check(pg.is_visible("#acx-panel-up .acx-empty"), "list: empty state when nothing is upcoming"); pg.context.close()
-        pg = page(b, EVENTS["designing"])
+        pg = page(b, DET_PATH, at=DET.s - dt.timedelta(days=6))
         check(pg.inner_text(".acx-status") == "Starts in 6 days", f"detail: '{pg.inner_text('.acx-status')}'"); pg.context.close()
-        pg = page(b, EVENTS["designing"], at=at("2026-10-19T17:00:00+04:00"))
+        pg = page(b, DET_PATH, at=DET.s + dt.timedelta(minutes=30))
         check(pg.inner_text(".acx-status") == "Live now", "detail: live state"); pg.context.close()
-        pg = page(b, EVENTS["designing"], 390, 844, at=at("2026-10-20T09:00:00+04:00"))
+        pg = page(b, DET_PATH, 390, 844, at=DET.e + dt.timedelta(hours=16))
         check(pg.inner_text(".acx-status") == "Ended", "detail: ended status")
         check(pg.is_visible(".acx-ended-note") and not pg.is_visible(".acx-bar") and not pg.is_visible(".acx-actions"), "detail: ended note shown, Register hidden (mobile bar too)")
         pg.context.close()
@@ -140,12 +150,12 @@ with sync_playwright() as p:
         print("\n== Homepage upcoming list ==")
         pg = page(b, CHROME["home"], 1920, 1080)
         ids = pg.evaluate("[...document.querySelectorAll('.acx-home-root .acx-ev')].map(e=>e.id)")
-        check(ids == ["ev-7002", "ev-7006", "ev-7007"], f"home: next three sessions {ids}")
+        check(ids == [f"ev-{e.id}" for e in UP[:3]], f"home: next three sessions {ids}")
         check("24" not in pg.inner_text(".acx-home-root .acx-d") if pg.query_selector(".acx-home-root .acx-d") else False, "home: stale '24 September' date gone")
         pg.context.close()
-        pg = page(b, CHROME["home"], 1920, 1080, at=dt.datetime(2026, 10, 16, 9, 0, tzinfo=UAE))
+        pg = page(b, CHROME["home"], 1920, 1080, at=UP[0].e + dt.timedelta(hours=1))
         ids = pg.evaluate("[...document.querySelectorAll('.acx-home-root .acx-ev')].map(e=>e.id)")
-        check(ids == ["ev-7002", "ev-7006", "ev-7007"], f"home: ended session drops off by itself {ids}")
+        check(ids == [f"ev-{e.id}" for e in UP[1:4]], f"home: ended session drops off by itself {ids}")
         pg.context.close()
 
     if run("header"):
@@ -327,6 +337,43 @@ with sync_playwright() as p:
         check(box == [390, 844] and pg.evaluate("document.documentElement.scrollWidth") <= 390, f"search @390: full-screen panel, no sideways scroll {box}")
         check(pg.evaluate("parseFloat(getComputedStyle(document.querySelector('.acx-sd-q')).fontSize)") >= 16, "search @390: box text 16px or more, so iOS does not zoom")
         pg.context.close()
+    if run("board"):
+        print("\n== Home board, Conference menu ==")
+        pg = page(b, CHROME["home"], 1280, 900)
+        rows = pg.evaluate("""() => { const h = [...document.querySelectorAll('h2,h3,h4')].find(e => e.textContent.includes('The Board of Directors'));
+            let s = h; while (s && !s.querySelector('.e-con.e-child .elementor-image-box-title, .e-con-full .elementor-image-box-title')) s = s.parentElement;
+            return [...s.querySelectorAll('.e-con.e-child')].filter(r => r.querySelector('.elementor-image-box-title'))
+              .map(r => [...r.querySelectorAll('.elementor-image-box-title')].map(t => t.textContent.trim())) }""")
+        check(rows and any("Narimane" in n for n in rows[0]) and not any("Nina" in n for n in rows[0]), f"home: Dr. Narimane Hadj-Hamou in the board's top row, Dr. Nina in the second {rows}")
+        everywhere = [open(os.path.join(ROOT, f), encoding="utf-8").read() for f in ("index.html", "conference/index.html", "actlc-assets/search-index.json", "tools/conference.json", "tools/events.json")]
+        check(not any("sofia" in t.lower() for t in everywhere) and "Narimane" in everywhere[0], "Ms. Sofia A. Adan is gone (and the positive control 'Narimane' is found)")
+        for label, anchor in [("Speakers", "speakers"), ("Registration", "registration"), ("Conference Themes", "tracks"), ("Sponsorship Opportunities", "sponsorship"), ("Contact Us", "contact")]:
+            pg.goto(BASE + CHROME["home"]); pg.hover("#primary-menu > li:has(> a > span:text-is('Conference'))")
+            pg.click(f"#primary-menu a:has(> span:text-is('{label}'))"); pg.wait_for_load_state("load")
+            try: pg.wait_for_function("(t => t && t.getBoundingClientRect().top >= 0 && t.getBoundingClientRect().top < innerHeight / 2)(document.querySelector(':target'))", timeout=4000); ok = True
+            except Exception: ok = False
+            check(pg.url.endswith(f"/conference/index.html#{anchor}") and ok, f"menu: Conference > {label} opens its section ({pg.url.split('8899')[-1]})")
+        pg.context.close()
+
+    if run("fresh"):
+        print("\n== Old copies refresh themselves ==")
+        live = {"v": None}
+        def serve(route):
+            if live["v"] is None: route.continue_()
+            else: route.fulfill(status=200, content_type="application/json", body='{"v": "%s"}' % live["v"])
+        for path in (CHROME["home"], CHROME["conference"], EVENTS["list"]):
+            c = b.new_context(viewport={"width": 390, "height": 844}); pg = c.new_page(); navs = []
+            pg.on("framenavigated", lambda f: f == pg.main_frame and navs.append(f.url)); pg.route("**/version.json*", serve)
+            live["v"] = None; pg.goto(BASE + path, wait_until="load"); pg.wait_for_timeout(500)
+            check(len(navs) == 1, f"fresh {path}: same build, no reload ({len(navs)} loads)")
+            live["v"] = "newbuild1"
+            pg.evaluate("document.dispatchEvent(new Event('visibilitychange'))"); pg.wait_for_timeout(800); pg.wait_for_load_state("load")
+            pg.evaluate("document.dispatchEvent(new Event('visibilitychange'))"); pg.wait_for_timeout(800)
+            check(len(navs) == 2, f"fresh {path}: new build on the server -> exactly one reload when the tab comes back ({len(navs)} loads)")
+            c.close()
+        heads = open(os.path.join(ROOT, "_headers")).read()
+        check("Cache-Control: no-cache" in heads, "fresh: _headers asks every browser to re-check every file")
+
     b.close()
 
 print(f"\n{len(fails)} failure(s)")

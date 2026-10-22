@@ -7,7 +7,7 @@ Times are stored local to each event's IANA timezone; member-country clocks are
 computed here (system tz database), not in the browser, so old browser tz data
 cannot show a wrong time.        Usage: python3 tools/build_events.py
 """
-import datetime as dt, html, json, os, re, sys
+import datetime as dt, hashlib, html, json, os, re, sys
 from urllib.parse import quote
 from zoneinfo import ZoneInfo
 
@@ -98,6 +98,18 @@ def fix_events_nav(h, rel):
     """Menu 'Events' links must open the events list from any depth (copied pages pointed at themselves)."""
     pat = re.compile(r'(<a\b[^>]*?\bhref=")[^"]*("[^>]*>\s*(?:<i\b[^>]*></i>\s*)?<span>Events</span>)')
     return pat.sub(lambda m: m.group(1) + rel + "events/index.html" + m.group(2), h)
+
+CONF_MENU = {"Speakers": "speakers", "Registration": "registration", "Conference Themes": "tracks",
+             "Sponsorship Opportunities": "sponsorship", "Contact Us": "contact"}
+
+def fix_conference_nav(h, rel, here):
+    """Conference submenu items all opened the top of the page: point each at its section."""
+    target = r'(?:index\.html)?(?:#[^"]*)?' if here else r'[^"]*conference/index\.html(?:#[^"]*)?'
+    pat = re.compile(r'(<a\b[^>]*?\bhref=")' + target + r'("[^>]*>\s*(?:<i\b[^>]*></i>\s*)?<span>([^<]+)</span>)')
+    def sub(m):
+        if m.group(3) not in CONF_MENU: return m.group(0)
+        return m.group(1) + ("" if here else rel + "conference/index.html") + "#" + CONF_MENU[m.group(3)] + m.group(2)
+    return pat.sub(sub, h)
 
 def footer_html(rel):
     col = lambda title, links: (f'<div class="acx-foot-col"><h2 class="acx-foot-h">{title}</h2><ul>' +
@@ -194,6 +206,7 @@ def build_site():
         rel = "../" * page.count("/")
         h = open(p, encoding="utf-8").read()
         h = fix_events_nav(h, rel)
+        h = fix_conference_nav(h, rel, page == "conference/index.html")
         h = fix_cloudflare_email(h)
         # Member cards: the host label belongs to ADU, Abu Dhabi Campus (it was baked into the PSU image)
         h = h.replace("actlc-assets/logos/cards/UAEU.webp", "wp-content/uploads/2025/04/UAEU.webp")
@@ -201,6 +214,7 @@ def build_site():
         h = drop_dead_font_links(h)
         h = enhance_buttons(h)
         h, has_footer = replace_footer(h, rel)
+        h = version_images(h, page)
         is_list, is_detail, is_res = page == "events/index.html", page.startswith("events-main/"), page == "resources/index.html"
         h = ensure_head(h, rel, is_list or is_detail or page == "index.html",
                         "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else None,
@@ -208,6 +222,46 @@ def build_site():
         open(p, "w", encoding="utf-8").write(h)
         done.append(f"{page}{'' if has_footer else ' (no theme footer)'}")
     return done
+
+LOCAL_IMG = re.compile(r'(?<![\w:/.-])((?:\.\./)*[\w-][\w./-]*\.(?:png|jpe?g|webp|gif|svg|avif))(?:\?v=[0-9a-f]+)?')
+
+def version_images(h, page):
+    """Every local picture URL carries its content hash, so a replaced picture gets a new URL."""
+    def sub(m):
+        f = os.path.normpath(os.path.join(ROOT, os.path.dirname(page), m.group(1)))
+        if not os.path.isfile(f): return m.group(1)
+        return m.group(1) + "?v=" + hashlib.sha1(open(f, "rb").read()).hexdigest()[:8]
+    def attr(m): return m.group(1) + LOCAL_IMG.sub(sub, m.group(2)) + m.group(3)
+    h = re.sub(r'(https?://[^"\s)]+\.(?:png|jpe?g|webp|gif|svg|avif))\?v=[0-9a-f]{8}\b', r"\1", h)   # remote pictures are not ours to version
+    h = re.sub(r'<img\b[^>]*>', lambda m: re.sub(r'(\b(?:src|srcset|data-src|data-srcset)=")([^"]*)(")', attr, m.group(0)), h)
+    return re.sub(r'url\((["\']?)([^)"\']+)', lambda m: "url(" + m.group(1) + LOCAL_IMG.sub(sub, m.group(2)), h)
+
+FRESH_JS = ('(function(){var m=document.querySelector(\'meta[name="actlc-build"]\');if(!m||!window.fetch)return;'
+            'var busy=0;function check(){if(busy)return;busy=1;fetch(m.getAttribute("data-src"),{cache:"no-store"})'
+            '.then(function(r){return r.ok?r.json():null}).then(function(j){busy=0;if(!j||j.v===m.content)return;'
+            'var k="actlc-reload-"+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,"1")}catch(e){}'
+            'location.reload()}).catch(function(){busy=0})}check();'
+            'addEventListener("pageshow",function(e){if(e.persisted)check()});'
+            'document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()})})();')
+
+def stamp_build():
+    """One stamp for the whole build. A page opened from memory (phone tab restore, back button,
+       in-app browser) asks actlc-assets/version.json for the live stamp and reloads once if it changed."""
+    strip = lambda h: re.sub(r'<meta name="actlc-build"[^>]*>\n?<script id="acx-fresh">[^<]*</script>\n?', "", h)
+    pages = site_pages()
+    texts = {p: strip(open(os.path.join(ROOT, p), encoding="utf-8").read()) for p in pages}
+    sha = hashlib.sha1()
+    for p in pages: sha.update(texts[p].encode())
+    for n in sorted(os.listdir(os.path.join(ROOT, "actlc-assets"))):
+        f = os.path.join(ROOT, "actlc-assets", n)
+        if os.path.isfile(f) and n != "version.json": sha.update(open(f, "rb").read())
+    v = sha.hexdigest()[:12]
+    for p in pages:
+        rel = "../" * p.count("/")
+        tag = f'<meta name="actlc-build" content="{v}" data-src="{rel}actlc-assets/version.json"/>\n<script id="acx-fresh">{FRESH_JS}</script>\n'
+        open(os.path.join(ROOT, p), "w", encoding="utf-8").write(texts[p].replace("</head>", tag + "</head>", 1))
+    open(os.path.join(ROOT, "actlc-assets", "version.json"), "w").write(json.dumps({"v": v}))
+    return v
 
 def replace_jsonld(h, obj, marker):
     # drop hand-written Event blocks and any previous generated block, then insert ours before </head>
@@ -365,4 +419,5 @@ if __name__ == "__main__":
     from search_index import build_index
     print("built %s (%d records)" % build_index(ROOT, EVENTS))
     for page in build_site(): print("site chrome", page)
+    print("build stamp", stamp_build())
     print(f"{len(EVENTS)} events, {sum(not e.past for e in EVENTS)} upcoming, {sum(e.past for e in EVENTS)} past (as of {NOW:%Y-%m-%d %H:%M} UTC)")
