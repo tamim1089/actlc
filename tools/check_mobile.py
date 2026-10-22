@@ -5,8 +5,9 @@
      python3 tools/check_mobile.py --baseline DIR       # save 1440px screenshots of every public page
      python3 tools/check_mobile.py --desktop-diff DIR   # compare against them; prints DESKTOP_SAME
    Prints MOBILE_OK only when every selected check passes."""
-import argparse, datetime as dt, os, sys
+import argparse, datetime as dt, importlib, os, pkgutil, sys, types
 from playwright.sync_api import sync_playwright
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--only", default=""); ap.add_argument("--shots"); ap.add_argument("--baseline"); ap.add_argument("--desktop-diff")
@@ -25,8 +26,10 @@ def check(cond, msg):
     if not cond: fails.append(msg)
 
 SETTLE = """async () => { document.documentElement.classList.remove('acx-rv');
-  for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo(0, y); await new Promise(r => setTimeout(r, 40)); }
-  scrollTo(0, 0); await Promise.all([...document.images].filter(i => !i.complete).map(i => new Promise(r => { i.onload = i.onerror = r; setTimeout(r, 3000); })));
+  for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); }
+  scrollTo(0, 0);
+  const shown = () => [...document.images].filter(i => i.getClientRects().length && getComputedStyle(i).visibility !== 'hidden');
+  for (let t = 0; t < 300 && shown().some(i => !i.complete); t++) await new Promise(r => setTimeout(r, 100));   // every visible picture, up to 30s
   document.getAnimations().forEach(a => { try { a.finish(); } catch (e) {} }); }"""
 
 def open_page(b, path, w, h, **ctx):
@@ -40,7 +43,7 @@ def phone(b, path, **ctx):
 def desktop_shots(b, out):
     os.makedirs(out, exist_ok=True)
     for name, path in PAGES.items():
-        pg = open_page(b, path, 1440, 900); pg.evaluate(SETTLE); pg.wait_for_timeout(300)
+        pg = open_page(b, path, 1440, 900); pg.evaluate(SETTLE); pg.wait_for_load_state("networkidle"); pg.wait_for_timeout(300)
         pg.screenshot(path=os.path.join(out, f"{name}.png"), full_page=True, animations="disabled"); pg.context.close()
 
 with sync_playwright() as p:
@@ -61,6 +64,15 @@ with sync_playwright() as p:
             check(share <= 0.002, f"desktop {name}: {share:.4%} of pixels changed (limit 0.2%)")
         b.close(); print(f"\n{len(fails)} failure(s)"); print("DESKTOP_SAME" if not fails else "DESKTOP_CHANGED"); sys.exit(1 if fails else 0)
 
+    import mobile_checks
+    sections = {}
+    for m in pkgutil.iter_modules(mobile_checks.__path__):
+        sections.update(importlib.import_module(f"mobile_checks.{m.name}").SECTIONS)
+    ctx = types.SimpleNamespace(b=b, check=check, PAGES=PAGES, BASE=BASE, phone=lambda path, **o: phone(b, path, **o), shots=A.shots)
+    unknown = ONLY - set(sections)
+    check(not unknown, f"sections exist {sorted(unknown) or ''} (have {sorted(sections)})")
+    for name, fn in sections.items():
+        if run(name): fn(ctx)
     b.close()
 
 print(f"\n{len(fails)} failure(s)")
