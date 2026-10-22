@@ -546,3 +546,11 @@
   .acx .acx-c-tsum::after { transition: transform .2s ease; }
   .acx.acx-conf .acx-local { transition: top .2s ease; }
 }
+
+/* Phones, review round 2: no repetition, no decoration, cards as tall as their content */
+@media (max-width: 760px) {
+  .acx #speakers .acx-c-people:not(.acx-c-team) { align-items: flex-start; }          /* shorter cards end with their text, no blank tail */
+  .acx .acx-c-kd-next .acx-c-kd-t { display: none; }                                  /* the first step right below names the deadline */
+  .acx .acx-c-plan-badge svg { display: none; }                                       /* the star only decorated "Save AED 75" */
+  .acx .acx-c-contactcta { display: none; }                                           /* the list above already has the email to tap */
+}

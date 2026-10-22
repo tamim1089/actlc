@@ -145,7 +145,8 @@ def conference(ctx):
           f"speakers: previous / next as a pair on the title row, right, 44px; Previous greyed at the start {btn}")
     gaps = pg.evaluate(f"""(r => {{ const cards = Math.max(...[...r.children].map(c => c.getBoundingClientRect().bottom)), t = document.getElementById('acx-h-team').getBoundingClientRect().top;
         return [Math.round(r.getBoundingClientRect().bottom - cards), Math.round(t - cards), new Set([...r.children].map(c => Math.round(c.getBoundingClientRect().height))).size]; }})({row})""")
-    check(gaps[0] <= 2 and gaps[1] == 32 and gaps[2] == 1, f"speakers: the row is as tall as its cards, cards share one height, 32px to the committee [row-cards, to title, heights] = {gaps}")
+    tails = pg.evaluate(f"""(r => [...r.children].map(c => {{ const cap = c.querySelector('.acx-c-cap'); return cap ? Math.round(c.getBoundingClientRect().bottom - cap.getBoundingClientRect().bottom) : 0 }}).filter(v => v > 24))({row})""")
+    check(gaps[0] <= 2 and gaps[1] == 32 and not tails, f"speakers: the row is as tall as its tallest card, each card ends with its text (no blank tail), 32px to the committee [row-cards, to title] = {gaps[:2]} tails {tails}")
     x0 = pg.evaluate(f"{row}.scrollLeft"); pg.tap(".acx-c-swb[data-dir='1']"); pg.wait_for_timeout(700)
     x1 = pg.evaluate(f"{row}.scrollLeft")
     check(x1 - x0 >= 200, f"speakers: Next scrolls the row by a card ({x0} -> {x1})")

@@ -64,7 +64,7 @@
     font: 600 var(--fs-body)/1.2 var(--font); white-space: nowrap; text-decoration: none; -webkit-tap-highlight-color: transparent;
   }
   .acx .acx-mh-cta-1 { background: #fff; color: var(--teal-deep); }
-  .acx .acx-mh-cta-2 { background: rgba(255, 255, 255, .16); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45); }
+  .acx .acx-mh-cta-2 { background: var(--teal-deep); color: #fff; box-shadow: inset 0 0 0 2px #fff; }   /* solid, so the label passes AA (7.2:1); a see-through fill fell to 4.1:1 */
   .acx .acx-mh-cta:active { transform: scale(.98); }
   .acx .acx-mh-cta-1:active { background: var(--teal-tint-2); }
   .acx .acx-mh-cta:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
