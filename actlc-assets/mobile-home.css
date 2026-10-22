@@ -121,6 +121,7 @@
 
   /* ---------- founding members: roles as plain grouped rows, institutions as a grid of white tiles ---------- */
   .acx .acx-mh-role { justify-content: flex-start; padding: 12px 16px; }
+  .acx .acx-mh-role > .acx-dst { flex: 1 1 auto; min-width: 0; }   /* the distilled role fills the row like the full text did */
   .acx .acx-mh-role:active { background: none; }
   .acx .acx-mh-role p { font-size: var(--fs-body); line-height: 1.47; color: var(--body); }
   .acx .acx-mh-gh { margin: 24px 16px 8px; }

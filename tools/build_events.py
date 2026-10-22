@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 from images import picture_images
 from mobile_chrome import replace_mobile_chrome
 from home_mobile import home_mobile
+from distil import distil, undistil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = json.load(open(os.path.join(ROOT, "tools", "events.json"), encoding="utf-8"))
@@ -210,7 +211,7 @@ def build_site():
     for page in site_pages():
         p = os.path.join(ROOT, page)
         rel = "../" * page.count("/")
-        h = open(p, encoding="utf-8").read()
+        h = undistil(open(p, encoding="utf-8").read())   # before home_mobile() copies legacy text into the phone blocks
         h = fix_events_nav(h, rel)
         h = fix_conference_nav(h, rel, page == "conference/index.html")
         h = fix_cloudflare_email(h)
@@ -222,6 +223,7 @@ def build_site():
         h, has_footer = replace_footer(h, rel)
         h = replace_mobile_chrome(h, rel, page, EMAIL, PHONE)
         if page == "index.html": h = home_mobile(h)
+        h = distil(h, page)
         h = version_images(h, page)
         h = picture_images(h, page)
         is_list, is_detail, is_res = page == "events/index.html", page.startswith("events-main/"), page == "resources/index.html"

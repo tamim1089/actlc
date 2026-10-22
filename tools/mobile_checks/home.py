@@ -19,7 +19,7 @@ RHYTHM = [(EV_TITLE, ".acx-home-root", ".elementor-element-a36dfb9"),
           ("#acx-mh-obj-t", ".acx-mh-objs", ".acx-mh-objectives"),
           ("#acx-mh-mv-t", ".acx-mh-seg-l", ".acx-mh-sheet"),
           ("#acx-mh-val-t", ".acx-mh-vals", ".acx-mh-mission"),
-          ("#acx-mh-bd-t", ".acx-mh-board .acx-mh-lead", ".acx-mh-board"),
+          ("#acx-mh-bd-t", ".acx-mh-board .acx-dst", ".acx-mh-board"),   # the intro shows as its distilled short version
           ("#acx-mh-fm-t", ".acx-mh-founding .acx-mh-lead", ".acx-mh-founding"),
           ("#acx-mh-faq-t", ".acx-mh-faqs", ".acx-mh-faq")]
 INK_BOTTOM = """(s) => { const root = document.querySelector(s); let b = 0;
@@ -119,7 +119,7 @@ def home(ctx):
     roles = pg.evaluate("document.querySelectorAll('.acx-mh-roles > li').length")
     check(roles == nroles == 6, f"founding: {roles} roles (legacy {nroles})")
     check(pg.evaluate("document.querySelectorAll('.acx-mh-roles img, .acx-mh-roles svg').length") == 0, "founding: no line-art icons beside the roles")
-    rw = pg.evaluate("[...document.querySelectorAll('.acx-mh-role p')].map(p => Math.round(p.getBoundingClientRect().width))")
+    rw = pg.evaluate("[...document.querySelectorAll('.acx-mh-role p')].filter(p => p.offsetParent).map(p => Math.round(p.getBoundingClientRect().width))")
     gw = pg.evaluate("Math.round(document.querySelector('.acx-mh-roles').getBoundingClientRect().width)")
     check(rw and all(w >= gw - 32 - 1 for w in rw), f"founding: role text uses the full row width ({rw[:2]} of {gw})")
     # the live carousel adds loop clones and reorders slides; "N of 5" labels keep the authored order

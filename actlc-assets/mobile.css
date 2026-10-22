@@ -104,3 +104,17 @@ body { padding-top: var(--m-top) !important; padding-bottom: var(--m-tabs) !impo
 /* Bars from page layers sit clear of the chrome */
 .acx .acx-bar { bottom: var(--m-tabs) !important; }
 .acx-conf .acx-local { top: var(--m-top-live) !important; }
+
+/* Distilled text (tools/distil.py): a short line in place of a long paragraph, the full text one tap away */
+.acx.acx-dst { display: block; margin: 0 0 12px; }
+[data-dst] { display: none !important; }
+.acx .acx-dst-s { margin: 0; font-size: var(--fs-body); line-height: 1.45; color: var(--body); }
+.acx .acx-dst.is-title .acx-dst-s { font-weight: 600; color: var(--ink); }
+.acx .acx-dst-more > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; list-style: none; cursor: pointer;
+  font-size: var(--fs-sub); font-weight: 600; color: var(--teal); -webkit-tap-highlight-color: transparent; }
+.acx .acx-dst-more > summary::-webkit-details-marker { display: none; }
+.acx .acx-dst-more > summary::after { content: ""; width: 7px; height: 7px; margin-top: -3px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
+.acx .acx-dst-more[open] > summary::after { margin-top: 3px; transform: rotate(-135deg); }
+.acx .acx-dst-more > p { margin: 0 0 4px; font-size: var(--fs-body); line-height: 1.5; color: var(--body); }
+.acx .acx-dst.is-title { margin: 0; }
+@media (prefers-reduced-motion: no-preference) { .acx .acx-dst-more > summary::after { transition: transform .2s ease; } }

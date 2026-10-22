@@ -1,0 +1,55 @@
+{
+ "_about": "Phone-only short versions of long paragraphs. Each entry: the page, the opening words of the original paragraph (it stays the source, one tap away under Read more), and the short version. 'title' entries read as a row heading.",
+ "items": [
+  {
+   "page": "index.html",
+   "starts": "The consortium consists of",
+   "short": "11 universities founded the consortium through their teaching and learning centres. Together they share these roles:"
+  },
+  {
+   "page": "index.html",
+   "starts": "Collaboratively (working closely",
+   "title": true,
+   "short": "Build and run the consortium website"
+  },
+  {
+   "page": "index.html",
+   "starts": "Formulate a clear vision",
+   "title": true,
+   "short": "Set the vision, mission and roadmap"
+  },
+  {
+   "page": "index.html",
+   "starts": "Determine the key priority areas",
+   "title": true,
+   "short": "Choose the priorities for the next 2–3 years"
+  },
+  {
+   "page": "index.html",
+   "starts": "Plan and execute collaborative events",
+   "title": true,
+   "short": "Run joint events: workshops, seminars, conferences"
+  },
+  {
+   "page": "index.html",
+   "starts": "Identify research opportunities",
+   "title": true,
+   "short": "Do shared research on teaching and technology"
+  },
+  {
+   "page": "index.html",
+   "starts": "The ACTLC is governed by",
+   "short": "The General Assembly elects the Board. The Board sets the consortium's plans and policies and represents it at outside events."
+  },
+  {
+   "page": "events-main/designing-ai-ready-graduates/index.html",
+   "starts": "Preparing AI-ready graduates requires",
+   "short": "How to build AI skills into program and course outcomes, grow them through the degree, and check them in assessment."
+  },
+  {
+   "page": "events-main/teaching-the-learner-not-the-label/index.html",
+   "starts": "It will introduce practical, inclusive teaching strategies",
+   "short": "Simple, inclusive teaching strategies based on neurodiversity and Universal Design for Learning that help every student."
+  }
+ ]
+}
