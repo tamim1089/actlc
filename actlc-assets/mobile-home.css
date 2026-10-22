@@ -15,6 +15,12 @@
   .elementor-5659 > .elementor-element-b863369 { order: 6; }   /* founding members */
   .elementor-5659 > .elementor-element-a40434b { order: 7; }   /* FAQ */
   .elementor-5659 > .elementor-element-6f3a0d6, .elementor-5659 > .elementor-element-cb7d624 { display: none !important; }
+  /* Upcoming events keeps its legacy heading: give it the same left-aligned large title as every other section, no icon */
+  .elementor-element-a36dfb9 { padding: 8px 0 0 !important; }
+  .elementor-element-a36dfb9 .elementor-element-fd26ef0 { display: none !important; }
+  .elementor-element-a36dfb9 .elementor-element-72ac8a3 { margin: 0 !important; padding: 0 16px 12px !important; }
+  .elementor-element-a36dfb9 .elementor-element-72ac8a3 .elementor-heading-title {
+    text-align: left !important; font: 700 calc(17px * 1.647)/1.15 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important; letter-spacing: -.02em !important; color: #15242b !important; }
 
   .elementor-element-11da066, .elementor-element-0ccfaf6, .elementor-element-0d91c55,
   .elementor-element-a24525e, .elementor-element-b863369, .elementor-element-a40434b {

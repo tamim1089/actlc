@@ -112,7 +112,7 @@
 .acx .acx-note { margin: 0; font-size: var(--fs-foot); color: var(--muted); text-align: right; }
 .acx .acx-ended-note { display: none; padding: calc(var(--t) * 0.8) calc(var(--t) * 1); border: 1px solid var(--red-line); border-radius: calc(var(--t) * 0.8); background: var(--red-tint); }
 .acx .acx-ended-note strong { display: block; font-size: var(--fs-body); font-weight: 600; color: var(--red); }
-.acx .acx-ended-note span { display: block; margin: 0.15em 0 0.4em; font-size: var(--fs-sub); color: #5b3530; }
+.acx .acx-ended-note > span { display: block; margin: 0.15em 0 0.4em; font-size: var(--fs-sub); color: #5b3530; }
 
 .acx .acx-when-world { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--t) * 0.5) calc(var(--t) * 1.2); padding: calc(var(--t) * 0.8) calc(var(--t) * 1.5); border-top: 1px solid var(--hairline); }
 .acx .acx-world-h { margin: 0; font-size: var(--fs-foot); font-weight: 600; color: var(--muted); }
