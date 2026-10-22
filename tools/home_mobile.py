@@ -5,9 +5,9 @@ strips the old blocks first and parses the legacy markup again. actlc-assets/mob
 the legacy widgets at <= 760px only (the containers stay, so #founding-members and CSS `order` keep working).
 Every parser raises when it finds nothing, so a changed page fails the build instead of shipping an empty section.
 
-Blocks: hero (tagline + two actions), objectives (swipe row), mission & vision (segmented control) and values (swipe row),
-founding members (roles as a grouped list, logos as a grid), board (swipe row of people), FAQ (disclosure rows),
-and one small script for the segmented control and the swipe buttons."""
+Blocks: hero (tagline + two actions on a plain teal gradient), objectives (disclosure rows), mission & vision (segmented
+control) and values (disclosure rows), founding members (roles as a grouped list, logos as a grid), board (list rows of
+people, like the conference committee), FAQ (disclosure rows), and one small script for the segmented control."""
 import html
 import re
 from html.parser import HTMLParser
@@ -117,25 +117,18 @@ def pick_src(img, at_least):
 
 
 # ---------------------------------------------------------------- shared pieces
-CHEV = ('<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" '
-        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="%s"/></svg>')
 NOTAB = ' tabindex="-1"'
-PREV, NEXT = CHEV % "M15 5l-7 7 7 7", CHEV % "M9 5l7 7-7 7"
 
 
 def title(tag, text, hid):
     return f'<{tag} class="acx-mh-title" id="{hid}">{esc(text)}</{tag}>'
 
 
-def swipe(label, cards, kind, head=""):
-    """A horizontal row that snaps card by card. The previous/next buttons sit on the header line (right of the
-    section title when there is one) and appear once the script runs; without it the row still scrolls by touch."""
-    lis = "".join(f'<li class="acx-mh-card acx-mh-card-{kind}">{c}</li>' for c in cards)
-    return (f'<div class="acx-mh-swipe"><div class="acx-mh-head">{head}<div class="acx-mh-nav" hidden>'
-            f'<span class="acx-mh-count" aria-live="polite">1 of {len(cards)}</span>'
-            f'<button type="button" class="acx-mh-btn acx-mh-prev" aria-label="Previous">{PREV}</button>'
-            f'<button type="button" class="acx-mh-btn acx-mh-next" aria-label="Next">{NEXT}</button></div></div>'
-            f'<ul class="acx-mh-track acx-mh-track-{kind}" aria-label="{esc(label)}" tabindex="0">{lis}</ul></div>')
+def disclosure(cls, items):
+    """A grouped list of <details> rows: the summary is the item title, the body its full text (works without JS)."""
+    lis = "".join(f'<li><details class="acx-mh-qa"><summary><span>{esc(t)}</span><span class="acx-mh-qchev" aria-hidden="true"></span></summary>'
+                  f'<div class="acx-mh-ans">{body}</div></details></li>' for t, body in items)
+    return f'<ul class="acx-m-group acx-mh-dis {cls}">{lis}</ul>'
 
 
 def block(name, inner, label_id=None, extra=""):
@@ -158,14 +151,10 @@ def hero(h):
     # the subline: the first sentence of the slider's introduction paragraph
     paras = [squash(p.text()) for p in sl.all("p") if len(squash(p.text())) > 80]
     sub = re.match(r"^(.+?[.!?])(\s|$)", need(paras, "hero introduction paragraph")[0]).group(1)
-    bg = sl.first(cls="n2-ss-slide-background-image")
-    img = bg.first("img") if bg else None
-    back = (f'<div class="acx-mh-hero-bg" aria-hidden="true"><img src="{esc(strip_v(img.attrs["src"]))}" width="1920" height="1080" '
-            f'alt="" decoding="async" fetchpriority="high"/></div>') if img is not None else ""
-    return block("hero", f"""{back}<div class="acx-mh-hero-in">
+    return block("hero", f"""<div class="acx-mh-hero-in">
 <h1 class="acx-mh-hero-t" id="acx-mh-hero-t">{esc(tagline)}</h1>
 <p class="acx-mh-hero-sub">{esc(sub)}</p>
-<div class="acx-mh-hero-act"><a class="acx-mh-cta acx-mh-cta-1" href="events/index.html">Upcoming webinars</a><a class="acx-mh-cta acx-mh-cta-2" href="conference/index.html">Conference 2027</a></div>
+<div class="acx-mh-hero-act"><a class="acx-mh-cta acx-mh-cta-1" href="events/index.html">Webinars</a><a class="acx-mh-cta acx-mh-cta-2" href="conference/index.html">Conference 2027</a></div>
 </div>""", "acx-mh-hero-t")
 
 
@@ -173,7 +162,7 @@ def objectives(h):
     root = element(h, "0ccfaf6")
     sl = need(root.all(id="n2-ss-4"), "objectives slider #n2-ss-4")[0]
     slides = need([s for s in sl.all("div", "n2-ss-slide") if s.attrs.get("data-slide-public-id")], "objective slides")
-    eyebrow, cards = "", []
+    eyebrow, items = "", []
     for s in slides:
         texts = [squash(t.text()) for t in s.all(cls="n2-ss-text")]
         eyebrow = eyebrow or next((t for t in texts if t.lower() == "our objectives"), "")
@@ -185,10 +174,9 @@ def objectives(h):
             if t.startswith("•") or not points: points.append(t.lstrip("• ").strip())
             else: points[-1] += " " + t                     # a line the editor broke off the bullet above
         need(points, f"points in objective '{head}'")
-        cards.append(f'<h3 class="acx-mh-card-t">{esc(head)}</h3><ul class="acx-mh-points">' +
-                     "".join(f"<li>{esc(p)}</li>" for p in points) + "</ul>")
+        items.append((head, '<ul class="acx-mh-points">' + "".join(f"<li>{esc(p)}</li>" for p in points) + "</ul>"))
     name = eyebrow.title() if eyebrow else "Our Objectives"
-    return block("objectives", swipe(name, cards, "text", title("h2", name, "acx-mh-obj-t")), "acx-mh-obj-t")
+    return block("objectives", title("h2", name, "acx-mh-obj-t") + disclosure("acx-mh-objs", items), "acx-mh-obj-t")
 
 
 def mission_values(h):
@@ -211,12 +199,12 @@ def mission_values(h):
     for box in car.all(cls="elementor-icon-box-content"):
         t, d = box.first(cls="elementor-icon-box-title"), box.first(cls="elementor-icon-box-description")
         if t is None or d is None: continue
-        vals.append(f'<h3 class="acx-mh-card-t">{esc(squash(t.text()))}</h3><p>{esc(squash(d.text()))}</p>')
+        vals.append((squash(t.text()), f"<p>{esc(squash(d.text()))}</p>"))
     need(vals, "values (icon boxes in the Values carousel)")
     inner = (title("h2", head, "acx-mh-mv-t") +
              f'<div class="acx-mh-seg"><div class="acx-mh-seg-l" role="tablist" aria-label="{esc(head)}" hidden>{seg}</div>'
              f'<div class="acx-mh-sheet">{pans}</div></div>' +
-             swipe(vhead, vals, "text", title("h2", vhead, "acx-mh-val-t")))
+             title("h2", vhead, "acx-mh-val-t") + disclosure("acx-mh-vals", vals))
     return block("mission", inner, "acx-mh-mv-t")
 
 
@@ -228,11 +216,9 @@ def founding(h):
     grid = need(root.all(cls="e-grid"), "founding roles grid")[0]
     rows = []
     for box in grid.all(cls="elementor-widget-image-box"):
-        d = box.first(cls="elementor-image-box-description"); img = box.first("img")
+        d = box.first(cls="elementor-image-box-description")      # the line-art icon beside it stays out
         if d is None or not squash(d.text()): continue
-        ic = (f'<img class="acx-mh-role-ic" src="{esc(pick_src(img, 80))}" width="40" height="40" alt="" loading="lazy" decoding="async"/>'
-              if img is not None else "")
-        rows.append(f'<li><div class="acx-m-row acx-mh-role">{ic}<p>{esc(squash(d.text()))}</p></div></li>')
+        rows.append(f'<li><div class="acx-m-row acx-mh-role"><p>{esc(squash(d.text()))}</p></div></li>')
     need(rows, "founding member roles (image boxes)")
     car = need(root.all(cls="elementor-widget-image-carousel"), "member logo carousel")[0]
     seen, logos = set(), []
@@ -262,14 +248,14 @@ def board(h):
         role = squash(b.text()) if b is not None else ""
         lines = [squash(l).rstrip(",") for l in (desc.text() if desc is not None else "").split("\n")]
         lines = [l for l in lines if l and l != role]
-        ph = (f'<img class="acx-mh-ph" src="{esc(pick_src(img, 192))}" width="96" height="96" alt="" loading="lazy" decoding="async"/>'
-              if img is not None else "")
-        people.append(f'{ph}<div class="acx-mh-who"><h3 class="acx-mh-name">{esc(squash(name.text()))}</h3>'
+        ph = (f'<img class="acx-mh-ph" src="{esc(pick_src(img, 112))}" width="56" height="56" alt="" loading="lazy" decoding="async"/>'
+              if img is not None else '<span class="acx-mh-ph" aria-hidden="true"></span>')
+        people.append(f'<li class="acx-mh-person">{ph}<div class="acx-mh-who"><h3 class="acx-mh-name">{esc(squash(name.text()))}</h3>'
                       + (f'<p class="acx-mh-role-t">{esc(role)}</p>' if role else "")
-                      + "".join(f'<p class="acx-mh-org">{esc(l)}</p>' for l in lines) + "</div>")
+                      + "".join(f'<p class="acx-mh-org">{esc(l)}</p>' for l in lines) + "</div></li>")
     need(people, "board members (.director)")
     inner = (title("h2", head, "acx-mh-bd-t") + (f'<p class="acx-mh-lead">{esc(intro)}</p>' if intro else "") +
-             swipe(head, people, "person"))
+             f'<ul class="acx-m-group acx-mh-people" aria-labelledby="acx-mh-bd-t">{"".join(people)}</ul>')
     return block("board", inner, "acx-mh-bd-t")
 
 
@@ -300,16 +286,14 @@ def faq(h):
         if q is None or a is None: continue
         qt = re.sub(r"^\d+\.\s*", "", squash(q.text()))        # the list order already numbers them
         ans = re.sub(r"\s+", " ", inline(a)).strip()
-        rows.append(f'<li><details class="acx-mh-qa"><summary><span>{esc(qt)}</span><span class="acx-mh-qchev" aria-hidden="true"></span></summary>'
-                    f'<div class="acx-mh-ans">{ans}</div></details></li>')
+        rows.append((qt, ans))
     need(rows, "FAQ items (.elementor-toggle-item)")
-    inner = title("h2", head, "acx-mh-faq-t") + f'<ul class="acx-m-group acx-mh-faqs">{"".join(rows)}</ul>'
+    inner = title("h2", head, "acx-mh-faq-t") + disclosure("acx-mh-faqs", rows)
     return block("faq", inner, "acx-mh-faq-t")
 
 
-# Segmented control (tabs with arrow keys) and swipe-row buttons. Without it: Mission and Vision stack, rows still scroll.
+# Segmented control (tabs with arrow keys). Without it Mission and Vision simply stack.
 JS = r"""(function(){
-var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 [].forEach.call(document.querySelectorAll('.acx-mh-seg'),function(seg){
  var list=seg.querySelector('[role=tablist]'),tabs=[].slice.call(seg.querySelectorAll('[role=tab]'));if(!list||!tabs.length)return;
  function pick(i,focus){tabs.forEach(function(t,k){var on=k===i;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;
@@ -318,17 +302,6 @@ var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matc
   t.addEventListener('keydown',function(e){var n=tabs.length,j={ArrowRight:i+1,ArrowLeft:i-1+n,Home:0,End:n-1}[e.key];
    if(j===undefined)return;e.preventDefault();pick(j%n,true);});});
  list.hidden=false;seg.classList.add('is-js');pick(0);
-});
-[].forEach.call(document.querySelectorAll('.acx-mh-swipe'),function(sw){
- var tr=sw.querySelector('.acx-mh-track'),nav=sw.querySelector('.acx-mh-nav'),pv=sw.querySelector('.acx-mh-prev'),nx=sw.querySelector('.acx-mh-next'),
-  ct=sw.querySelector('.acx-mh-count'),n=tr.children.length;
- function step(){var a=tr.children[0],b=tr.children[1];return b?b.offsetLeft-a.offsetLeft:a.offsetWidth;}
- function upd(){var max=tr.scrollWidth-tr.clientWidth,x=tr.scrollLeft;nav.hidden=max<=2;
-  pv.disabled=x<=2;nx.disabled=x>=max-2;var i=nx.disabled?n:Math.min(n,Math.round(x/step())+1);ct.textContent=i+' of '+n;}
- function go(d){tr.scrollBy({left:d*step(),behavior:still?'auto':'smooth'});}
- pv.addEventListener('click',function(){go(-1)});nx.addEventListener('click',function(){go(1)});
- var raf=0;tr.addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(function(){raf=0;upd();});},{passive:true});
- addEventListener('resize',upd);upd();
 });
 })();"""
 
