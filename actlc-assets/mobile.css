@@ -4,6 +4,10 @@
    Page-specific phone layouts live with their page CSS; this file owns the chrome and shared patterns. */
 
 :root { --m-top: calc(56px + env(safe-area-inset-top)); --m-tabs: calc(60px + env(safe-area-inset-bottom)); }
+html { --m-top-live: var(--m-top); }                        /* top edge free for page bars: 0 while the top bar is slid away */
+html.acx-m-hidebar { --m-top-live: 0px; }
+html.acx-m-hidebar .acx .acx-m-top { transform: translateY(-100%); }
+@media (prefers-reduced-motion: no-preference) { .acx .acx-m-top { transition: transform .2s ease; } }
 html { scroll-padding-top: calc(var(--m-top) + 12px); }
 body { padding-top: var(--m-top) !important; padding-bottom: var(--m-tabs) !important; }
 
@@ -100,4 +104,4 @@ body { padding-top: var(--m-top) !important; padding-bottom: var(--m-tabs) !impo
 
 /* Bars from page layers sit clear of the chrome */
 .acx .acx-bar { bottom: var(--m-tabs) !important; }
-.acx-conf .acx-local { top: var(--m-top) !important; }
+.acx-conf .acx-local { top: var(--m-top-live) !important; }

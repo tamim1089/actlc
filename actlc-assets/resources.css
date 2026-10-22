@@ -60,7 +60,7 @@
 
   .acx .acx-res-lead { font-size: var(--fs-body); line-height: 1.47; }
   .acx .acx-res-group { margin-top: 32px; }
-  .acx .acx-res-group > .acx-h2 { margin: 0 4px 10px; font-size: var(--fs-t3); font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; }
+  .acx .acx-res-group > .acx-h2 { margin: 0 16px 8px; font: 600 15px/1.3 var(--font); letter-spacing: 0; color: var(--muted); }   /* same group header as the events list */
   .acx .acx-res-list { overflow: hidden; border-radius: 12px; background: var(--surface); }
 
   .acx .acx-res { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 14px; align-items: start; padding: 16px; border-top: 0; }
@@ -93,6 +93,6 @@
   @media (prefers-reduced-motion: no-preference) { .acx .acx-res-dl { transition: transform .16s ease; } }
   @media (prefers-reduced-motion: reduce) { .acx .acx-res-dl:active { transform: none; } }
 
-  .acx .acx-res-more { margin: 32px 4px 0; font-size: var(--fs-callout); line-height: 1.5; }
+  .acx .acx-res-more { margin: 32px 0 0; font-size: var(--fs-callout); line-height: 1.5; }
   .acx .acx-res-more a { padding: 13px 0; font-weight: 500; overflow-wrap: anywhere; }   /* 44px hit area inside the sentence */
 }

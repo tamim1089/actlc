@@ -67,14 +67,14 @@
   .acx-page-reg #signup-form .register-privacy-info { margin: 4px 0 0 !important; font-size: 15px !important; line-height: 1.47 !important; color: #374850 !important; }
   .acx-page-reg #signup-form .register-privacy-info a { padding: 13px 0; font-weight: 600; color: #0e7a83 !important; text-decoration: none; }
 
-  /* Submit: full width, white on --teal-deep (7.2:1) */
+  /* Submit: full width, white on --teal (5.3:1), the primary button colour on every page */
   .acx-page-reg #signup-form .submit { margin: 0 !important; padding: 24px 0 0 !important; }
   .acx-page-reg #signup-form #signup_submit {
     display: block; width: 100% !important; height: auto !important; min-height: 52px; margin: 0 !important; padding: 0 20px !important;
-    border: 0 !important; border-radius: 26px !important; background: #0b616a !important; color: #fff !important;
+    border: 0 !important; border-radius: 26px !important; background: #0e7a83 !important; color: #fff !important;
     font-size: 17px !important; font-weight: 600 !important; line-height: 52px !important; letter-spacing: -0.01em;
     -webkit-appearance: none; appearance: none; cursor: pointer;
   }
-  .acx-page-reg #signup-form #signup_submit:active { background: #0e7a83 !important; }
+  .acx-page-reg #signup-form #signup_submit:active { background: #0b616a !important; }
   .acx-page-reg #signup-form #signup_submit:focus-visible { outline: 3px solid #0e7a83; outline-offset: 3px; }
 }

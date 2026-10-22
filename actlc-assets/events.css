@@ -81,7 +81,7 @@
 .acx .is-past .acx-title { color: #5a6675; }
 
 /* Phone-only pieces of the markup (shown by the phone layer at the end of this file) */
-.acx .acx-ms, .acx .acx-wd, .acx .acx-more-m, .acx .acx-elsewhere-m, .acx .acx-past-disc { display: none; }
+.acx .acx-ms, .acx .acx-wd, .acx .acx-more-m, .acx .acx-elsewhere-m, .acx .acx-past-disc, .acx .acx-reg-m { display: none; }
 
 /* Homepage: next sessions (no-JS fallback shows the first three) */
 .acx-home-root .acx-list > .acx-ev:nth-child(n+4) { display: none; }
@@ -237,7 +237,10 @@
     content: ""; position: absolute; top: 50%; right: 19px; width: 9px; height: 9px; margin-top: -5px;
     border-top: 2px solid #aab8bc; border-right: 2px solid #aab8bc; transform: rotate(45deg); pointer-events: none;
   }
-  .acx .acx-ev.has-page:not(.is-past) .acx-act { display: none; }
+  /* every upcoming row shows Register; rows with their own page open it (the page carries the registration link) */
+  .acx .acx-ev.has-page .acx-act > .acx-btn:not(.acx-reg-m) { display: none; }
+  .acx .acx-ev.has-page:not(.is-past) .acx-reg-m { display: inline-flex; }
+  .acx .acx-ev.has-page .acx-act { position: relative; z-index: 1; }
   .acx .acx-ev.has-page:has(.acx-title a:active) { background: var(--track); }
 
   /* Past rows: grey tile with the year, a small neutral "Ended" label */
@@ -328,7 +331,7 @@
 
   .acx .acx-actions { display: none; }
   .acx-detail.is-past .acx-ended-note { order: 1; display: block; margin-top: 24px; padding: 0; border: 0; border-radius: 0; background: none; }
-  .acx .acx-ended-note strong { margin: 0 16px 8px; font-size: 15px; font-weight: 600; color: var(--muted); }
+  .acx .acx-ended-note strong { display: none; }
   .acx .acx-ended-note span { display: none; }
   .acx .acx-ended-note .acx-link {
     display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 16px;

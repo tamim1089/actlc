@@ -303,7 +303,7 @@ def row(e, base):
 <li>{I_CLOCK}<span><span class="acx-wd">{e.s:%a} · </span><span class="acx-tnum">{e.hm(e.s)} – {e.hm(e.e)}</span> {esc(e.zone_label)}<span class="acx-live" hidden>Live now</span></span></li>
 </ul>
 </div>
-<div class="acx-act"><a class="acx-btn" href="{esc(link)}">{btn}</a><span class="acx-ended">{I_CLOCK}Ended</span></div>
+<div class="acx-act"><a class="acx-btn" href="{esc(link)}">{btn}</a>{f'<a class="acx-btn acx-reg-m" href="{esc(link)}">Register</a>' if has_page else ""}<span class="acx-ended">{I_CLOCK}Ended</span></div>
 </li>"""
 
 def list_html():
