@@ -279,8 +279,7 @@
 
   /* Homepage: the next three as one inset group, then "See all webinars" */
   .acx.acx-home-root {
-    margin: 0 16px; overflow: hidden; border-radius: 12px; background: var(--surface);
-    box-shadow: 0 0 0 1px var(--hairline);
+    margin: 0 16px; overflow: hidden; border-radius: 12px; background: var(--surface);   /* borderless white on the grey page, like every group */
   }
   .acx-home-root .acx-home-more { position: relative; margin: 0; font-size: var(--fs-body); }
   .acx-home-root .acx-home-more::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
