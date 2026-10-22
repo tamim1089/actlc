@@ -37,7 +37,7 @@ WRONG_FONT = r"""(sel) => [...document.querySelectorAll(sel)].filter(e => e.getC
   .filter(e => !/^\s*"?Inter/i.test(getComputedStyle(e).fontFamily)).map(e => e.textContent.trim().slice(0, 24) + ' [' + getComputedStyle(e).fontFamily.slice(0, 30) + ']')"""
 
 # elements under `sel` whose top or bottom sits under the fixed bars, measured after scrolling each into view
-UNDER_BARS = r"""(sel) => [...document.querySelectorAll(sel)].filter(e => e.getClientRects().length).filter(e => {
+UNDER_BARS = r"""(sel) => { document.documentElement.style.scrollBehavior = 'auto'; return [...document.querySelectorAll(sel)].filter(e => e.getClientRects().length).filter(e => {
   e.scrollIntoView({block: 'start'}); const r = e.getBoundingClientRect();
   const top = document.querySelector('.acx-m-top').getBoundingClientRect().bottom;
-  return r.top < top - 1; }).map(e => e.textContent.trim().slice(0, 24))"""
+  return r.top < top - 1; }).map(e => e.textContent.trim().slice(0, 24)) }"""
