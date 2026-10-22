@@ -25,6 +25,31 @@ def conference(ctx):
     bar = pg.evaluate("(r => [Math.round(r.top), Math.round(r.height), Math.round(r.width)])(document.querySelector('.acx-local').getBoundingClientRect())")
     top = pg.evaluate("Math.round(document.querySelector('.acx-m-top').getBoundingClientRect().bottom)")
     check(bar[0] == top and 44 <= bar[1] <= 56 and bar[2] == 390, f"section bar: pinned under the top bar, full width, compact [top, height, width] = {bar} (top bar ends {top})")
+    solid = pg.evaluate("(cs => [cs.backgroundColor, cs.backdropFilter])(getComputedStyle(document.querySelector('.acx-local')))")
+    check(solid == ["rgb(255, 255, 255)", "none"], f"section bar: solid white, nothing shows through over the dark bands {solid}")
+    # when the site top bar slides away (mobile.js sets --m-top-live: 0px), the section bar moves up into the space
+    pg.evaluate("scrollTo({top: 2000, behavior: 'instant'})"); pg.wait_for_timeout(300)
+    pg.evaluate("document.documentElement.style.setProperty('--m-top-live', '0px')"); pg.wait_for_timeout(350)
+    up = pg.evaluate(BARS + " - Math.round(document.querySelector('.acx-local').getBoundingClientRect().height)")
+    pg.evaluate("document.documentElement.style.removeProperty('--m-top-live')"); pg.wait_for_timeout(350)
+    back = pg.evaluate("Math.round(document.querySelector('.acx-local').getBoundingClientRect().top)")
+    pg.evaluate("scrollTo({top: 0, behavior: 'instant'})"); pg.wait_for_timeout(400)
+    check(up == 0 and back == top, f"section bar: follows --m-top-live (top {up}px with the top bar hidden, {back}px when it returns)")
+
+    # One rhythm: 32px between sections (to a dark band's edge, then 32px inside it), 8px from a title to its content
+    rhythm = pg.evaluate("""(() => { const R = e => e.getBoundingClientRect(), vis = e => e.getClientRects().length && R(e).height > 0 && getComputedStyle(e).visibility !== 'hidden';
+        const secs = [...document.querySelectorAll('.acx-conf > header, .acx-conf > section')], out = [];
+        const box = s => s.matches('.acx-c-band, .acx-c-hero') ? R(s).bottom : Math.max(...[...s.querySelectorAll('*')].filter(e => vis(e) && !e.closest('details:not([open]) > :not(summary)')).map(e => R(e).bottom));
+        for (let i = 1; i < secs.length; i++) { const s = secs[i], t = s.querySelector('h2'), band = s.matches('.acx-c-band');
+            const gap = Math.round((band ? R(s).top : R(t).top) - box(secs[i - 1]));
+            const inner = band ? Math.round(R(t).top - R(s).top) : 32;
+            const head = t.closest('.acx-c-head'), last = head ? (head.querySelector('.acx-c-lead') || t) : t;
+            let nx = head ? head.nextElementSibling : t.nextElementSibling || t.parentElement.nextElementSibling; while (nx && !vis(nx)) nx = nx.nextElementSibling;
+            const sub = nx && nx.matches('h3');   // a sub-heading right after the lead starts a block: 24px
+            out.push([s.id, gap, inner, nx ? Math.round(R(nx).top - R(last).bottom) - (sub ? 16 : 0) : 8]); }
+        return out; })()""")
+    off = [r for r in rhythm if r[1:] != [32, 32, 8]]
+    check(not off, f"rhythm: 32px between sections, 8px from title to content [id, gap, band inset, title->content] {off or rhythm[:3]}")
     check(not pg.is_visible(".acx-local-links") and pg.is_visible(".acx-local-sheet") and pg.is_visible(".acx-local .acx-btn"),
           "section bar: the clipped chip strip gives way to a Sections button and Register")
     cur = lambda: pg.evaluate("document.querySelector('.acx-local-cur b').textContent")
@@ -97,6 +122,12 @@ def conference(ctx):
     tsz = pg.evaluate("[...new Set([...document.querySelectorAll('.acx-c-t span:not(.acx-c-to)')].filter(e => e.getClientRects().length).map(e => Math.round(parseFloat(getComputedStyle(e).fontSize))))]")
     stz = pg.evaluate("parseFloat(getComputedStyle(document.querySelector('.acx-c-blk:not(.is-break) .acx-c-st')).fontSize)")
     check(all(13 <= x <= 15 for x in tsz) and stz == 17, f"programme: times 13-15px, titles 17px {tsz} {stz}")
+    brk = pg.evaluate("""(() => { const s = document.querySelector('.acx-c-blk:not(.is-break) .acx-c-t span'), b = document.querySelector('.acx-c-blk.is-break .acx-c-t span');
+        const m = getComputedStyle(document.querySelector('.acx-conf')).getPropertyValue('--muted').trim();
+        return [getComputedStyle(s).fontSize === getComputedStyle(b).fontSize, getComputedStyle(b).color]; })()""")
+    check(brk == [True, "rgb(82, 98, 106)"], f"programme: break times the same size as session times, in the muted colour {brk}")
+    dayh = pg.evaluate("[...document.querySelectorAll('.acx-c-dayh')].filter(e => e.getClientRects().length).length + ' ' + [...document.querySelectorAll('.acx-c-dayv')].filter(e => e.getClientRects().length).length")
+    check(dayh == "0 1", f"programme: no day heading repeating the selected segment, the venue line stays [headings, venue lines] = {dayh}")
 
     # K5 speakers and committee
     row = "document.querySelector('#speakers .acx-c-people:not(.acx-c-team)')"
@@ -104,13 +135,20 @@ def conference(ctx):
     check(sp[0] and sp[1].startswith("x") and 240 <= sp[2] <= 280 and sp[3] == len(DATA["speakers"]["people"]), f"speakers: swipe row of ~260px cards, snapping, every speaker [scrolls, snap, width, count] = {sp}")
     pg.evaluate("document.getElementById('speakers').scrollIntoView()"); pg.wait_for_timeout(200)
     btn = pg.evaluate("[...document.querySelectorAll('.acx-c-swb')].map(b => getComputedStyle(b).visibility + ' ' + Math.round(b.getBoundingClientRect().width) + 'x' + Math.round(b.getBoundingClientRect().height))")
-    check(btn == ["hidden 44x44", "visible 44x44"], f"speakers: only Next shows at the start, 44px {btn}")
+    btn = pg.evaluate("""[...document.querySelectorAll('.acx-c-swb')].map(b => { const r = b.getBoundingClientRect(), h = document.getElementById('acx-h-spk').getBoundingClientRect();
+        return [getComputedStyle(b).visibility, b.disabled, Math.round(r.width) + 'x' + Math.round(r.height), Math.abs((r.top + r.bottom) / 2 - (h.top + h.bottom) / 2) < 2, Math.round(r.right)]; })""")
+    check([b[:4] for b in btn] == [["visible", True, "44x44", True], ["visible", False, "44x44", True]] and btn[1][4] == 374,
+          f"speakers: previous / next as a pair on the title row, right, 44px; Previous greyed at the start {btn}")
+    gaps = pg.evaluate(f"""(r => {{ const cards = Math.max(...[...r.children].map(c => c.getBoundingClientRect().bottom)), t = document.getElementById('acx-h-team').getBoundingClientRect().top;
+        return [Math.round(r.getBoundingClientRect().bottom - cards), Math.round(t - cards), new Set([...r.children].map(c => Math.round(c.getBoundingClientRect().height))).size]; }})({row})""")
+    check(gaps[0] <= 2 and gaps[1] == 32 and gaps[2] == 1, f"speakers: the row is as tall as its cards, cards share one height, 32px to the committee [row-cards, to title, heights] = {gaps}")
     x0 = pg.evaluate(f"{row}.scrollLeft"); pg.tap(".acx-c-swb[data-dir='1']"); pg.wait_for_timeout(700)
     x1 = pg.evaluate(f"{row}.scrollLeft")
     check(x1 - x0 >= 200, f"speakers: Next scrolls the row by a card ({x0} -> {x1})")
     check(pg.evaluate("getComputedStyle(document.querySelector('.acx-c-swb[data-dir=\"-1\"]')).visibility") == "visible", "speakers: Previous appears once there is somewhere to go back to")
     pg.evaluate(f"{row}.scrollLeft = 1e5"); pg.wait_for_timeout(300)
-    check(pg.evaluate("getComputedStyle(document.querySelector('.acx-c-swb[data-dir=\"1\"]')).visibility") == "hidden", "speakers: Next hides at the end")
+    end = pg.evaluate("[...document.querySelectorAll('.acx-c-swb')].map(b => getComputedStyle(b).visibility + ' ' + b.disabled)")
+    check(end == ["visible false", "visible true"], f"speakers: at the end Next is greyed and Previous works {end}")
     nm = pg.evaluate("(e => [Math.round(parseFloat(getComputedStyle(e).fontSize)), getComputedStyle(e).fontWeight, Math.round(parseFloat(getComputedStyle(e.nextElementSibling).fontSize))])(document.querySelector('#speakers .acx-c-pn'))")
     check(nm == [17, "600", 15], f"speakers: name 17/600, role and org 15px {nm}")
     team = pg.evaluate("""[...document.querySelectorAll('.acx-c-team > li')].map(li => { const i = li.querySelector('img').getBoundingClientRect();
@@ -123,6 +161,11 @@ def conference(ctx):
     check(kd == ["none", "rgba(0, 0, 0, 0)", "0px", 0], f"key dates: no outer glass frame around the cards [image, colour, padding, blurred] = {kd}")
     steps = pg.evaluate("[document.querySelectorAll('.acx-c-dates [data-date]').length, (d => d.getBoundingClientRect().top > document.querySelector('.acx-c-kd-next').getBoundingClientRect().bottom)(document.querySelector('.acx-c-dates'))]")
     check(steps == [4, True], f"key dates: the next-deadline card, then 4 steps [steps, below] = {steps}")
+    rel = pg.evaluate("[...document.querySelectorAll('.acx-c-dates [data-date]')].map(li => (li.classList.contains('is-next') ? 'next' : li.classList.contains('is-goal') ? 'goal' : 'step') + ':' + (li.querySelector('.acx-c-rel').getClientRects().length > 0))")
+    check(rel and all(r.endswith(":false") for r in rel if not r.startswith("step")) and any(r.startswith("next") for r in rel) and any(r == "step:true" for r in rel),
+          f"key dates: no 'in N days' on the next step (the card says it) or on the opening (the hero countdown says it) {rel}")
+    hint = pg.evaluate("getComputedStyle(document.querySelector('.acx-c-hint')).textAlign")
+    check(hint in ("left", "start"), f"proposal: the subject hint is left-aligned ({hint})")
     specs = pg.evaluate("""[...document.querySelectorAll('.acx-c-specg dl > div')].map(d => { const t = d.querySelector('dt').getBoundingClientRect(), v = d.querySelector('dd').getBoundingClientRect(), r = d.getBoundingClientRect();
         return [Math.round(t.left - r.left), Math.round(r.right - v.right), Math.abs(t.top - v.top) < 4]; })""")
     nspec = sum(len(g["items"]) for g in DATA["cfp"]["specs"])
@@ -137,12 +180,29 @@ def conference(ctx):
         const hi = document.querySelector('.acx-c-plan.is-hi'), b = hi.querySelector('.acx-c-plan-badge').getBoundingClientRect(), c = hi.getBoundingClientRect();
         return [p[0] === hi, b.top >= c.top && b.right <= c.right, document.querySelectorAll('.acx-c-plan .acx-btn-light').length]; })()""")
     check(fees == [True, True, 1], f"fees: the presenter rate first, its badge inside the card, one filled button {fees}")
+    reg = pg.evaluate("document.querySelector('.acx-local .acx-btn').href")
+    plans = pg.evaluate("""[...document.querySelectorAll('.acx-c-plan .acx-btn')].map(a => { const cs = getComputedStyle(a), r = a.getBoundingClientRect();
+        return [a.closest('.is-hi') ? 'hi' : 'other', cs.backgroundColor, Math.round(r.height), a.href, a.textContent.trim()]; })""")
+    ok = all((p[1] == "rgb(14, 122, 131)" if p[0] == "hi" else p[1] == "rgba(0, 0, 0, 0)") and p[2] >= 44 and p[3] == reg and p[4] == "Register" for p in plans)
+    check(len(plans) == 3 and ok, f"fees: only the presenter card has a filled button; the others end in a quiet 44px 'Register' link to the same page {[p[:3] for p in plans]}")
+    filled = pg.evaluate("""[...document.querySelectorAll('.acx-conf .acx-btn')].filter(a => a.getClientRects().length && getComputedStyle(a).backgroundColor !== 'rgba(0, 0, 0, 0)')
+        .map(a => getComputedStyle(a).backgroundColor + ' ' + getComputedStyle(a).color)""")
+    check(filled and set(filled) == {"rgb(14, 122, 131) rgb(255, 255, 255)"}, f"buttons: every filled button is teal with white text {sorted(set(filled))}")
+    regs = pg.evaluate("[...document.querySelectorAll('.acx-conf .acx-btn')].filter(a => a.getClientRects().length && a.textContent.trim() === 'Register' && getComputedStyle(a).backgroundColor !== 'rgba(0, 0, 0, 0)').length")
+    check(regs == 3, f"buttons: three filled Register buttons on the page (section bar, hero, presenter card), not five ({regs})")
 
     # K8 logos
     logos = pg.evaluate("""(() => { const im = [...document.querySelectorAll('.acx-c-logos img')].filter(i => i.getClientRects().length);
         return [im.length, new Set(im.map(i => i.getAttribute('src'))).size, new Set(im.map(i => Math.round(i.closest('li').getBoundingClientRect().left))).size,
                 getComputedStyle(document.querySelector('.acx-c-mtrack')).animationName, document.documentElement.scrollWidth]; })()""")
-    check(logos[:2] == [len(DATA["logos"])] * 2 and logos[2] == 3 and logos[3] == "none", f"members: a still 3-column grid, every logo once [shown, unique, columns, animation, width] = {logos}")
+    check(logos[:2] == [len(DATA["logos"])] * 2 and logos[2] == 2 and logos[3] == "none", f"members: a still 2-column grid, every logo once [shown, unique, columns, animation, width] = {logos}")
+    pg.evaluate("document.getElementById('members').scrollIntoView()")
+    pg.wait_for_function("[...document.querySelectorAll('.acx-c-logos:not([aria-hidden]) img')].every(i => i.complete && i.naturalWidth)", timeout=15000)
+    tiles = pg.evaluate("""(() => { const li = [...document.querySelectorAll('.acx-c-logos:not([aria-hidden]) li')], r = e => e.getBoundingClientRect();
+        return [Math.round(r(li[0]).left), Math.round(r(li[li.length - 1]).left), li.length % 2, Math.min(...li.map(l => Math.round(r(l).width))),
+                Math.min(...li.map(l => Math.round(r(l.querySelector('img')).height))), getComputedStyle(li[0]).backgroundColor]; })()""")
+    check(tiles[0] == 16 and (tiles[2] == 0 or tiles[1] == 16) and tiles[3] >= 160 and tiles[4] >= 20 and tiles[5] == "rgb(255, 255, 255)",
+          f"members: white tiles at least 160px wide, logos at least 20px tall, an odd last tile sits left [first, last left, odd, tile w, min logo h, bg] = {tiles}")
 
     # K9 sponsorship and contact
     mk = pg.evaluate("getComputedStyle(document.querySelector('#sponsorship .acx-c-list')).listStyleType")
@@ -168,6 +228,9 @@ def conference(ctx):
     check(not clear, f"conference: anchored sections land below the section bar too {clear[:3]}")
     last = pg.evaluate("(() => { scrollTo(0, 1e7); const r = document.querySelector('.acx-conf').getBoundingClientRect(); return [Math.round(r.bottom), Math.round(document.querySelector('.acx-m-tabs').getBoundingClientRect().top)]; })()")
     check(last[0] <= last[1], f"conference: the last section clears the tab bar {last}")
+    foot = pg.evaluate("""[[...document.querySelectorAll('.acx-footer a[href^="mailto:"], .acx-footer a[href^="tel:"]')].filter(a => a.getClientRects().length).length,
+        (p => !!p && p.getClientRects().length > 0 && /Copyright/.test(p.textContent))(document.querySelector('.acx-footer .acx-foot-bottom p'))]""")
+    check(foot == [0, True], f"footer: no second copy of the contact email and phone on this page, the copyright stays {foot}")
     pg.context.close()
 
     # Narrow phones, reduced motion, no JavaScript

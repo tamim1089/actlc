@@ -151,13 +151,16 @@ def conference_html(c, email):
              '<div class="acx-c-days">%s</div></div></section>' % (head(pr, "acx-h-prog"), seg, "".join(days)))
 
     sp, cm = c["speakers"], c["committee"]
+    # Phones: previous / next sit on the title row, right (hidden above 760px and until the script finds the row scrolls)
+    swnav = ('<div class="acx-c-swnav" role="group" aria-label="Scroll the speakers" hidden>'
+             '<button type="button" class="acx-c-swb" data-dir="-1" aria-label="Previous speakers">%s</button>'
+             '<button type="button" class="acx-c-swb" data-dir="1" aria-label="Next speakers">%s</button></div>' % (I_PREV, I_NEXT))
+    sp_head = head(sp, "acx-h-spk").replace('<div class="acx-c-head">', '<div class="acx-c-head acx-c-swhead">', 1).replace("</h2>", "</h2>" + swnav, 1)
     o.append('<section class="acx-c-sec" id="speakers" aria-labelledby="acx-h-spk"><div class="acx-c-in">%s'
-             '<div class="acx-c-swnav" hidden><p class="acx-c-swc">%d speakers</p><button type="button" class="acx-c-swb" data-dir="-1" aria-label="Previous speakers">%s</button>'
-             '<button type="button" class="acx-c-swb" data-dir="1" aria-label="Next speakers">%s</button></div>'
              '<ul class="acx-c-people">%s</ul>'
              '<div class="acx-c-head acx-c-subhead"><h2 class="acx-c-h2" id="acx-h-team">%s</h2><p class="acx-c-lead">%s</p></div>'
              '<ul class="acx-c-people acx-c-team" aria-labelledby="acx-h-team">%s</ul></div></section>'
-             % (head(sp, "acx-h-spk"), len(sp["people"]), I_PREV, I_NEXT, "".join(person(p) for p in sp["people"]), esc(cm["title"]), esc(cm["lead"]),
+             % (sp_head, "".join(person(p) for p in sp["people"]), esc(cm["title"]), esc(cm["lead"]),
                 "".join(member(m) for m in cm["people"])))
 
     cf = c["cfp"]; dl = {d["title"]: d for d in c["downloads"]}
