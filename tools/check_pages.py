@@ -176,7 +176,13 @@ with sync_playwright() as p:
                 pg.screenshot(path=f"{A.shots}/header-{name}.png", clip={"x": 0, "y": 0, "width": 1920, "height": 380})
             pg.context.close()
         pg = page(b, CHROME["list"], 390, 844)
-        check(pg.is_visible(".bb-left-panel-mobile"), "mobile: menu button still present"); pg.context.close()
+        check(pg.is_visible(".acx-m-tabs") and pg.is_visible(".acx-m-more-open") and not pg.is_visible("#masthead"),
+              "phone: the tab bar (with More) replaces the theme header and its menu button"); pg.context.close()
+        pg = page(b, CHROME["list"], 790, 900, has_touch=True, is_mobile=True)   # theme panel width range, between phone layer and desktop
+        pg.tap(".bb-left-panel-mobile"); pg.wait_for_timeout(500)
+        vis = pg.evaluate("(r => Math.round(r.height))(document.querySelector('.bb-mobile-panel-wrapper').getBoundingClientRect())")
+        shown = pg.evaluate("[...document.querySelectorAll('.side-panel-menu > li > a')].filter(a => a.offsetParent && a.getBoundingClientRect().bottom <= innerHeight).map(a => a.textContent.trim())")
+        check(vis >= 800 and "Conference" in shown, f"790px: the theme menu panel is full height and shows its links ({vis}px, {shown})"); pg.context.close()
 
     if run("footer"):
         print("\n== Footer on every page ==")
@@ -190,11 +196,14 @@ with sync_playwright() as p:
                 check("mailto:info@ac-tlc.org" in hrefs and "tel:+97143487445" in hrefs, f"{name} @{w}: tappable email and phone")
                 check(not [h for h in hrefs if h in ("#", "") or "email-protection" in h], f"{name} @{w}: no dead links in footer")
                 check(pg.evaluate("document.querySelector('.acx-foot-brand img').alt.length > 0"), f"{name} @{w}: logo has alt text")
-                pg.locator(".acx-foot-brand img").scroll_into_view_if_needed(); pg.wait_for_timeout(500)
-                check(pg.evaluate("(i => i.complete && i.naturalWidth > 0)(document.querySelector('.acx-foot-brand img'))"), f"{name} @{w}: footer logo actually loads")
+                if w == 390:   # phones: the top bar carries the logo, so the footer drops it
+                    check(not pg.is_visible(".acx-foot-brand img") and pg.is_visible(".acx-m-logo img"), f"{name} @390: logo in the top bar, not repeated in the footer")
+                else:
+                    pg.locator(".acx-foot-brand img").scroll_into_view_if_needed(); pg.wait_for_timeout(500)
+                    check(pg.evaluate("(i => i.complete && i.naturalWidth > 0)(document.querySelector('.acx-foot-brand img'))"), f"{name} @{w}: footer logo actually loads")
                 bad = pg.evaluate(CONTRAST, ".acx-footer *"); check(not bad, f"{name} @{w}: footer contrast {[(c['t'], c['r']) for c in bad] or ''}")
                 if w == 390:
-                    small = pg.evaluate("[...document.querySelectorAll('.acx-footer a')].filter(a=>a.getBoundingClientRect().height<44).length")
+                    small = pg.evaluate("[...document.querySelectorAll('.acx-footer a')].filter(a=>a.offsetParent && a.getBoundingClientRect().height<44).length")
                     check(small == 0, f"{name} @390: footer links >= 44px tall ({small} smaller)")
                 if A.shots and name == "list": f.screenshot(path=f"{A.shots}/footer-{w}.png")
                 pg.context.close()

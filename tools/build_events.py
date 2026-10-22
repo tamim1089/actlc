@@ -11,10 +11,13 @@ import datetime as dt, hashlib, html, json, os, re, sys
 from urllib.parse import quote
 from zoneinfo import ZoneInfo
 from images import picture_images
+from mobile_chrome import replace_mobile_chrome
+from home_mobile import home_mobile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = json.load(open(os.path.join(ROOT, "tools", "events.json"), encoding="utf-8"))
 SITE, EMAIL = DATA["site"], DATA["register_email"]
+PHONE = "+971 43 487 445"
 UTC = dt.timezone.utc
 NOW = dt.datetime.now(UTC)
 
@@ -77,13 +80,15 @@ INTER_CSS = "wp-content/uploads/elementor/google-fonts/css/inter-local.css"
 def ensure_head(h, rel, events, body_class=None, styles=()):
     """(Re)write our <head> links. Versioned by content hash so browsers never keep a stale copy.
        styles: extra stylesheets for pages that need no script (the resources page)."""
-    h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter|events|resources)"[^>]*>\n?', "", h)
-    h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal|search)"[^>]*></script>\n?', "", h)
+    h = re.sub(r'<link\b[^>]*\bid="acx-(?:css|site|inter|events|resources|mobile|mobile-home|mobile-forms)"[^>]*>\n?', "", h)
+    h = re.sub(r'<script\b[^>]*\bid="acx-(?:js|reveal|search|mobile-js)"[^>]*></script>\n?', "", h)
     h = re.sub(r'<link\b[^>]*inter-local\.css[^>]*>\n?', "", h)          # old link at a wrong depth
     tags = [f'<link rel="stylesheet" id="acx-inter" href="{rel}{INTER_CSS}"/>',
             f'<link rel="stylesheet" id="acx-site" href="{rel}actlc-assets/site.css?v={asset_version("site.css")}"/>',
             f'<script id="acx-reveal" src="{rel}actlc-assets/reveal.js?v={asset_version("reveal.js")}" defer></script>',
-            f'<script id="acx-search" src="{rel}actlc-assets/search.js?v={asset_version("search.js")}" data-index="{rel}actlc-assets/search-index.json?v={asset_version("search-index.json")}" defer></script>']
+            f'<script id="acx-search" src="{rel}actlc-assets/search.js?v={asset_version("search.js")}" data-index="{rel}actlc-assets/search-index.json?v={asset_version("search-index.json")}" defer></script>',
+            f'<link rel="stylesheet" id="acx-mobile" href="{rel}actlc-assets/mobile.css?v={asset_version("mobile.css")}" media="(max-width: 760px)"/>',
+            f'<script id="acx-mobile-js" src="{rel}actlc-assets/mobile.js?v={asset_version("mobile.js")}" defer></script>']
     if events:
         tags += [f'<link rel="stylesheet" id="acx-css" href="{rel}actlc-assets/events.css?v={asset_version("events.css")}"/>',
                  f'<script id="acx-js" src="{rel}actlc-assets/events.js?v={asset_version("events.js")}" defer></script>']
@@ -122,7 +127,7 @@ def footer_html(rel):
 <nav class="acx-foot-nav" aria-label="Footer">
 {col("Explore", [("Home", "index.html"), ("Webinars", "events/index.html"), ("Conference", "conference/index.html"), ("Registration", "registration/index.html")])}
 <div class="acx-foot-col"><h2 class="acx-foot-h">Contact</h2><ul>
-<li><a href="tel:+97143487445">+971 43 487 445</a></li>
+<li><a href="tel:+97143487445">{PHONE}</a></li>
 <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
 </ul><address>Centre for Faculty Development and Learning Innovation<br/>Abu Dhabi University, P.O. Box 59911<br/>Khalifa City, Abu Dhabi, UAE</address></div>
 </nav>
@@ -215,12 +220,14 @@ def build_site():
         h = drop_dead_font_links(h)
         h = enhance_buttons(h)
         h, has_footer = replace_footer(h, rel)
+        h = replace_mobile_chrome(h, rel, page, EMAIL, PHONE)
+        if page == "index.html": h = home_mobile(h)
         h = version_images(h, page)
         h = picture_images(h, page)
         is_list, is_detail, is_res = page == "events/index.html", page.startswith("events-main/"), page == "resources/index.html"
         h = ensure_head(h, rel, is_list or is_detail or page == "index.html",
-                        "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else None,
-                        ("events.css", "resources.css") if is_res else ())
+                        "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else "acx-page-reg" if page.startswith("registration/") else None,
+                        ("events.css", "resources.css") if is_res else ("mobile-home.css",) if page == "index.html" else ("mobile-forms.css",) if page.startswith("registration/") else ())
         open(p, "w", encoding="utf-8").write(h)
         done.append(f"{page}{'' if has_footer else ' (no theme footer)'}")
     return done
