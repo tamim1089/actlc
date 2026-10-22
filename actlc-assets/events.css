@@ -80,14 +80,8 @@
 .acx .is-past .acx-ended { display: inline-flex; }
 .acx .is-past .acx-title { color: #5a6675; }
 
-@media (max-width: 720px) {
-  .acx .acx-tabs { display: flex; }
-  .acx .acx-tab { flex: 1; justify-content: center; }
-  .acx .acx-ev { grid-template-columns: minmax(0, 1fr); row-gap: calc(var(--t) * 0.7); padding: calc(var(--t) * 1.25) 0; }
-  .acx .acx-d { font-size: calc(var(--t) * 2.4); }
-  .acx .acx-w { font-size: calc(var(--t) * 1.4); }
-  .acx .acx-act { justify-self: start; }
-}
+/* Phone-only pieces of the markup (shown by the phone layer at the end of this file) */
+.acx .acx-ms, .acx .acx-wd, .acx .acx-more-m, .acx .acx-elsewhere-m, .acx .acx-past-disc { display: none; }
 
 /* Homepage: next sessions (no-JS fallback shows the first three) */
 .acx-home-root .acx-list > .acx-ev:nth-child(n+4) { display: none; }
@@ -142,27 +136,6 @@
 .acx-detail.is-past .acx-ended-note { display: block; }
 .acx-detail.is-live .acx-status { color: var(--teal); }
 
-@media (max-width: 760px) {
-  .acx-detail { padding-bottom: calc(var(--tap) + 48px + env(safe-area-inset-bottom)); }
-  .acx-detail.is-past { padding-bottom: calc(var(--t) * 3); }
-  .acx .acx-h1 { font-size: calc(var(--t) * 1.6); }
-  .acx .acx-when-main { flex-direction: column; align-items: stretch; padding: calc(var(--t) * 1.1); }
-  .acx .acx-when-world { padding: calc(var(--t) * 0.8) calc(var(--t) * 1.1); }
-  .acx .acx-bigtime { font-size: calc(var(--t) * 2.2); }
-  .acx .acx-actions { justify-items: start; }
-  .acx .acx-actions-row { display: none; }
-  .acx .acx-note { text-align: left; }
-  .acx .acx-bar {
-    display: flex; gap: 10px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    background: rgba(246,248,250,.92); -webkit-backdrop-filter: saturate(180%) blur(16px); backdrop-filter: saturate(180%) blur(16px);
-    border-top: 1px solid var(--hairline);
-  }
-  .acx .acx-bar .acx-btn { min-height: 50px; font-size: 17px; }
-  .acx .acx-bar .acx-btn-filled { flex: 1; }
-  .acx .acx-bar .acx-btn:not(.acx-btn-filled) { width: 50px; padding: 0; }
-}
-
 /* Motion: brief, purposeful, opacity + transform only, off for "reduce motion" */
 .acx .acx-tab { transition: background-color .2s ease, box-shadow .2s ease; }
 .acx .acx-title a { transition: color .15s ease; }
@@ -200,6 +173,191 @@
 .acx details.acx-when-world[open] summary::after { transform: rotate(-135deg); }
 .acx details.acx-when-world summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 6px; }
 .acx details.acx-when-world .acx-world { padding-bottom: calc(var(--t) * 1); }
-@media (max-width: 760px) { .acx details.acx-when-world { padding: 0 calc(var(--t) * 1.1); } }
 .acx .acx-list-note { margin: 0 0 calc(var(--t) * 1); font-size: var(--fs-body); color: var(--muted); }
 .acx .acx-elsewhere { margin: .35em 0 0; font-size: var(--fs-callout); color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Phones (<= 760px) ---------------------------------------------------------
+   iOS list rows: a date tile, then title, speaker and time; one row design on the homepage and the
+   events list. Upcoming months are white inset groups on the grey ground; past webinars fold behind one
+   disclosure row (events.js adds it; without JS the list stays open). Session pages: a large title, a
+   status pill, one white card for the time, other countries as a grouped list, Register in a bar. */
+@media (max-width: 760px) {
+  /* Page frame: grey ground and a 16px gutter (the theme leaves 20px) */
+  body.acx-page-list, body.acx-page-detail { background: #f6f8fa; }            /* = --ground */
+  .acx-page-list .content-area, .acx-page-detail .content-area { padding-top: 10px !important; }
+  .acx-page-list .e-con-inner:has(.acx-list-root) { gap: 0 !important; }        /* an empty widget above the list added 20px */
+  .acx-page-list .site-main, .acx-page-detail .site-main { margin-left: -4px; margin-right: -4px; }
+
+  /* Large title */
+  .acx-page-list .entry-header { margin: 0 !important; padding: 0; }
+  .acx-page-list .entry-header .entry-title {
+    margin: 0 !important; padding: 0; font-size: 30px !important; line-height: 1.15; letter-spacing: -0.02em !important;
+  }
+  .acx .acx-list-note { margin: 4px 0 0; font-size: var(--fs-callout); color: var(--muted); }
+
+  /* Group headers: sentence case, muted, aligned with the row text inside the group */
+  .acx .acx-month { margin-top: 28px; }
+  .acx .acx-month > .acx-h2, .acx .acx-past-h {
+    margin: 0 16px 8px; font: 600 15px/1.3 var(--font); letter-spacing: 0; color: var(--muted);
+  }
+  .acx .acx-panel-past { margin-top: 32px; }
+  .acx .acx-past-h .acx-count { margin-left: .25em; font-size: 1em; }
+  .acx-list-root .acx-list { overflow: hidden; border-radius: 12px; background: var(--surface); }
+
+  /* Row */
+  .acx .acx-ev {
+    position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 12px; row-gap: 0;
+    align-items: start; padding: 12px 16px 14px; border-top: 0; -webkit-tap-highlight-color: transparent;
+  }
+  .acx .acx-list > .acx-ev ~ .acx-ev::before { content: ""; position: absolute; top: 0; left: 80px; right: 0; height: 1px; background: var(--hairline); }
+  .acx .acx-date {
+    grid-row: 1 / span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    width: 52px; min-height: 56px; padding: 7px 0; border-radius: 12px; background: var(--teal-tint);
+    text-transform: none; line-height: 1;
+  }
+  .acx .acx-d { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--teal-deep); font-variant-numeric: tabular-nums; }
+  .acx .acx-m, .acx .acx-w { display: none; }
+  .acx .acx-ms { display: block; font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--teal-deep); }
+  .acx .acx-body { grid-column: 2; min-width: 0; }
+  .acx .acx-title { font: 600 17px/1.3 var(--font); letter-spacing: -0.012em; text-wrap: pretty; color: var(--ink); overflow-wrap: anywhere; }
+  .acx .acx-title a { display: block; padding: 11px 0; margin: -11px 0; }   /* a 44px tap area without moving the text */
+  .acx .acx-meta { margin: 4px 0 0; gap: 2px; font-size: 15px; line-height: 1.35; color: var(--muted); }
+  .acx .acx-meta li { display: block; }
+  .acx .acx-meta li:first-child { color: var(--body); }
+  .acx .acx-meta svg { display: none; }
+  .acx .acx-meta b { font-weight: 500; color: var(--body); }
+  .acx .acx-wd { display: inline; }
+  .acx .acx-act { grid-column: 2; justify-self: start; margin-top: 10px; }
+  .acx .acx-act .acx-btn { min-height: 44px; padding: 0 18px; border-radius: 22px; font-size: 15px; }
+
+  /* A row with its own page: the whole row opens it (iOS navigation row with a chevron) */
+  .acx .acx-ev.has-page { padding-right: 40px; }
+  .acx .acx-ev.has-page .acx-title a::after { content: ""; position: absolute; inset: 0; }
+  .acx .acx-ev.has-page::after {
+    content: ""; position: absolute; top: 50%; right: 19px; width: 9px; height: 9px; margin-top: -5px;
+    border-top: 2px solid #aab8bc; border-right: 2px solid #aab8bc; transform: rotate(45deg); pointer-events: none;
+  }
+  .acx .acx-ev.has-page:not(.is-past) .acx-act { display: none; }
+  .acx .acx-ev.has-page:has(.acx-title a:active) { background: var(--track); }
+
+  /* Past rows: grey tile with the year, a small neutral "Ended" label */
+  .acx .is-past .acx-date { background: var(--track); }
+  .acx .is-past .acx-d, .acx .is-past .acx-ms { color: var(--muted); }
+  .acx .is-past .acx-w { display: block; font-size: 13px; font-weight: 500; letter-spacing: 0; color: var(--muted); }
+  .acx .is-past .acx-title { color: var(--ink); }
+  .acx .is-past .acx-act { margin-top: 8px; }
+  .acx .is-past .acx-ended {
+    min-height: 0; padding: 2px 8px; border: 0; border-radius: 6px; background: var(--track); color: var(--muted);
+    font: 600 13px/1.35 var(--font);
+  }
+  .acx .acx-ended svg { display: none; }
+  .acx .acx-empty { margin: 12px 16px 0; }
+
+  /* Past webinars behind one disclosure row (only once events.js has added it) */
+  .acx .acx-past-disc { display: block; margin: 0; font: inherit; }
+  .acx .is-folding > .acx-past-h { display: none; }
+  .acx .acx-past-toggle {
+    display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; margin: 0; padding: 10px 16px;
+    border: 0; border-radius: 12px; background: var(--surface); color: var(--ink); cursor: pointer; text-align: left;
+    font: 400 var(--fs-body)/1.3 var(--font); letter-spacing: 0; -webkit-tap-highlight-color: transparent;
+  }
+  .acx .acx-past-toggle:active { background: var(--track); }
+  .acx .acx-past-toggle > span:first-child { flex: 1; }
+  .acx .acx-past-n { font-size: var(--fs-body); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .acx .acx-past-chev {
+    flex: none; width: 9px; height: 9px; margin: 0 3px 0 2px; border-top: 2px solid #aab8bc; border-right: 2px solid #aab8bc;
+    transform: rotate(45deg); transition: transform .2s ease;
+  }
+  .acx .is-folding.is-open .acx-past-chev { transform: rotate(135deg); }
+  .acx .is-folding:not(.is-open) > .acx-list { display: none; }
+  .acx .is-folding.is-open .acx-past-toggle { border-radius: 12px 12px 0 0; }
+  .acx .is-folding.is-open > .acx-list { position: relative; border-radius: 0 0 12px 12px; }
+  .acx .is-folding.is-open > .acx-list::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); z-index: 1; }
+
+  /* Homepage: the next three as one inset group, then "See all webinars" */
+  .acx.acx-home-root {
+    margin: 0 16px; overflow: hidden; border-radius: 12px; background: var(--surface);
+    box-shadow: 0 0 0 1px var(--hairline);
+  }
+  .acx-home-root .acx-home-more { position: relative; margin: 0; font-size: var(--fs-body); }
+  .acx-home-root .acx-home-more::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
+  .acx-home-root .acx-home-more .acx-link {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 16px;
+    font-weight: 400; color: var(--teal); -webkit-tap-highlight-color: transparent;
+  }
+  .acx-home-root .acx-home-more .acx-link:active { background: var(--track); }
+  .acx-home-root .acx-home-more .acx-link::after {
+    content: ""; flex: none; width: 9px; height: 9px; margin-right: 3px; border-top: 2px solid #aab8bc; border-right: 2px solid #aab8bc; transform: rotate(45deg);
+  }
+  .acx .acx-more-d { display: none; }
+  .acx .acx-more-m { display: inline; }
+  .acx-home-root .acx-empty { margin: 0; padding: 14px 16px; }
+
+  /* Session page ------------------------------------------------------------ */
+  .acx-detail, .acx-detail.is-past { padding-bottom: 40px; }
+  /* The Register bar (67px) sits on the tab bar: the page's last line (the footer) must clear both */
+  body.acx-page-detail:has(.acx-detail .acx-bar):not(:has(.acx-detail.is-past)) { padding-bottom: calc(var(--m-tabs) + 67px) !important; }
+  .acx .acx-back { margin: 0 0 6px -7px; font-size: var(--fs-body); }
+  .acx .acx-h1 { max-width: none; font-size: 28px; line-height: 1.18; letter-spacing: -0.02em; text-wrap: pretty; overflow-wrap: anywhere; }
+  .acx .acx-byline { margin: 14px 0 0; }
+  .acx .acx-byline .acx-pname { display: block; font-size: var(--fs-body); font-weight: 600; color: var(--ink); }
+  .acx .acx-bsep { display: none; }
+  .acx .acx-borg { display: block; margin-top: 2px; font-size: 15px; color: var(--muted); }
+
+  .acx .acx-when { margin-top: 24px; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
+  .acx .acx-when-main { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .acx .acx-when-info { order: 0; padding: 16px; border-radius: 12px; background: var(--surface); }
+  .acx .acx-dateline { flex-direction: column; align-items: flex-start; gap: 10px; font-size: var(--fs-body); }
+  .acx .acx-status {
+    order: -1; display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px;
+    background: var(--teal-tint); color: var(--teal-deep); font: 600 15px/1.35 var(--font);
+  }
+  .acx .acx-status::before { content: none; }
+  .acx-detail.is-past .acx-status { background: var(--red-tint); color: var(--red); }
+  .acx-detail.is-live .acx-status { background: var(--teal); color: #fff; }
+  .acx .acx-bigtime { margin: 4px 0 4px; font-size: 40px; font-weight: 300; }
+  .acx .acx-when-sub { font-size: 15px; }
+  .acx .acx-yourtime { font-size: 15px; }
+  .acx .acx-elsewhere { display: none; }
+
+  .acx .acx-elsewhere-m { display: block; }
+  .acx .acx-elsewhere-m .acx-m-gh { margin-top: 24px; font-size: 15px; font-weight: 600; }
+  .acx .acx-elsewhere-m .acx-m-row { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+  .acx .acx-elsewhere-m .acx-m-val { font-size: var(--fs-body); color: var(--body); }
+  .acx-detail.is-past .acx-elsewhere-m { display: none; }    /* times elsewhere stop mattering once it has ended */
+
+  .acx .acx-actions { display: none; }
+  .acx-detail.is-past .acx-ended-note { order: 1; display: block; margin-top: 24px; padding: 0; border: 0; border-radius: 0; background: none; }
+  .acx .acx-ended-note strong { margin: 0 16px 8px; font-size: 15px; font-weight: 600; color: var(--muted); }
+  .acx .acx-ended-note span { display: none; }
+  .acx .acx-ended-note .acx-link {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 0 16px;
+    border-radius: 12px; background: var(--surface); font-size: var(--fs-body); font-weight: 400; -webkit-tap-highlight-color: transparent;
+  }
+  .acx .acx-ended-note .acx-link:active { background: var(--track); }
+  .acx .acx-ended-note .acx-link::after {
+    content: ""; flex: none; width: 9px; height: 9px; margin-right: 3px; border-top: 2px solid #aab8bc; border-right: 2px solid #aab8bc; transform: rotate(45deg);
+  }
+  .acx .acx-ended-note .acx-arr { display: none; }
+
+  .acx .acx-about { margin-top: 32px; }
+  .acx .acx-about .acx-h2 { margin: 0 0 8px; font-size: 22px; letter-spacing: -0.015em; }
+  .acx .acx-lead { max-width: none; margin: 0 0 14px; font-size: var(--fs-body); line-height: 1.5; font-weight: 500; }
+  .acx .acx-p { margin: 0 0 14px; font-size: var(--fs-body); line-height: 1.55; }
+
+  /* Register bar: sits on top of the tab bar (mobile.css sets its bottom) */
+  .acx .acx-bar {
+    display: flex; gap: 10px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 8px 16px;
+    background: rgba(246,248,250,.92); -webkit-backdrop-filter: saturate(180%) blur(16px); backdrop-filter: saturate(180%) blur(16px);
+    border-top: 1px solid var(--hairline);
+  }
+  .acx .acx-bar .acx-btn { min-height: 50px; border-radius: 14px; font-size: var(--fs-body); }
+  .acx .acx-bar .acx-btn-filled { flex: 1; }
+  .acx .acx-bar .acx-btn:not(.acx-btn-filled) { width: 50px; padding: 0; }
+}
+@media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
+  .acx .is-folding.is-open > .acx-list { animation: acx-fade .2s ease-out; }
+}
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+  .acx .acx-past-chev { transition: none; }
+}
