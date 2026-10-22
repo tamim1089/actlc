@@ -1,2 +1,48 @@
-/*
+# Pages and their files are checked on every visit. No rule here may match /actlc-assets/img/*: Netlify applies every
+# matching rule, so a broad /* rule would add no-cache to the hashed image copies (names change when content does).
+/
   Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/bolg/*
+  Cache-Control: no-cache
+/cdn-cgi/*
+  Cache-Control: no-cache
+/conference/*
+  Cache-Control: no-cache
+/events/*
+  Cache-Control: no-cache
+/events-main/*
+  Cache-Control: no-cache
+/experts/*
+  Cache-Control: no-cache
+/founding-members/*
+  Cache-Control: no-cache
+/groups/*
+  Cache-Control: no-cache
+/news-feed/*
+  Cache-Control: no-cache
+/registration/*
+  Cache-Control: no-cache
+/resources/*
+  Cache-Control: no-cache
+/tools/*
+  Cache-Control: no-cache
+/wp-admin/*
+  Cache-Control: no-cache
+/wp-content/*
+  Cache-Control: no-cache
+/wp-includes/*
+  Cache-Control: no-cache
+/wp-json/*
+  Cache-Control: no-cache
+/actlc-assets/*.css
+  Cache-Control: no-cache
+/actlc-assets/*.js
+  Cache-Control: no-cache
+/actlc-assets/*.json
+  Cache-Control: no-cache
+/actlc-assets/logos/*
+  Cache-Control: no-cache
+/actlc-assets/img/*
+  Cache-Control: public, max-age=31536000, immutable
