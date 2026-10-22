@@ -39,7 +39,9 @@ def item(root, r):
     source = ""
     if r.get("source") or r.get("doi"):
         doi = f'<a href="https://doi.org/{esc(r["doi"])}">doi.org/{esc(r["doi"])}</a>' if r.get("doi") else ""
-        source = f'<p class="acx-res-src">{" · ".join(x for x in (esc(r.get("source") or ""), doi) if x)}</p>'
+        cite = f'<span class="acx-res-cite">{esc(r["source"])}</span>' if r.get("source") else ""
+        sep = '<span class="acx-res-sep"> · </span>'
+        source = f'<p class="acx-res-src">{sep.join(x for x in (cite, doi) if x)}</p>'
     return f"""<li class="acx-res" id="res-{slug(r['file'][:-4])}">
 <a class="acx-res-thumb" href="{pdf}" tabindex="-1" aria-hidden="true"><img src="{src}" width="{w}" height="{h}" alt="" loading="lazy" decoding="async"/></a>
 <div class="acx-res-body">
@@ -49,7 +51,7 @@ def item(root, r):
 {source}
 <p class="acx-res-sum">{esc(r['summary'])}</p>
 </div>
-<div class="acx-act"><a class="acx-btn" href="{pdf}">Open PDF</a><a class="acx-res-dl" href="{pdf}" download>Download · {r['pages']} pages, {size}</a></div>
+<div class="acx-act"><a class="acx-btn" href="{pdf}">Open PDF</a><a class="acx-res-dl" href="{pdf}" download>Download<span class="acx-res-meta"> · <span class="acx-res-pages">{r['pages']} pages, </span>{size}</span></a></div>
 </li>"""
 
 
