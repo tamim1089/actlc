@@ -307,16 +307,26 @@
     background: var(--ground) !important; }
   .acx .acx-c-in { padding: 0 16px; }
   .acx-conf [id] { scroll-margin-top: 60px; }   /* html already keeps the top bar clear; this clears the section bar too */
-  .acx .acx-c-sec { padding: 32px 0; }
+  /* One rhythm (same as the other pages): 32px between sections, 8px from a title to what it introduces, 24px between blocks inside a section.
+     Sections only pad their top, so two neighbours never add up; a dark band pads both sides and keeps 32px off the content above it. */
+  .acx .acx-c-sec { padding: 32px 0 0; }
+  .acx .acx-c-band { margin-top: 32px; padding: 32px 0; }
+  .acx.acx-conf > .acx-c-sec:last-child { padding-bottom: 32px; }
   .acx .acx-c-h2 { font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; }
-  .acx .acx-c-head { margin-bottom: 20px; }
+  .acx .acx-c-head { margin-bottom: 8px; }
   .acx .acx-c-lead { margin-top: 8px; font-size: var(--fs-body); line-height: 1.45; }
-  .acx .acx-c-h3 { margin-bottom: 10px; font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; }
-  .acx .acx-c-subhead { margin-top: 40px !important; }
+  .acx .acx-c-h3 { margin-bottom: 8px; font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; }
+  .acx .acx-c-subhead { margin-top: 30px !important; }   /* + the swipe row's 2px bottom padding = 32px */
+
+  /* Filled buttons: one colour on phones, teal with white text (5.3:1); pressed is the deeper teal */
+  .acx.acx-conf .acx-btn, .acx.acx-conf .acx-btn-light { background-color: var(--teal); color: #fff; box-shadow: none; }
+  .acx.acx-conf .acx-btn:active, .acx.acx-conf .acx-btn-light:active { background-color: var(--teal-deep); }
 
   /* K1 Section bar: where you are, a Sections sheet with every section, and Register */
-  .acx .acx-local { border-bottom: 0; clip-path: none; box-shadow: 0 1px 0 rgba(16, 42, 48, .08);
-    background: rgba(255, 255, 255, .84); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
+  /* Solid white (a translucent bar washed out over the dark Fees band). It follows the site top bar: when that bar slides away
+     on scroll down, mobile.js sets --m-top-live to 0px and this bar moves up into the freed space. */
+  .acx.acx-conf .acx-local { top: var(--m-top-live, var(--m-top)) !important; border-bottom: 0; clip-path: none; box-shadow: 0 1px 0 var(--hairline);
+    background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .acx .acx-local-in { gap: 6px; padding: 4px 12px 4px 16px; }
   .acx .acx-local-title, .acx .acx-local-links { display: none; }
   .acx .acx-local-cur { display: grid; flex: 1; min-width: 0; margin: 0; line-height: 1.25; }
@@ -350,7 +360,7 @@
 
   /* About: what to expect as a grouped list */
   .acx .acx-c-2col { gap: 24px; }
-  .acx .acx-c-prose p { margin-top: 12px; }
+  .acx .acx-c-prose p { margin-top: 8px; }
   .acx .acx-c-rows { overflow: hidden; border-radius: 12px; background: var(--surface); }
   .acx .acx-c-rows li, .acx .acx-c-rows li:first-child { position: relative; padding: 12px 16px; border: 0; }
   .acx .acx-c-rows li + li::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
@@ -375,7 +385,7 @@
   .acx .acx-c-topics li { padding: 10px 0; font-size: var(--fs-callout); line-height: 1.4; }
 
   /* K4 Programme: Day 1 / Day 2 segmented control, each day a time-and-title list */
-  .acx .acx-c-seg:not([hidden]) { isolation: isolate; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); height: 36px; margin: 4px 0 24px; padding: 0 2px;
+  .acx .acx-c-seg:not([hidden]) { isolation: isolate; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); height: 36px; margin: 0 0 16px; padding: 0 2px;
     border-radius: 9px; background: var(--track); }
   .acx .acx-c-seg [role="tab"] { position: relative; height: 44px; margin: -4px 0; padding: 0 8px; border: 0; background: none; cursor: pointer;
     font: 500 var(--fs-sub)/1.2 var(--font); color: var(--ink); -webkit-tap-highlight-color: transparent; }
@@ -387,7 +397,9 @@
   .acx .acx-c-days { gap: 32px; }
   .acx .acx-c-days.is-seg .acx-c-day:not(.is-on) { display: none; }
   .acx .acx-c-dayh { font-size: 20px; line-height: 1.3; }
-  .acx .acx-c-dayv { margin: 2px 0 12px !important; font-size: var(--fs-sub); }
+  .acx .acx-c-dayv { margin: 2px 0 8px !important; font-size: var(--fs-sub); }
+  .acx .acx-c-days.is-seg .acx-c-dayh { display: none; }   /* the selected segment already names the day */
+  .acx .acx-c-days.is-seg .acx-c-dayv { margin-top: 0 !important; }
   .acx .acx-c-cal { overflow: hidden; border-radius: 12px; background: var(--surface); }
   .acx .acx-c-blk { position: relative; display: grid; grid-template-columns: 48px minmax(0, 1fr); column-gap: 14px; align-items: start; min-height: 0;
     margin: 0; padding: 12px 16px; border-radius: 0; background: none; box-shadow: none; }
@@ -401,19 +413,22 @@
   .acx .acx-c-sd { grid-column: 2; margin-top: 4px; font-size: var(--fs-sub); line-height: 1.4; }
   .acx .acx-c-blk.is-par { background: var(--teal-tint); box-shadow: none; }
   .acx .acx-c-blk.is-break { padding-top: 8px; padding-bottom: 8px; box-shadow: none; }
-  .acx .acx-c-blk.is-break .acx-c-t span { font-size: var(--fs-foot); font-weight: 500; color: var(--muted); }
+  .acx .acx-c-blk.is-break .acx-c-t span { font-size: var(--fs-sub); font-weight: 500; color: var(--muted); }   /* same size as session times, lighter */
   .acx .acx-c-blk.is-break .acx-c-st { align-self: center; font-size: var(--fs-sub); font-weight: 500; color: var(--muted); }
 
   /* K5 Speakers: a swipe row of cards with previous / next; the committee as list rows */
-  .acx .acx-c-swnav:not([hidden]) { display: flex; align-items: center; gap: 8px; margin: -8px 0 8px; }
-  .acx .acx-c-swc { flex: 1; font-size: var(--fs-sub); color: var(--muted); }
-  .acx .acx-c-swb { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
-    background: var(--surface); color: var(--teal-deep); box-shadow: 0 0 0 1px var(--hairline); -webkit-tap-highlight-color: transparent; }
+  /* Title row: "Speakers" left, the previous / next pair right (the same pair as the home page's swipe rows); the lead below */
+  .acx .acx-c-swhead { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; }
+  .acx .acx-c-swhead > * { grid-column: 1 / -1; }
+  .acx .acx-c-swhead > .acx-c-h2 { grid-column: 1; grid-row: 1; }
+  .acx .acx-c-swnav:not([hidden]) { grid-column: 2; grid-row: 1; display: flex; gap: 8px; margin: -6px 0; }   /* 44px buttons on a 32px title line: the row keeps the title's height */
+  .acx .acx-c-swb { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 22px; cursor: pointer;
+    background: var(--surface); color: var(--teal); box-shadow: 0 0 0 1px var(--hairline); -webkit-tap-highlight-color: transparent; }
   .acx .acx-c-swb svg { width: 22px; height: 22px; }
-  .acx .acx-c-swb:active { background: var(--track); }
-  .acx .acx-c-swb:disabled { visibility: hidden; }
+  .acx .acx-c-swb:active:not(:disabled) { background: var(--track); }
+  .acx .acx-c-swb:disabled { color: #aab8bc; background: var(--ground); cursor: default; }   /* the end of the row: shown, greyed, does nothing */
   .acx .acx-c-swb:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
-  .acx .acx-c-people { display: flex; align-items: flex-start; gap: 12px; margin: 0 -16px; padding: 2px 16px 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px;
+  .acx .acx-c-people { display: flex; align-items: stretch; gap: 12px; margin: 0 -16px; padding: 2px 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px;
     overscroll-behavior-x: contain; scrollbar-width: none; }
   .acx .acx-c-people::-webkit-scrollbar { display: none; }
   .acx .acx-c-person, .acx .acx-c-person.is-lg { flex: 0 0 min(260px, 72vw); display: flex; flex-direction: column; overflow: hidden; scroll-snap-align: start;
@@ -436,13 +451,13 @@
   /* K6 Call for proposals: full-width actions, key dates without the outer glass frame, the proposal as numbered rows, specs as grouped rows */
   .acx .acx-c-cta { display: grid; gap: 8px; }
   .acx .acx-c-cta .acx-btn, .acx .acx-c-spcta .acx-btn, .acx .acx-c-contactcta .acx-btn { width: 100%; min-height: 50px; font-size: var(--fs-body); }
-  .acx .acx-c-hint { font-size: var(--fs-sub); text-align: center; }
+  .acx .acx-c-hint { font-size: var(--fs-sub); text-align: left; }
   .acx .acx-c-dlrow { display: block; }
   .acx .acx-c-dl { display: flex; box-sizing: border-box; width: 100%; min-height: 60px; margin-top: 16px; gap: 12px; padding: 10px 16px; border: 0; border-radius: 12px; }
   .acx .acx-c-dl svg { width: 20px; height: 20px; padding: 8px; box-sizing: content-box; border-radius: 10px; background: var(--teal-tint-2); color: var(--teal-deep); }
   .acx .acx-c-dl b { font-size: var(--fs-body); line-height: 1.3; }
   .acx .acx-c-dl small { margin-top: 2px; font-size: var(--fs-sub); }
-  .acx .acx-c-datesh { margin-top: 32px !important; }
+  .acx .acx-c-datesh { margin-top: 24px !important; }
   .acx .acx-c-kd { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 0; padding: 0; border-radius: 0; background: none; }
   .acx .acx-c-kd .acx-glass { border: 0; border-radius: 12px; background: var(--surface); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
   .acx .acx-c-kd .acx-c-kd-next { gap: 2px; padding: 16px; background: var(--teal-tint); }
@@ -452,7 +467,9 @@
   .acx .acx-c-dates time { font-size: var(--fs-body); }
   .acx .acx-c-dates b { font-size: var(--fs-sub); }
   .acx .acx-c-rel { font-size: var(--fs-sub); }
-  .acx .acx-c-req { gap: 28px; margin-top: 32px; }
+  /* No repeats: the Next-deadline card above already counts down to the next step, and the hero countdown is the source for the opening */
+  .acx .acx-c-dates li.is-next .acx-c-rel, .acx .acx-c-dates li.is-goal .acx-c-rel { display: none; }
+  .acx .acx-c-req { gap: 24px; margin-top: 24px; }
   .acx .acx-c-reqm { display: block; margin: 2px 0 0; font-size: var(--fs-sub); }
   .acx .acx-c-parts { overflow: hidden; margin-top: 0 !important; border-radius: 12px; background: var(--surface); }
   .acx .acx-c-parts li { position: relative; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; padding: 12px 16px; border: 0; }
@@ -480,21 +497,32 @@
   .acx .acx-c-plan-price b { font-size: 34px; }
   .acx .acx-c-plan-inc { gap: 6px; margin: 14px 0 !important; padding-bottom: 14px !important; }
   .acx .acx-c-plan-inc li { font-size: var(--fs-sub); }
+  /* Only the presenter card keeps a filled button; the other two end in a quiet "Register →" link to the same registration page */
+  .acx.acx-conf .acx-c-plan:not(.is-hi) .acx-btn { align-self: flex-start; justify-content: flex-start; min-height: 44px; margin: -6px 0 -10px; padding: 0 !important;
+    border-radius: 0 !important; background: none; box-shadow: none; color: var(--on-dark-link); font-size: var(--fs-body); font-weight: 600; transform: none; }
+  .acx.acx-conf .acx-c-plan:not(.is-hi) .acx-btn::before, .acx.acx-conf .acx-c-plan:not(.is-hi) .acx-btn::after { display: none; }
+  .acx.acx-conf .acx-c-plan:not(.is-hi) .acx-btn-t { transform: none; opacity: 1; }
+  .acx.acx-conf .acx-c-plan:not(.is-hi) .acx-btn-t::after { content: "\2192"; }
+  .acx.acx-conf .acx-c-plan:not(.is-hi) .acx-btn:active { background: none; color: #fff; }
+  .acx.acx-conf .acx-c-plan .acx-btn { font-size: var(--fs-body); }
+  .acx.acx-conf .acx-c-plan.is-hi .acx-btn { min-height: 50px; }
 
   /* K8 Founding members: a still grid of white logo tiles (the marquee's second copy is not shown) */
-  .acx .acx-c-marquee { margin-top: 20px; padding: 0 16px; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  /* Two columns so wide wordmarks stay readable; the grid fills left to right, so an odd last tile sits left, not centred */
+  .acx .acx-c-marquee { margin-top: 8px; padding: 0 16px; overflow: visible; -webkit-mask-image: none; mask-image: none; }
   .acx .acx-c-mtrack { display: block; width: auto; animation: none !important; transform: none; }
   .acx .acx-c-logos[aria-hidden] { display: none; }
-  .acx .acx-c-logos { flex-wrap: wrap; justify-content: center; gap: 8px; padding: 0; }
-  .acx .acx-c-logos li { flex: 0 0 calc((100% - 16px) / 3); display: grid; place-items: center; box-sizing: border-box; aspect-ratio: 3 / 2; padding: 10px;
-    border-radius: 12px; background: #fff; }
-  .acx .acx-c-logos img { width: auto; height: auto; max-width: 100%; max-height: calc(46px * var(--k, 1)); }
+  .acx .acx-c-logos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0; }
+  .acx .acx-c-logos li { display: grid; place-items: center; min-width: 0; box-sizing: border-box; aspect-ratio: 16 / 9; padding: 12px 10px;
+    border-radius: 12px; background: var(--surface); }
+  .acx .acx-c-logos img { width: auto; height: auto; max-width: 100%; max-height: calc(64px * var(--k, 1)); }
 
   /* K9 Sponsorship list with markers; contact as a grouped list */
   .acx .acx-c-list, .acx .acx-c-list[style] { columns: 1 !important; padding-left: 1.3em; list-style: disc; }
   .acx .acx-c-list li { padding: 4px 0; font-size: var(--fs-body); line-height: 1.4; color: var(--body); }
   .acx .acx-c-list li::marker { color: var(--teal); }
   .acx .acx-c-spcta { margin-top: 24px; }
+  .acx .acx-c-head + .acx-c-h3 { margin-top: 24px; }   /* a sub-heading straight after the lead starts a new block */
   .acx .acx-c-contact { display: block; overflow: hidden; border-radius: 12px; background: var(--surface); }
   .acx .acx-c-contact > div { position: relative; padding: 10px 16px 0; }
   .acx .acx-c-contact > div + div::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--hairline); }
@@ -502,6 +530,10 @@
   .acx .acx-c-contact dd { margin: 0; padding-bottom: 10px; font-size: var(--fs-body); line-height: 1.35; }
   .acx .acx-c-contact dd a { display: flex; align-items: center; min-height: 44px; margin: -11px 0 -10px; -webkit-tap-highlight-color: transparent; }
   .acx .acx-c-contactcta { margin-top: 24px; }
+  /* The Contact section already lists the email and phone; the site footer's copy of them would sit on the same screen, so it goes (copyright stays) */
+  .page-template-page-conference .acx-footer .acx-foot-col:has(a[href^="mailto:"], a[href^="tel:"]) { display: none; }
+  .page-template-page-conference .acx-footer .acx-foot-bottom {   /* the footer's top half is now empty on phones (mobile.css already hides Explore) */
+    margin-top: 0; padding-top: 12px; border-top: 0; }
 }
 @media (max-width: 359px) {
   .acx .acx-local-sheet span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -509,4 +541,5 @@
 }
 @media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
   .acx .acx-c-tsum::after { transition: transform .2s ease; }
+  .acx.acx-conf .acx-local { transition: top .2s ease; }
 }
