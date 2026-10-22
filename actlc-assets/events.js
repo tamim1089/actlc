@@ -90,6 +90,7 @@
     var nUp = $$('.acx-ev', upPanel).length, nPast = $$('.acx-ev', pastPanel).length;
     var empty = $('.acx-empty', upPanel); if (empty) empty.hidden = nUp > 0;
     $$('[data-count="past"]', root).forEach(function (c) { c.textContent = nPast; });
+    foldPast(pastPanel, nPast);
 
     // Segmented control: Upcoming | Past (WAI-ARIA tabs, automatic activation)
     var tabs = $('.acx-tabs', root); if (!tabs) return;
@@ -122,6 +123,27 @@
     root.classList.add('acx-js');
     tabs.hidden = false;
     select(location.hash === '#past' ? 1 : 0, false);
+  }
+
+  // Phones: past webinars fold behind one disclosure row. The row is added here and shown by CSS only at
+  // <= 760px, so wider screens and visitors without JS keep the full list.
+  function foldPast(panel, n) {
+    var list = panel && $('.acx-list', panel);
+    if (!list || !n || $('.acx-past-disc', panel)) return;
+    if (!list.id) list.id = 'acx-past-list';
+    var h = document.createElement('h2'), b = document.createElement('button');
+    h.className = 'acx-past-disc';
+    b.type = 'button'; b.className = 'acx-past-toggle';
+    b.setAttribute('aria-controls', list.id);
+    b.innerHTML = '<span>Past webinars</span><span class="acx-past-n" data-count="past">' + n +
+                  '</span><span class="acx-past-chev" aria-hidden="true"></span>';
+    h.appendChild(b);
+    panel.insertBefore(h, panel.firstChild);
+    panel.classList.add('is-folding');
+    function set(open) { b.setAttribute('aria-expanded', open ? 'true' : 'false'); panel.classList.toggle('is-open', open); }
+    b.addEventListener('click', function () { set(b.getAttribute('aria-expanded') !== 'true'); });
+    window.addEventListener('hashchange', function () { if (location.hash === '#past') set(true); });
+    set(location.hash === '#past');
   }
 
   function initDetail(root) {
