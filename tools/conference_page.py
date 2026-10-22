@@ -133,14 +133,20 @@ def conference_html(c, email):
     import datetime as _dt
     day = lambda s: _dt.datetime.strptime(s, "%d %B %Y").date()
     ds = [day(x["date"]) for x in cf["dates"]]; opens = _dt.date(2027, 2, 2)
-    m0 = ds[0].year * 12 + ds[0].month - 1 - 2           # axis starts two months before the first deadline
-    t0, t1 = _dt.date(m0 // 12, m0 % 12 + 1, 1), opens
-    pos = lambda d: 100 * (d - t0).days / (t1 - t0).days
-    ticks = "".join('<li style="left:%.2f%%"><span>%s</span></li>' % (pos(d), "%d %s" % (d.day, d.strftime("%b"))) for d in ds + [opens])
-    months = "".join('<span style="left:%.2f%%">%s</span>' % (pos(m), m.strftime("%b")) for m in
-                     [_dt.date(t0.year + (t0.month - 1 + k) // 12, (t0.month - 1 + k) % 12 + 1, 1) for k in range(1, 12)] if m < t1)
-    dates = "".join('<li data-date="%s"><time datetime="%s">%s</time><b>%s</b><span class="acx-c-rel" hidden></span></li>'
-                    % (d.isoformat(), d.isoformat(), esc(x["date"]), esc(x["title"])) for d, x in zip(ds, cf["dates"]))
+    # one step per date; items that fall on the same day share a step, and the opening is the last step
+    steps = []
+    for d, x in zip(ds, cf["dates"]):
+        if steps and steps[-1][0] == d: steps[-1][1].append(x["title"])
+        else: steps.append((d, [x["title"]]))
+    steps.append((opens, ["Conference opens"]))
+    nxt = next((st for st in steps if st[0] >= _dt.date.today()), steps[-1])     # build-time guess; the script corrects it
+    dates = "".join('<li data-date="%s"%s><span class="acx-c-kd-dot" aria-hidden="true"></span><time datetime="%s">%s</time>%s<span class="acx-c-rel" hidden></span></li>'
+                    % (d.isoformat(), ' class="is-goal"' if d == opens else "", d.isoformat(), "%d %s %d" % (d.day, d.strftime("%b"), d.year),
+                       "".join("<b>%s</b>" % esc(t) for t in ts)) for d, ts in steps)
+    kd_next = ('<div class="acx-c-kd-next acx-glass"><p class="acx-c-kd-k">Next deadline</p>'
+               '<p class="acx-c-kd-n" hidden><span class="acx-c-kd-days"></span></p>'
+               '<p class="acx-c-kd-t"><b>%s</b> <time datetime="%s">%s</time></p></div>'
+               % (esc(" · ".join(nxt[1])), nxt[0].isoformat(), "%d %s %d" % (nxt[0].day, nxt[0].strftime("%B"), nxt[0].year)))
     parts = "".join('<li><b>%s</b><span>%s</span></li>' % (esc(x["name"]), esc(x["text"])) for x in cf["parts"])
     def spec(g):
         return ('<div class="acx-c-specg"><h4>%s</h4><dl>%s</dl><p>%s</p></div>'
@@ -149,14 +155,12 @@ def conference_html(c, email):
              '<div class="acx-c-cta"><a class="acx-btn" href="%s">Email your proposal</a>'
              '<p class="acx-c-hint">The subject is filled in for you; add your track number.</p></div><div class="acx-c-dlrow">%s</div>'
              '<h3 class="acx-c-h3 acx-c-datesh">Key dates</h3>'
-             '<div class="acx-c-tl" data-t0="%s" data-t1="%s" aria-hidden="true"><div class="acx-c-tl-m">%s</div><ol class="acx-c-tl-ticks">%s</ol>'
-             '<span class="acx-c-tl-now" hidden><span>Today</span></span></div>'
-             '<ol class="acx-c-dates">%s</ol>'
+             '<div class="acx-c-kd">%s<ol class="acx-c-dates acx-glass" style="--n:%d">%s</ol></div>'
              '<div class="acx-c-req"><div><h3 class="acx-c-h3">Your proposal, in this order <span class="acx-c-reqm">500–1,000 words</span></h3><ol class="acx-c-parts">%s</ol></div>'
              '<div class="acx-c-specs">%s</div></div>'
              '</div></section>'
              % (head(cf, "acx-h-cfp"), esc(mail), download(dl["Call for Best Practices"]["href"], "Download the full call for best practices", dl["Call for Best Practices"]["meta"]),
-                t0.isoformat(), t1.isoformat(), months, ticks, dates, parts, "".join(spec(g) for g in cf["specs"])))
+                kd_next, len(steps), dates, parts, "".join(spec(g) for g in cf["specs"])))
 
     o.append(fees_section(c))
     o.append(members_section(c))

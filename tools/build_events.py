@@ -10,6 +10,7 @@ cannot show a wrong time.        Usage: python3 tools/build_events.py
 import datetime as dt, hashlib, html, json, os, re, sys
 from urllib.parse import quote
 from zoneinfo import ZoneInfo
+from images import picture_images
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = json.load(open(os.path.join(ROOT, "tools", "events.json"), encoding="utf-8"))
@@ -215,6 +216,7 @@ def build_site():
         h = enhance_buttons(h)
         h, has_footer = replace_footer(h, rel)
         h = version_images(h, page)
+        h = picture_images(h, page)
         is_list, is_detail, is_res = page == "events/index.html", page.startswith("events-main/"), page == "resources/index.html"
         h = ensure_head(h, rel, is_list or is_detail or page == "index.html",
                         "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else None,

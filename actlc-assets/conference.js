@@ -46,22 +46,35 @@
     tick(); setInterval(tick, 30000);
   }
 
-  // 3b. Key dates: mark today on the time axis and say how far away each date is (calendar days, UAE time).
-  var tl = root.querySelector('.acx-c-tl');
-  if (tl) {
+  // 3b. Key dates: how far away each date is (calendar days, UAE time), the next one large, and the rail filled up to today.
+  var kd = root.querySelector('.acx-c-kd');
+  if (kd) {
     var uae = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Dubai', year: 'numeric', month: '2-digit', day: '2-digit' });
     var today = Date.parse(uae.format(Date.now())), DAY = 864e5;
-    var t0 = Date.parse(tl.getAttribute('data-t0')), t1 = Date.parse(tl.getAttribute('data-t1'));
-    var now = tl.querySelector('.acx-c-tl-now');
-    if (today >= t0 && today <= t1) { now.style.left = (100 * (today - t0) / (t1 - t0)) + '%'; now.hidden = false; }
-    var rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' }), next = false;
-    Array.prototype.forEach.call(root.querySelectorAll('.acx-c-dates [data-date]'), function (li) {
-      var d = Math.round((Date.parse(li.getAttribute('data-date')) - today) / DAY), rel = li.querySelector('.acx-c-rel');
-      rel.textContent = d < 0 ? 'Passed' : d === 0 ? 'Today' : rtf.format(d, 'day');
+    var rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+    var steps = Array.prototype.slice.call(kd.querySelectorAll('.acx-c-dates [data-date]'));
+    var at = steps.map(function (li) { return Date.parse(li.getAttribute('data-date')); });
+    var next = -1;
+    steps.forEach(function (li, i) {
+      var d = Math.round((at[i] - today) / DAY), rel = li.querySelector('.acx-c-rel');
+      rel.textContent = d < 0 ? 'Done' : d === 0 ? 'Today' : rtf.format(d, 'day');
       rel.hidden = false;
       li.classList.toggle('is-done', d < 0);
-      if (d >= 0 && !next) { li.classList.add('is-next'); next = true; }
+      if (d >= 0 && next < 0) { next = i; li.classList.add('is-next'); li.setAttribute('aria-current', 'step'); }
     });
+    // rail: dots sit evenly, so fill by step index plus the share of the gap already behind us
+    var p = next < 0 ? 1 : next === 0 ? 0 : (next - 1 + (today - at[next - 1]) / (at[next] - at[next - 1])) / (steps.length - 1);
+    kd.querySelector('.acx-c-dates').style.setProperty('--p', Math.max(0, Math.min(1, p)).toFixed(4));
+    var card = kd.querySelector('.acx-c-kd-next');
+    if (next >= 0) {
+      var li = steps[next], d = Math.round((at[next] - today) / DAY);
+      card.querySelector('.acx-c-kd-k').textContent = li.classList.contains('is-goal') ? 'Next' : 'Next deadline';
+      card.querySelector('.acx-c-kd-days').textContent = d === 0 ? 'Today' : d === 1 ? '1 day left' : d + ' days left';
+      card.querySelector('.acx-c-kd-n').hidden = false;
+      card.querySelector('.acx-c-kd-t b').textContent = Array.prototype.map.call(li.querySelectorAll('b'), function (b) { return b.textContent; }).join(' · ');
+      var t = card.querySelector('.acx-c-kd-t time'); t.setAttribute('datetime', li.getAttribute('data-date'));
+      t.textContent = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(at[next]);
+    } else card.hidden = true;
   }
 
   // 4. Programme: Day 1 / Day 2 segmented control (WAI-ARIA tabs, automatic activation).

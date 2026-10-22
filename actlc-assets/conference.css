@@ -140,23 +140,48 @@
 .acx .acx-c-dl:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
 .acx .acx-c-dl:active { transform: scale(.98); }
 .acx .acx-c-datesh { margin-top: calc(var(--t) * 2.2) !important; }
-/* Key dates on a real time axis (1 Oct 2026 to the opening on 2 Feb 2027), today marked */
-.acx .acx-c-tl { position: relative; height: calc(var(--t) * 3.4); margin: calc(var(--t) * .4) 0 calc(var(--t) * 1.2); }
-.acx .acx-c-tl::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(var(--t) * 1.2); height: 2px; background: var(--hairline); }
-.acx .acx-c-tl-m span { position: absolute; bottom: 0; transform: translateX(-50%); font-size: var(--fs-foot); color: var(--muted); }
-.acx .acx-c-tl-ticks li { position: absolute; bottom: calc(var(--t) * 1.2 - 5px); width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 3px var(--teal); }
-.acx .acx-c-tl-ticks li:last-child { box-shadow: inset 0 0 0 6px var(--teal); }
-.acx .acx-c-tl-ticks span { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: var(--fs-foot); font-weight: 600; color: var(--ink); white-space: nowrap; }
-.acx .acx-c-tl-now { position: absolute; top: 0; bottom: calc(var(--t) * 1.2 - 8px); width: 2px; margin-left: -1px; }
-.acx .acx-c-tl-now::before { content: ""; position: absolute; inset: 0; background: var(--ink); }
-.acx .acx-c-tl-now span { position: absolute; top: -.2em; left: 6px; font-size: var(--fs-foot); font-weight: 600; color: var(--ink); white-space: nowrap; }
-.acx .acx-c-dates { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(var(--t) * 2); }
-.acx .acx-c-dates li { padding-top: calc(var(--t) * .7); border-top: 2px solid var(--hairline); }
-.acx .acx-c-dates li.is-next { border-top-color: var(--teal); }
-.acx .acx-c-dates time { display: block; margin-bottom: .15em; font-size: var(--fs-callout); font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.acx .acx-c-dates b { display: block; font-size: var(--fs-callout); font-weight: 500; color: var(--body); }
-.acx .acx-c-rel { display: block; margin-top: .3em; font-size: var(--fs-sub); font-weight: 600; color: var(--teal-deep); }
-.acx .acx-c-dates li.is-done .acx-c-rel { color: var(--muted); font-weight: 500; }
+/* Key dates: one glass panel. The next deadline large on the left, every step on an evenly spaced rail filled up to today.
+   Glass = blur + saturate over a tinted ground, a bright top edge, a soft tinted shadow (Apple's material recipe, CSS only). */
+.acx .acx-c-kd { display: grid; grid-template-columns: minmax(250px, 1fr) minmax(0, 2.5fr); gap: 14px; margin: calc(var(--t) * .6) 0 0; padding: 14px; border-radius: 30px;
+  background: radial-gradient(60% 90% at 8% 10%, rgba(61, 193, 200, .45), transparent 70%), radial-gradient(55% 80% at 92% 95%, rgba(14, 122, 131, .30), transparent 70%),
+              radial-gradient(40% 60% at 60% 0%, rgba(216, 239, 241, .9), transparent 70%), var(--teal-tint); }
+.acx .acx-glass { position: relative; border-radius: 22px; background: linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .58));
+  -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, .75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1px 0 rgba(255, 255, 255, .35), 0 1px 2px rgba(11, 97, 106, .06), 0 14px 34px -14px rgba(11, 97, 106, .32); }
+.acx .acx-c-kd-next { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 22px 24px; }
+.acx .acx-c-kd-next .acx-c-kd-k { margin: 0; font-size: var(--fs-foot); font-weight: 600; color: var(--teal-deep); }
+.acx .acx-c-kd-next .acx-c-kd-n { margin: 0; font-size: clamp(34px, 4.2vw, 52px); line-height: 1.05; font-weight: 600; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.acx .acx-c-kd-next .acx-c-kd-t { margin: 6px 0 0; font-size: var(--fs-sub); color: var(--body); }
+.acx .acx-c-kd-t b { display: block; font-weight: 600; color: var(--ink); }
+.acx .acx-c-dates { --p: 0; --n: 4; --pad: 14px; --dot: 14px; position: relative; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); margin: 0; padding: 26px var(--pad) 22px; list-style: none; }
+.acx .acx-c-dates::before, .acx .acx-c-dates::after { content: ""; position: absolute; top: calc(26px + var(--dot) / 2 - 1.5px); height: 3px; border-radius: 3px;
+  left: calc(var(--pad) + (100% - 2 * var(--pad)) / (2 * var(--n))); }
+.acx .acx-c-dates::before { right: calc(var(--pad) + (100% - 2 * var(--pad)) / (2 * var(--n))); background: rgba(14, 122, 131, .16); }
+.acx .acx-c-dates::after { width: calc((100% - 2 * var(--pad)) * (var(--n) - 1) / var(--n) * var(--p)); background: var(--teal); }
+.acx .acx-c-dates li { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0 8px; text-align: center; }
+.acx .acx-c-kd-dot { width: var(--dot); height: var(--dot); margin-bottom: 12px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 3px var(--teal); }
+.acx .acx-c-dates li.is-done .acx-c-kd-dot { background: var(--teal); }
+.acx .acx-c-dates li.is-next .acx-c-kd-dot { box-shadow: inset 0 0 0 4px var(--teal), 0 0 0 6px rgba(14, 122, 131, .18); }
+.acx .acx-c-dates li.is-goal .acx-c-kd-dot { background: var(--teal-deep); box-shadow: inset 0 0 0 3px var(--teal-deep), 0 0 0 4px rgba(255, 255, 255, .9); }
+.acx .acx-c-dates time { font-size: var(--fs-callout); font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.acx .acx-c-dates b { display: block; font-size: var(--fs-sub); font-weight: 500; line-height: 1.35; color: var(--body); }
+.acx .acx-c-rel { display: block; margin-top: 6px; padding: 2px 10px; border-radius: 99px; font-size: var(--fs-foot); font-weight: 600; color: var(--teal-deep); background: rgba(14, 122, 131, .09); }
+.acx .acx-c-dates li.is-next .acx-c-rel { color: #fff; background: var(--teal-deep); }
+.acx .acx-c-dates li.is-done .acx-c-rel { color: var(--muted); background: rgba(21, 36, 43, .06); }
+@media (prefers-reduced-motion: no-preference) { .acx .acx-c-dates::after { transition: width .9s cubic-bezier(.2, .8, .2, 1); } }
+@media (max-width: 900px) { .acx .acx-c-kd { grid-template-columns: minmax(0, 1fr); } }
+/* Phones: the same steps as a vertical list, each joined to the next by a short rail piece, filled once that step is done */
+@media (max-width: 640px) {
+  .acx .acx-c-kd { padding: 10px; border-radius: 26px; }
+  .acx .acx-c-dates { grid-template-columns: minmax(0, 1fr); padding: 20px 18px 6px; }
+  .acx .acx-c-dates::before, .acx .acx-c-dates::after { display: none; }
+  .acx .acx-c-dates li { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 0 0 18px; text-align: left; }
+  .acx .acx-c-dates li > :not(.acx-c-kd-dot) { grid-column: 2; }
+  .acx .acx-c-kd-dot { grid-row: 1 / span 4; margin: 3px 0 0; }
+  .acx .acx-c-dates li:not(:last-child)::before { content: ""; position: absolute; left: calc(var(--dot) / 2 - 1.5px); top: calc(var(--dot) + 6px); bottom: 2px; width: 3px; border-radius: 3px; background: rgba(14, 122, 131, .16); }
+  .acx .acx-c-dates li.is-done::before { background: var(--teal); }
+  .acx .acx-c-rel { justify-self: start; }
+}
 /* Requirements: the proposal's parts in order, beside a spec sheet with the key values large */
 .acx .acx-c-req { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: calc(var(--t) * 3.5); margin-top: calc(var(--t) * 2.6); }
 .acx .acx-c-reqm { margin-left: .4em; font-weight: 500; color: var(--muted); }
@@ -228,7 +253,6 @@
 
 /* Recompose per size class (rule 19) */
 @media (max-width: 1199px) {
-  .acx .acx-c-dates { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--t) * 1.2) calc(var(--t) * 2); }
   .acx .acx-c-req { grid-template-columns: minmax(0, 1fr); gap: calc(var(--t) * 2); }
   .acx .acx-c-tracks { column-gap: calc(var(--t) * 2.2); }
 }
@@ -251,11 +275,9 @@
   /* Tracks, proposal parts and specs: one column */
   .acx .acx-c-tracks, .acx .acx-c-parts { grid-template-columns: minmax(0, 1fr); }
   .acx .acx-c-cal { --ppm: 1.9px; }
-  .acx .acx-c-tl-m span:nth-child(even) { display: none; }
   /* People: two equal columns on phones */
   .acx .acx-c-people, .acx .acx-c-team { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: calc((var(--w) - var(--gap)) / 2 * 1.2) auto; }
   .acx .acx-c-person, .acx .acx-c-person.is-lg, .acx .acx-c-team .acx-c-person { grid-column: span 1; }
-  .acx .acx-c-dates { grid-template-columns: minmax(0, 1fr); gap: calc(var(--t) * .6); }
   .acx .acx-c-list[style] { columns: 1 !important; }
   .acx .acx-c-logos { gap: calc(var(--t) * 2.4); padding-right: calc(var(--t) * 2.4); }
   .acx .acx-c-logos img { height: calc(var(--t) * 4.6 * var(--k, 1)); }
