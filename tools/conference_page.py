@@ -23,6 +23,28 @@ def download(href, label, meta):
 NAV = [("tracks", "Tracks"), ("programme", "Programme"), ("speakers", "Speakers"),
        ("call-for-papers", "Proposals"), ("registration", "Fees"), ("contact", "Contact")]
 
+# Phones: every section, in page order, for the Sections sheet and the current-section label in the bar
+# (id, row label, shorter label for the bar when the row label is long)
+SHEET = [("overview", "Overview", ""), ("about", "About", ""), ("tracks", "Tracks", ""), ("programme", "Programme", ""), ("speakers", "Speakers", ""),
+         ("acx-h-team", "Organising committee", "Committee"), ("call-for-papers", "Call for proposals", "Proposals"), ("registration", "Fees", ""),
+         ("members", "Founding members", "Members"), ("sponsorship", "Sponsorship", ""), ("contact", "Contact", "")]
+
+I_LIST = ('<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
+          '<path d="M9 6.5h11M9 12h11M9 17.5h11M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/></svg>')
+I_PREV = ('<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+          'stroke-linejoin="round"><path d="m14.5 6-6 6 6 6"/></svg>')
+I_NEXT = I_PREV.replace("m14.5 6-6 6 6 6", "m9.5 6 6 6-6 6")
+
+
+def sections_sheet():
+    """Phones: a bottom sheet with every section (styled by mobile.css; without JS it opens through #acx-secs)."""
+    rows = "".join('<li><a class="acx-m-row" href="#%s" data-sec="%s"%s><span>%s</span><span class="acx-m-chev" aria-hidden="true"></span></a></li>'
+                   % (i, i, ' data-short="%s"' % esc(sh) if sh else "", esc(t)) for i, t, sh in SHEET)
+    return ('<dialog class="acx-m-sheet acx-c-sheet" id="acx-secs" aria-labelledby="acx-secs-h"><div class="acx-m-sheet-in">'
+            '<div class="acx-m-sheet-top"><span class="acx-m-grab" aria-hidden="true"></span><h2 id="acx-secs-h">Sections</h2>'
+            '<a class="acx-m-close" href="#acx-secs-closed" aria-label="Close">Done</a></div>'
+            '<ul class="acx-m-group">%s</ul></div></dialog>' % rows)
+
 
 def head(d, hid):
     lead = '<p class="acx-c-lead">%s</p>' % esc(d["lead"]) if d.get("lead") else ""
@@ -73,7 +95,10 @@ def conference_html(c, email):
     o.append('<nav class="acx-local" aria-label="Conference sections"><div class="acx-local-in">'
              '<a class="acx-local-title" href="#overview">ACTLC 2027</a><div class="acx-local-links">'
              + "".join('<a href="#%s">%s</a>' % (i, t) for i, t in NAV)
-             + '</div><a class="acx-btn" href="%s" target="_blank" rel="noopener">Register</a></div></nav>' % reg)
+             + '</div><p class="acx-local-cur"><span class="acx-local-k">Conference</span><b>ACTLC 2027</b></p>'
+             '<a class="acx-local-sheet" href="#acx-secs" aria-haspopup="dialog">%s<span>Sections</span></a>'
+             '<a class="acx-btn" href="%s" target="_blank" rel="noopener">Register</a></div></nav>' % (I_LIST, reg))
+    o.append(sections_sheet())
 
     h = c["hero"]
     facts = " · ".join("%s %s" % (f["n"], f["label"].lower()) for f in c["facts"])
@@ -89,15 +114,16 @@ def conference_html(c, email):
              % (esc(h["title"]), esc(h["sub"]), esc(h["when_where"]), esc(facts), reg))
 
     ab = c["about"]
-    o.append('<section class="acx-c-sec" aria-labelledby="acx-h-about"><div class="acx-c-in acx-c-2col">'
+    o.append('<section class="acx-c-sec" id="about" aria-labelledby="acx-h-about"><div class="acx-c-in acx-c-2col">'
              '<div class="acx-c-prose"><h2 class="acx-c-h2" id="acx-h-about">%s</h2>%s</div>'
              '<div><h3 class="acx-c-h3">What to expect</h3>%s%s</div></div></section>'
              % (esc(ab["title"]), "<p>%s</p>" % esc(ab["body"][0]), rows(ab["formats"]), ""))
 
     th = c["themes"]
     tracks = "".join(
-        '<li class="acx-c-track" id="track-%d"><span class="acx-c-tn" aria-hidden="true">%d</span><div><h3 class="acx-c-tt"><span class="acx-vh">Track %d: </span>%s</h3>'
-        '<p class="acx-c-ts">%s</p><ul class="acx-c-topics">%s</ul></div></li>'
+        '<li class="acx-c-track" id="track-%d"><details class="acx-c-tdet" open><summary class="acx-c-tsum"><span class="acx-c-tn" aria-hidden="true">%d</span>'
+        '<h3 class="acx-c-tt"><span class="acx-vh">Track %d: </span>%s</h3><span class="acx-c-ts">%s</span></summary>'
+        '<ul class="acx-c-topics">%s</ul></details></li>'
         % (int(t["n"]), int(t["n"]), int(t["n"]), esc(t["title"]), esc(t["short"]), "".join("<li>%s</li>" % esc(x) for x in t["points"]))
         for t in th["items"])
     o.append('<section class="acx-c-sec" id="tracks" aria-labelledby="acx-h-tracks"><div class="acx-c-in">%s'
@@ -112,20 +138,26 @@ def conference_html(c, email):
             kind = "is-break" if it["break"] else "is-par" if it["title"].startswith("Parallel") else "is-ses"
             note = '<span class="acx-c-note">%s</span>' % esc(it["note"].strip("()")) if it["note"] else ""
             detail = '<span class="acx-c-sd">%s</span>' % esc(it["detail"]) if it["detail"] else ""
-            items.append('<li class="acx-c-blk %s" style="--m:%d;--g:%d"><time class="acx-c-t">%s</time><span class="acx-c-st">%s</span>%s%s</li>'
-                         % (kind, b - a, (a - prev) if prev is not None else 0, esc(it["time"]), esc(it["title"]), note, detail))
+            t0, t1 = it["time"].split("–")
+            items.append('<li class="acx-c-blk %s" style="--m:%d;--g:%d"><time class="acx-c-t"><span>%s</span><span class="acx-c-to">–</span><span>%s</span></time><span class="acx-c-st">%s</span>%s%s</li>'
+                         % (kind, b - a, (a - prev) if prev is not None else 0, esc(t0), esc(t1), esc(it["title"]), note, detail))
             prev = b
         days.append('<div class="acx-c-day" id="acx-day-%d"><h3 class="acx-c-dayh">%s</h3><p class="acx-c-dayv">%s</p>'
                     '<ol class="acx-c-cal">%s</ol></div>' % (i, esc(d["date"]), esc(d["venue"]), "".join(items)))
+    seg = "".join('<button type="button" role="tab" id="acx-seg-%d" aria-controls="acx-day-%d" aria-selected="%s">%s</button>'
+                  % (i, i, "true" if i == 1 else "false", esc(d["tab"])) for i, d in enumerate(pr["days"], 1))
     o.append('<section class="acx-c-sec" id="programme" aria-labelledby="acx-h-prog"><div class="acx-c-in">%s'
-             '<div class="acx-c-days">%s</div></div></section>' % (head(pr, "acx-h-prog"), "".join(days)))
+             '<div class="acx-c-seg" role="tablist" aria-label="Programme day" hidden>%s</div>'
+             '<div class="acx-c-days">%s</div></div></section>' % (head(pr, "acx-h-prog"), seg, "".join(days)))
 
     sp, cm = c["speakers"], c["committee"]
     o.append('<section class="acx-c-sec" id="speakers" aria-labelledby="acx-h-spk"><div class="acx-c-in">%s'
+             '<div class="acx-c-swnav" hidden><p class="acx-c-swc">%d speakers</p><button type="button" class="acx-c-swb" data-dir="-1" aria-label="Previous speakers">%s</button>'
+             '<button type="button" class="acx-c-swb" data-dir="1" aria-label="Next speakers">%s</button></div>'
              '<ul class="acx-c-people">%s</ul>'
              '<div class="acx-c-head acx-c-subhead"><h2 class="acx-c-h2" id="acx-h-team">%s</h2><p class="acx-c-lead">%s</p></div>'
              '<ul class="acx-c-people acx-c-team" aria-labelledby="acx-h-team">%s</ul></div></section>'
-             % (head(sp, "acx-h-spk"), "".join(person(p) for p in sp["people"]), esc(cm["title"]), esc(cm["lead"]),
+             % (head(sp, "acx-h-spk"), len(sp["people"]), I_PREV, I_NEXT, "".join(person(p) for p in sp["people"]), esc(cm["title"]), esc(cm["lead"]),
                 "".join(member(m) for m in cm["people"])))
 
     cf = c["cfp"]; dl = {d["title"]: d for d in c["downloads"]}
