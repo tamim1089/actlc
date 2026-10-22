@@ -26,6 +26,7 @@ def check(cond, msg):
     if not cond: fails.append(msg)
 
 SETTLE = """async () => { document.documentElement.classList.remove('acx-rv');
+  document.querySelectorAll('.swiper, .swiper-container').forEach(e => { const s = e.swiper; if (s) { if (s.autoplay) s.autoplay.stop(); s.slideTo(0, 0, false); } });   // autoplaying carousels hold still
   for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); }
   scrollTo(0, 0);
   const shown = () => [...document.images].filter(i => i.getClientRects().length && getComputedStyle(i).visibility !== 'hidden');
