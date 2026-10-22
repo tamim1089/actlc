@@ -58,7 +58,7 @@ with sync_playwright() as p:
 
     if A.desktop_diff:
         from PIL import Image, ImageChops
-        tmp = A.desktop_diff.rstrip("/") + "-now"; desktop_shots(b, tmp)
+        tmp = A.desktop_diff.rstrip("/") + f"-now-{os.getpid()}"; desktop_shots(b, tmp)   # per run: parallel checkouts must not share it
         for name in PAGES:
             a, c = Image.open(os.path.join(A.desktop_diff, f"{name}.png")).convert("RGB"), Image.open(os.path.join(tmp, f"{name}.png")).convert("RGB")
             if a.size != c.size:

@@ -34,7 +34,7 @@ body { padding-top: var(--m-top) !important; padding-bottom: var(--m-tabs) !impo
 /* Tab bar: icon over label; the current place gets a tinted pill behind its icon and a heavier label */
 .acx .acx-m-tabs {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 1200; height: var(--m-tabs);
-  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 5px 0 env(safe-area-inset-bottom);
+  display: grid; grid-template-columns: repeat(5, minmax(max-content, 1fr)); padding: 5px 0 env(safe-area-inset-bottom);   /* columns never narrower than their label, so "Conference" fits at 320px */
   background: rgba(255, 255, 255, .88); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
   border-top: 1px solid rgba(16, 42, 48, .08);
 }
