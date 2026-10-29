@@ -100,6 +100,8 @@
 .acx .acx-c-st { font-size: var(--fs-callout); font-weight: 600; line-height: 1.35; color: var(--ink); }
 .acx .acx-c-note { font-size: var(--fs-sub); font-weight: 500; color: var(--teal-deep); }
 .acx .acx-c-sd { flex-basis: 100%; margin-top: .15em; font-size: var(--fs-sub); line-height: 1.45; color: var(--body); }
+.acx .acx-c-sd.acx-c-ws { margin-top: .6em; }   /* a named workshop: title on its own line, facilitator under it */
+.acx .acx-c-ws b { display: block; font-weight: 600; color: var(--ink); }
 .acx .acx-c-blk.is-par { background: var(--teal-tint-2); box-shadow: inset 3px 0 0 var(--teal-deep); align-content: flex-start; }
 .acx .acx-c-blk.is-par .acx-c-st { font-size: var(--fs-body); }
 .acx .acx-c-blk.is-break { background: none; box-shadow: inset 3px 0 0 var(--hairline); }

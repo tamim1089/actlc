@@ -255,6 +255,12 @@
       "title": "Parallel Interactive Workshops",
       "detail": "",
       "note": "(4 concurrent · 2.5 hrs each)",
+      "workshops": [
+       {
+        "title": "Thinking Beyond the Prompt: Embedding Creativity and Critical Thinking through AI",
+        "by": "Dr Randa Mikati, Associate, CLICKS, UAE"
+       }
+      ],
       "break": false
      },
      {
