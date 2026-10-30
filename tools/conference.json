@@ -607,13 +607,14 @@
  "fees": {
   "eyebrow": "Registration",
   "title": "Conference Fees",
+  "currency": "USD",
   "lead": "All fees include access to all conference sessions and materials. All fees subject to 5% VAT.",
   "tiers": [
    {
     "name": "Regular Delegate",
     "qualifier": "Non-Founding Member",
     "price": "250",
-    "vat": "+ 5% VAT = AED 262.50",
+    "vat": "+ 5% VAT = USD 262.50",
     "includes": "All sessions, materials & networking events",
     "badge": "",
     "highlight": false
@@ -622,7 +623,7 @@
     "name": "Presenter",
     "qualifier": "",
     "price": "175",
-    "vat": "+ 5% VAT = AED 183.75",
+    "vat": "+ 5% VAT = USD 183.75",
     "includes": "All sessions + presentation slot & materials",
     "badge": "Presenter Rate",
     "highlight": true
@@ -631,7 +632,7 @@
     "name": "Founding Member Delegate",
     "qualifier": "beyond first 5 complimentary",
     "price": "100",
-    "vat": "+ 5% VAT = AED 105.00",
+    "vat": "+ 5% VAT = USD 105.00",
     "includes": "All sessions, materials & networking events",
     "badge": "",
     "highlight": false

@@ -74,7 +74,7 @@ def conference(root):
         out.append({"k": "Key date", "t": d["title"], "s": d["date"], "b": clean(d.get("text", "")), "u": C + "#call-for-papers"})
     fe = c["fees"]
     for t in fe["tiers"]:
-        out.append({"k": "Registration fee", "t": f"{t['name'].title()}: AED {t['price']}", "s": t.get("qualifier", ""),
+        out.append({"k": "Registration fee", "t": f"{t['name'].title()}: {c['fees']['currency']} {t['price']}", "s": t.get("qualifier", ""),
                     "b": clean(f"{t.get('includes', '')} {t.get('vat', '')} {fe.get('note', '')} register registration fee price cost"), "u": C + "#registration"})
     sp = c["sponsorship"]
     out.append({"k": "Conference", "t": sp["title"], "s": "Sponsorship opportunities",

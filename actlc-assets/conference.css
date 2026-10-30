@@ -553,7 +553,7 @@
 @media (max-width: 760px) {
   .acx #speakers .acx-c-people:not(.acx-c-team) { align-items: flex-start; }          /* shorter cards end with their text, no blank tail */
   .acx .acx-c-kd-next .acx-c-kd-t { display: none; }                                  /* the first step right below names the deadline */
-  .acx .acx-c-plan-badge svg { display: none; }                                       /* the star only decorated "Save AED 75" */
+  .acx .acx-c-plan-badge svg { display: none; }                                       /* the star only decorated "Save USD 75" */
   .acx .acx-c-contactcta { display: none; }                                           /* the list above already has the email to tap */
 
   /* Speakers: every speaker on screen at once, two columns of portrait cards; nothing to swipe */

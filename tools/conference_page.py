@@ -259,14 +259,15 @@ def fees_section(c):
     """Three price cards on the teal band; the presenter rate raised with its saving."""
     fe, reg = c["fees"], esc(c["hero"]["register"])
     base = max(int(t["price"]) for t in fe["tiers"])
+    cur = esc(fe["currency"])   # USD: the registration form charges in dollars
     def plan(t):
         sub, inc = PLAN[t["name"]]
         hi = t["highlight"]
-        badge = '<p class="acx-c-plan-badge">%sSave AED %d</p>' % (I_STAR, base - int(t["price"])) if hi else ""
-        return ('<div class="acx-c-plan%s">%s<h3>%s</h3><p class="acx-c-plan-price"><b>AED %s</b><span>/ person</span></p>'
+        badge = '<p class="acx-c-plan-badge">%sSave %s %d</p>' % (I_STAR, cur, base - int(t["price"])) if hi else ""
+        return ('<div class="acx-c-plan%s">%s<h3>%s</h3><p class="acx-c-plan-price"><b>%s %s</b><span>/ person</span></p>'
                 '<p class="acx-c-plan-sub">%s</p><ul class="acx-c-plan-inc">%s</ul>'
                 '<a class="acx-btn %s" href="%s" target="_blank" rel="noopener">Register</a></div>'
-                % (" is-hi" if hi else "", badge, esc(t["name"][0] + t["name"][1:].lower()), esc(t["price"]), esc(sub),
+                % (" is-hi" if hi else "", badge, esc(t["name"][0] + t["name"][1:].lower()), cur, esc(t["price"]), esc(sub),
                    "".join("<li>%s%s</li>" % (I_CHECK, esc(x)) for x in inc), "acx-btn-light" if hi else "acx-btn-ghost", reg))
     return ('<section class="acx-c-sec acx-c-band" id="registration" aria-labelledby="acx-h-fees"><div class="acx-c-in">'
             '<div class="acx-c-head"><h2 class="acx-c-h2" id="acx-h-fees">%s</h2>'
