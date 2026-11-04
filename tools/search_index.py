@@ -56,7 +56,7 @@ def conference(root):
         for it in d["items"]:
             if it["break"]: continue
             out.append({"k": "Conference session", "t": it["title"], "s": f"{d['date'].replace('—', '·')} · {it['time']}",
-                        "b": clean(" · ".join(x for x in (it.get("detail", ""), it.get("note", ""), d["venue"]) if x)), "u": f"{C}#acx-day-{i}"})
+                        "b": clean(" · ".join(x for x in [it.get("detail", ""), it.get("note", ""), d["venue"]] + [p["name"] for p in it.get("people", [])] if x)), "u": f"{C}#acx-day-{i}"})
             for w in it.get("workshops", []):
                 out.append({"k": "Conference workshop", "t": w["title"], "s": f"{w['by']} · {d['date'].replace('—', '·')} · {it['time']}",
                             "b": clean(it["title"]), "u": f"{C}#acx-day-{i}"})

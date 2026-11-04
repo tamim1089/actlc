@@ -141,7 +141,7 @@
      {
       "time": "09:30–09:55",
       "title": "Keynote Address 1",
-      "detail": "",
+      "detail": "Beyond Knowledge: Empowering Learners with Agency, Purpose, and Future-Ready Capabilities",
       "note": "",
       "break": false
      },
@@ -162,7 +162,7 @@
      {
       "time": "11:05–11:30",
       "title": "Keynote Address 2",
-      "detail": "",
+      "detail": "The Human Advantage in the Age of AI: Reimagining Teaching, Learning, and Assessment",
       "note": "",
       "break": false
      },
@@ -211,14 +211,20 @@
      {
       "time": "09:30–10:20",
       "title": "Plenary Panel Discussion",
-      "detail": "",
+      "detail": "Reimagining Higher Education in the Arab Region: Leadership, Innovation, and Collective Impact",
       "note": "",
       "break": false
      },
      {
       "time": "10:20–10:45",
       "title": "Keynote Address",
-      "detail": "",
+      "detail": "From Innovation to Impact: Advancing Student Success and Educational Transformation Across the Arab Region",
+      "people": [
+       {
+        "name": "Prof. Hoda Mostafa",
+        "role": "Director, Center for Learning and Teaching, The American University in Cairo"
+       }
+      ],
       "note": "",
       "break": false
      },
@@ -233,6 +239,32 @@
       "time": "11:05–11:55",
       "title": "Structured Debate",
       "detail": "Is Higher Education Still Teaching for the Future — or for the Past?",
+      "people": [
+       {
+        "name": "Prof. Barry O'Mahony",
+        "role": "Provost, Abu Dhabi University – Moderator"
+       },
+       {
+        "name": "Dr. Mahinour Ezzat",
+        "role": "Director of Teaching and Learning, Ajman University"
+       },
+       {
+        "name": "Dr. Saed Alrabaee",
+        "role": "Director, Centre for Excellence in Teaching and Learning, United Arab Emirates University"
+       },
+       {
+        "name": "Dr. Nina Abdul Razzak",
+        "role": "Associate Professor & Director, Center for Teaching and Learning, American University of Bahrain"
+       },
+       {
+        "name": "Prof. Norita Ahmad, SFHEA",
+        "role": "Director, Center for Innovation in Teaching and Learning & Professor of Information Systems and Business Analytics, American University of Sharjah"
+       },
+       {
+        "name": "Dr. Karim Moustaghfir",
+        "role": "Associate Vice President for 21st Century Learning Innovation and Faculty Development, Al Akhawayn University"
+       }
+      ],
       "note": "",
       "break": false
      },

@@ -139,6 +139,8 @@ def conference_html(c, email):
             note = '<span class="acx-c-note">%s</span>' % esc(it["note"].strip("()")) if it["note"] else ""
             detail = '<span class="acx-c-sd">%s</span>' % esc(it["detail"]) if it["detail"] else ""
             detail += "".join('<span class="acx-c-sd acx-c-ws"><b>%s</b>%s</span>' % (esc(w["title"]), esc(w["by"])) for w in it.get("workshops", []))
+            if it.get("people"):
+                detail += '<ul class="acx-c-sd acx-c-ppl">%s</ul>' % "".join("<li><b>%s</b>, %s</li>" % (esc(p["name"]), esc(p["role"])) for p in it["people"])
             t0, t1 = it["time"].split("–")
             items.append('<li class="acx-c-blk %s" style="--m:%d;--g:%d"><time class="acx-c-t"><span>%s</span><span class="acx-c-to">–</span><span>%s</span></time><span class="acx-c-st">%s</span>%s%s</li>'
                          % (kind, b - a, (a - prev) if prev is not None else 0, esc(t0), esc(t1), esc(it["title"]), note, detail))
