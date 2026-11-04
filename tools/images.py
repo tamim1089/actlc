@@ -12,9 +12,8 @@ from PIL import Image, ImageOps
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = "actlc-assets/img"
-PAGES = ["index.html", "events/index.html", "events-main/designing-ai-ready-graduates/index.html",
-         "events-main/teaching-the-learner-not-the-label/index.html", "conference/index.html",
-         "resources/index.html", "registration/index.html"]
+PAGES = ["index.html", "events/index.html", *sorted(f"events-main/{d}/index.html" for d in os.listdir(os.path.join(ROOT, "events-main"))),
+         "conference/index.html", "resources/index.html", "registration/index.html"]
 RASTER = (".png", ".jpg", ".jpeg", ".webp")
 
 # CSS px each picture is shown at: (desktop at 1440, phone at 390), measured with tools/check_images.py --sizes.

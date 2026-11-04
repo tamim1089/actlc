@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACTLC//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:building-coil-from-the-ground-up@ac-tlc.org
+DTSTAMP:20261013T000000Z
+DTSTART:20261112T120000Z
+DTEND:20261112T133000Z
+SUMMARY:Building COIL from the Ground Up: What Virtual Exchange at AUS Has 
+ Taught Us
+DESCRIPTION:ACTLC online webinar with Prof. Kristina Katsos (American Unive
+ rsity of Sharjah). https://www.ac-tlc.org/events-main/building-coil-from-t
+ he-ground-up/
+LOCATION:Online
+URL:https://www.ac-tlc.org/events-main/building-coil-from-the-ground-up/
+END:VEVENT
+END:VCALENDAR

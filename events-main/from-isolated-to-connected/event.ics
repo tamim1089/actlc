@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACTLC//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:from-isolated-to-connected@ac-tlc.org
+DTSTAMP:20261013T000000Z
+DTSTART:20270128T120000Z
+DTEND:20270128T140000Z
+SUMMARY:From Isolated to Connected: A Practical Model for Building Faculty 
+ Learning Communities (FLC)
+DESCRIPTION:ACTLC online webinar with Dr. Sanaa Al Reiahy (Abu Dhabi Univer
+ sity). https://www.ac-tlc.org/events-main/from-isolated-to-connected/
+LOCATION:Online
+URL:https://www.ac-tlc.org/events-main/from-isolated-to-connected/
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACTLC//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:ai-assisted-learning@ac-tlc.org
+DTSTAMP:20261013T000000Z
+DTSTART:20261214T140000Z
+DTEND:20261214T150000Z
+SUMMARY:AI-Assisted Learning: Practical Strategies for Enhancing Student En
+ gagement and Learning
+DESCRIPTION:ACTLC online webinar with Dr. Maqbool Khan (American University
+  of Bahrain). https://www.ac-tlc.org/events-main/ai-assisted-learning/
+LOCATION:Online
+URL:https://www.ac-tlc.org/events-main/ai-assisted-learning/
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACTLC//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:student-engagement-digital-fatigue@ac-tlc.org
+DTSTAMP:20261013T000000Z
+DTSTART:20261123T133000Z
+DTEND:20261123T150000Z
+SUMMARY:Student Engagement in an Era of Digital Fatigue
+DESCRIPTION:ACTLC online webinar with Dr. Alia Mitchell (Prince Sultan Univ
+ ersity). https://www.ac-tlc.org/events-main/student-engagement-digital-fat
+ igue/
+LOCATION:Online
+URL:https://www.ac-tlc.org/events-main/student-engagement-digital-fatigue/
+END:VEVENT
+END:VCALENDAR

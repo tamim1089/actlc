@@ -365,6 +365,8 @@ def ics(e):
              "LOCATION:Online", f"URL:{e.url}", "END:VEVENT", "END:VCALENDAR"]
     return "\r\n".join(fold(l) for l in lines) + "\r\n"
 
+TEMPLATE_PAGE = "teaching-the-learner-not-the-label"
+
 def detail_html(e):
     z = lambda d: d.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
     gcal = ("https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + quote(e.title) +
@@ -415,9 +417,20 @@ def detail_html(e):
 <div class="acx-bar"><a class="acx-btn acx-btn-filled" href="{esc(e.mailto)}" title="Opens an email to {EMAIL}">Register</a><a class="acx-btn" href="event.ics" download aria-label="Add to Calendar">{I_CALPLUS}</a></div>
 </div>"""
 
+def new_page(e):
+    """An event's first build: its page starts as a copy of the template event's page, with the head rewritten for it."""
+    t = next(x for x in EVENTS if x.detail == TEMPLATE_PAGE)
+    h = undistil(open(os.path.join(ROOT, "events-main", t.detail, "index.html"), encoding="utf-8").read())
+    h = h.replace(t.title, esc(e.title)).replace(t.detail, e.detail)
+    desc = f"{e.org} — {e.s.day} {e.s:%B %Y}. {e.lead_and_body()[0]}"
+    h = re.sub(r'<meta content="[^"]*" property="og:description"/>', lambda m: f'<meta content="{esc(desc)}" property="og:description"/>', h)
+    h = re.sub(r'<meta content="[^"]*" property="article:modified_time"/>\n?', "", h)
+    return re.sub(r'<script class="yoast-schema-graph"[^>]*>.*?</script>\n?', "", h, flags=re.S)
+
 def build_detail(e):
     d = os.path.join(ROOT, "events-main", e.detail); p = os.path.join(d, "index.html")
-    h = open(p, encoding="utf-8").read()
+    h = open(p, encoding="utf-8").read() if os.path.exists(p) else new_page(e)
+    os.makedirs(d, exist_ok=True)
     m = re.search(r'<div class="(?:ac-event-detail|acx acx-detail)"', h)
     assert m, f"detail block not found in {p}"
     s, end = block_span(h, m.start())

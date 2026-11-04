@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ACTLC//Events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:designing-authentic-assessment@ac-tlc.org
+DTSTAMP:20261013T000000Z
+DTSTART:20261207T120000Z
+DTEND:20261207T140000Z
+SUMMARY:Designing Authentic Assessment as a Learning Journey: Mapping Tasks
+  to Outcomes in the Age of AI
+DESCRIPTION:ACTLC online webinar with Dr. Sanaa Al Reiahy (Abu Dhabi Univer
+ sity). https://www.ac-tlc.org/events-main/designing-authentic-assessment/
+LOCATION:Online
+URL:https://www.ac-tlc.org/events-main/designing-authentic-assessment/
+END:VEVENT
+END:VCALENDAR

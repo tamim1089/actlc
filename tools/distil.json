@@ -50,6 +50,31 @@
    "page": "events-main/teaching-the-learner-not-the-label/index.html",
    "starts": "It will introduce practical, inclusive teaching strategies",
    "short": "Simple, inclusive teaching strategies based on neurodiversity and Universal Design for Learning that help every student."
+  },
+  {
+   "page": "events-main/building-coil-from-the-ground-up/index.html",
+   "starts": "Research confirms that",
+   "short": "How COIL grew at AUS over 8 years, from single course partnerships to a consortium, with lessons on partnerships, faculty training, course design and assessment."
+  },
+  {
+   "page": "events-main/student-engagement-digital-fatigue/index.html",
+   "starts": "This workshop examines",
+   "short": "Research and practical ways to keep students engaged in face-to-face, online and hybrid classes: active learning, belonging, motivation and learning analytics."
+  },
+  {
+   "page": "events-main/designing-authentic-assessment/index.html",
+   "starts": "Done well, it does two things",
+   "short": "It gives faculty a clear line from course outcomes to evidence, and makes assessment part of how students learn."
+  },
+  {
+   "page": "events-main/ai-assisted-learning/index.html",
+   "starts": "It will introduce accessible strategies",
+   "short": "Simple ways to use generative AI for active learning, feedback and critical thinking, with the educator still guiding the learning."
+  },
+  {
+   "page": "events-main/from-isolated-to-connected/index.html",
+   "starts": "Faculty Learning Communities (FLCs) address",
+   "short": "How to set up year-long groups of 8 to 10 faculty, from recruiting to a final deliverable, with a step-by-step checklist to adapt."
   }
  ]
 }
