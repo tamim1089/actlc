@@ -371,21 +371,15 @@ def detail_html(e):
     z = lambda d: d.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
     gcal = ("https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + quote(e.title) +
             f"&dates={z(e.s)}/{z(e.e)}&details=" + quote(f"ACTLC online webinar with {e.speaker}. {e.url}") + "&location=Online")
-    # Member-country start times as one sentence, countries sharing a time grouped (event's own zone excluded)
-    groups, rows = {}, []
+    # Member-country start times, one line per time, countries sharing a time grouped (event's own zone excluded)
+    groups = {}
     for name, tz in DATA["member_countries"]:
         if tz == e.tz: continue
         lt = e.s.astimezone(ZoneInfo(tz)); dd = (lt.date() - e.s.date()).days
         day = " next day" if dd > 0 else " previous day" if dd < 0 else ""
         groups.setdefault(lt.strftime("%H:%M") + day, []).append(name)
-        rows.append((name, f'{lt:%H:%M} – {e.e.astimezone(ZoneInfo(tz)):%H:%M}{day}'))
-    # Phones: the same times as a grouped list, one country per row (the sentence above stays on wider screens)
-    elsewhere_m = ('<div class="acx-elsewhere-m"><h2 class="acx-m-gh" id="acx-else-h">In other member countries</h2>'
-                   '<ul class="acx-m-group" aria-labelledby="acx-else-h">' +
-                   "".join(f'<li><div class="acx-m-row"><span>{esc(n)}</span><span class="acx-m-val acx-tnum">{t}</span></div></li>' for n, t in rows) +
-                   '</ul></div>')
     join = lambda n: n[0] if len(n) == 1 else ", ".join(n[:-1]) + " and " + n[-1]
-    elsewhere = " · ".join(f"{k} in {join(v)}" for k, v in groups.items())
+    elsewhere = "".join(f"<span>{esc(k)} in {esc(join(v))}</span>" for k, v in groups.items())
     lead, body = e.lead_and_body()
     paras = "\n".join(f'<p class="acx-p">{esc(p)}</p>' for p in body)
     return f"""<div class="acx acx-detail" data-start="{Ev.iso(e.s)}" data-end="{Ev.iso(e.e)}" data-tz="{e.tz}">
@@ -398,7 +392,7 @@ def detail_html(e):
 <p class="acx-dateline"><time datetime="{e.s:%Y-%m-%d}">{e.long_date()}</time><span class="acx-status">Upcoming</span></p>
 <p class="acx-bigtime"><time datetime="{Ev.iso(e.s)}">{e.hm(e.s)}</time> – <time datetime="{Ev.iso(e.e)}">{e.hm(e.e)}</time></p>
 <p class="acx-when-sub">{esc(e.zone_label)} ({e.gmt()}) · {e.duration()} · Online</p>
-<p class="acx-elsewhere">{esc(elsewhere)}</p>
+<p class="acx-elsewhere">{elsewhere}</p>
 <p class="acx-yourtime" hidden></p>
 </div>
 <div class="acx-actions">
@@ -408,7 +402,6 @@ def detail_html(e):
 </div>
 
 </section>
-{elsewhere_m}
 <section class="acx-about" aria-labelledby="acx-about-h">
 <h2 class="acx-h2" id="acx-about-h">About this session</h2>
 <p class="acx-lead">{esc(lead)}</p>

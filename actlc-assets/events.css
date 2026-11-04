@@ -81,7 +81,7 @@
 .acx .is-past .acx-title { color: #5a6675; }
 
 /* Phone-only pieces of the markup (shown by the phone layer at the end of this file) */
-.acx .acx-ms, .acx .acx-wd, .acx .acx-more-m, .acx .acx-elsewhere-m, .acx .acx-past-disc, .acx .acx-reg-m { display: none; }
+.acx .acx-ms, .acx .acx-wd, .acx .acx-more-m, .acx .acx-past-disc, .acx .acx-reg-m { display: none; }
 
 /* Homepage: next sessions (no-JS fallback shows the first three) */
 .acx-home-root .acx-list > .acx-ev:nth-child(n+4) { display: none; }
@@ -175,6 +175,7 @@
 .acx details.acx-when-world .acx-world { padding-bottom: calc(var(--t) * 1); }
 .acx .acx-list-note { margin: 0 0 calc(var(--t) * 1); font-size: var(--fs-body); color: var(--muted); }
 .acx .acx-elsewhere { margin: .35em 0 0; font-size: var(--fs-callout); color: var(--muted); font-variant-numeric: tabular-nums; }
+.acx .acx-elsewhere span { display: block; }
 
 /* Phones (<= 760px) ---------------------------------------------------------
    iOS list rows: a date tile, then title, speaker and time; one row design on the homepage and the
@@ -317,16 +318,12 @@
   .acx .acx-status::before { content: none; }
   .acx-detail.is-past .acx-status { background: var(--red-tint); color: var(--red); }
   .acx-detail.is-live .acx-status { background: var(--teal); color: #fff; }
-  .acx .acx-bigtime { margin: 4px 0 4px; font-size: 40px; font-weight: 300; }
+  .acx .acx-bigtime { margin: 4px 0 4px; font-size: 26px; font-weight: 600; }
   .acx .acx-when-sub { font-size: 15px; }
   .acx .acx-yourtime { font-size: 15px; }
-  .acx .acx-elsewhere { display: none; }
+  .acx .acx-elsewhere { font-size: 15px; }
 
-  .acx .acx-elsewhere-m { display: block; }
-  .acx .acx-elsewhere-m .acx-m-gh { margin-top: 24px; font-size: 15px; font-weight: 600; }
-  .acx .acx-elsewhere-m .acx-m-row { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
-  .acx .acx-elsewhere-m .acx-m-val { font-size: var(--fs-body); color: var(--body); }
-  .acx-detail.is-past .acx-elsewhere-m { display: none; }    /* times elsewhere stop mattering once it has ended */
+  .acx-detail.is-past .acx-elsewhere { display: none; }    /* times elsewhere stop mattering once it has ended */
 
   .acx .acx-actions { display: none; }
   .acx-detail.is-past .acx-ended-note { order: 1; display: block; margin-top: 24px; padding: 0; border: 0; border-radius: 0; background: none; }
@@ -344,7 +341,7 @@
 
   .acx .acx-about { margin-top: 32px; }
   .acx .acx-about .acx-h2 { margin: 0 0 8px; font-size: 22px; letter-spacing: -0.015em; }
-  .acx .acx-lead { max-width: none; margin: 0 0 14px; font-size: var(--fs-body); line-height: 1.5; font-weight: 500; }
+  .acx .acx-lead { max-width: none; margin: 0 0 14px; font-size: var(--fs-body); line-height: 1.55; color: var(--body); }
   .acx .acx-p { margin: 0 0 14px; font-size: var(--fs-body); line-height: 1.55; }
 
   /* Register bar: sits on top of the tab bar (mobile.css sets its bottom) */
@@ -362,4 +359,33 @@
 }
 @media (max-width: 760px) and (prefers-reduced-motion: reduce) {
   .acx .acx-past-chev { transition: none; }
+}
+
+/* Session page on a laptop: the words on the left, one card with the facts and buttons on the right */
+@media (min-width: 901px) {
+  .acx-detail { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: auto auto auto 1fr; column-gap: calc(var(--t) * 3); align-items: start; }
+  .acx-detail > .acx-back, .acx-detail > .acx-h1, .acx-detail > .acx-byline, .acx-detail > .acx-about { grid-column: 1; }
+  .acx .acx-h1 { max-width: none; font-size: var(--fs-t1); font-weight: 600; line-height: 1.2; }
+  .acx .acx-byline { margin-top: calc(var(--t) * .5); }
+  .acx .acx-about { margin-top: calc(var(--t) * 1.5); }
+  .acx .acx-about .acx-h2 { font-size: var(--fs-t3); margin-bottom: calc(var(--t) * .4); }
+  .acx .acx-lead { max-width: 72ch; margin-bottom: calc(var(--t) * .9); font-size: var(--fs-body); line-height: 1.6; color: var(--body); }
+  .acx .acx-p { max-width: 72ch; }
+
+  .acx .acx-when { grid-column: 2; grid-row: 2 / -1; position: sticky; top: 96px; margin-top: 0; box-shadow: none; border: 1px solid var(--hairline); border-radius: calc(var(--t) * .7); }
+  .acx .acx-when-main { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: calc(var(--t) * .7); padding: calc(var(--t) * .95); }
+  .acx .acx-dateline { flex-direction: column; gap: .1em; }
+  .acx .acx-status::before { content: none; }
+  .acx .acx-bigtime { margin: .3em 0 .1em; font: 600 var(--fs-t2)/1.2 var(--display); letter-spacing: -0.012em; }
+  .acx .acx-when-sub, .acx .acx-elsewhere, .acx .acx-yourtime { font-size: var(--fs-sub); }
+
+  /* Past sessions: the "Ended" label already says it, so only the link stays */
+  .acx .acx-ended-note { padding: 0; border: 0; border-radius: 0; background: none; }
+  .acx .acx-ended-note strong, .acx .acx-ended-note > span { display: none; }
+
+  .acx .acx-actions { justify-items: stretch; }
+  .acx .acx-actions-row { flex-wrap: wrap; gap: calc(var(--t) * .5); }
+  .acx .acx-actions .acx-btn { flex: 1 1 auto; font-size: var(--fs-callout); padding: 0 calc(var(--t) * .8) !important; }
+  .acx-detail .acx-btn[data-label]::before, .acx-detail .acx-btn[data-label]::after { display: none; }   /* no dot in the buttons */
+  .acx-detail .acx-btn[data-label] .acx-btn-t { transform: none !important; opacity: 1 !important; }
 }

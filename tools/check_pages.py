@@ -97,7 +97,7 @@ with sync_playwright() as p:
             check(not missing, f"{name}: every detail still present {missing or ''}")
             hrefs = pg.evaluate("[...document.querySelectorAll('.acx-when a')].map(a=>a.getAttribute('href'))")
             check(any(h.startswith("mailto:") for h in hrefs) and "event.ics" in hrefs, f"{name}: Register (mailto) and .ics present")
-            check(pg.evaluate("document.querySelectorAll('.acx-when li, .acx-when details').length") == 0, f"{name}: member times are one line of text (no pills, no dropdown)")
+            check(pg.evaluate("document.querySelectorAll('.acx-when li, .acx-when details').length") == 0, f"{name}: member times are plain text (no pills, no dropdown)")
             pg.context.close()
 
     if run("states"):
@@ -143,7 +143,7 @@ with sync_playwright() as p:
             check(yt == want, f"detail: your-time line for {tz} ('{yt}')"); pg.context.close()
         pg = page(b, EVENTS["designing"], tz="America/New_York")
         yt = pg.inner_text(".acx-yourtime"); check(yt == "Your time: 08:30 – 10:00 · New York", f"detail: New York visitor sees own time ('{yt}')")
-        el = pg.inner_text(".acx-elsewhere"); check(el == "15:30 in Saudi Arabia, Bahrain, Lebanon and Egypt · 12:30 in Morocco", f"detail: member times grouped, Morocco 12:30 from tzdata 2026c ('{el}')")
+        el = " · ".join(pg.inner_text(".acx-elsewhere").split("\n")); check(el == "15:30 in Saudi Arabia, Bahrain, Lebanon and Egypt · 12:30 in Morocco", f"detail: member times grouped, Morocco 12:30 from tzdata 2026c ('{el}')")
         pg.context.close()
 
     if run("home"):
