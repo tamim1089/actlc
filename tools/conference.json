@@ -486,7 +486,7 @@
     "org": "Ajman University",
     "country": "UAE",
     "photo": "../wp-content/uploads/2026/05/Khaled.jpg",
-    "linkedin": "",
+    "linkedin": "https://www.linkedin.com/in/prof-khaled-assaleh/",
     "featured": false
    },
    {
@@ -495,7 +495,7 @@
     "org": "American University of Sharjah (AUS)",
     "country": "UAE",
     "photo": "../wp-content/uploads/2026/05/James.jpg",
-    "linkedin": "",
+    "linkedin": "https://www.linkedin.com/in/jamesgriffinc/",
     "featured": false
    }
   ]
