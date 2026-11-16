@@ -149,6 +149,16 @@
       "time": "09:55–10:45",
       "title": "Plenary Panel Discussion 1",
       "detail": "Capability, Purpose, and Future Readiness: What Should Universities Really Be Preparing Students For?",
+      "people": [
+       {
+        "name": "Dr. Narimane Hadj-Hamou",
+        "role": "Founder and CEO, Center for Learning Innovations and Customized Knowledge Solutions (CLICKS) – Moderator"
+       },
+       {
+        "name": "Prof. Ghassan Aouad",
+        "role": "Chancellor, Abu Dhabi University"
+       }
+      ],
       "note": "",
       "break": false
      },
@@ -170,6 +180,28 @@
       "time": "11:30–12:20",
       "title": "Plenary Panel Discussion 2",
       "detail": "Teaching in the Age of AI: Balancing Technology, Humanity, and Learning",
+      "people": [
+       {
+        "name": "Dr. Connie Mitchell, PFHEA",
+        "role": "Director, Teaching and Learning Center, Prince Sultan University – Moderator"
+       },
+       {
+        "name": "Dr. Hamad Odhabi",
+        "role": "Vice Chancellor for AI and Operational Excellence, Abu Dhabi University, UAE"
+       },
+       {
+        "name": "Dr. Amal Alrayes",
+        "role": "Director, Unit for Teaching Excellence and Leadership, University of Bahrain"
+       },
+       {
+        "name": "Dr. Fatma Al-Maadheed",
+        "role": "Director, Arab Educational Training Centre for the Gulf States"
+       },
+       {
+        "name": "Dr. Saed Alrabaee",
+        "role": "Director, Centre for Excellence in Teaching and Learning, United Arab Emirates University"
+       }
+      ],
       "note": "",
       "break": false
      },
@@ -218,7 +250,7 @@
      {
       "time": "10:20–10:45",
       "title": "Keynote Address",
-      "detail": "From Innovation to Impact: Advancing Student Success and Educational Transformation Across the Arab Region",
+      "detail": "How can Centers for Learning and Teaching serve as catalysts for human centered innovation?",
       "people": [
        {
         "name": "Prof. Hoda Mostafa",
@@ -290,7 +322,27 @@
       "workshops": [
        {
         "title": "Thinking Beyond the Prompt: Embedding Creativity and Critical Thinking through AI",
-        "by": "Dr Randa Mikati, Associate, CLICKS, UAE"
+        "by": "Dr Randa Mikati, Associate, CLICKS, UAE",
+        "page": "thinking-beyond-the-prompt",
+        "details": {
+         "duration": "2.5 hours",
+         "audience": "Higher education faculty across disciplines",
+         "question": "How can faculty integrate AI into their teaching to foster students’ creativity and critical thinking while maintaining student agency and ownership of learning?",
+         "overview": [
+          "This interactive, hands-on workshop explores practical approaches to using AI as a tool to stimulate creative thinking, challenge assumptions, generate alternative perspectives, and strengthen students’ ability to critically evaluate information and ideas.",
+          "Participants will examine how to design learning activities in which AI supports rather than replaces students’ thinking, ensuring that students remain responsible for evaluating evidence, making decisions, developing original responses, and justifying their choices.",
+          "Working with an activity from their own courses, participants will apply a structured process of questioning, generating ideas, evaluating alternatives, and refining responses to redesign an AI-supported learning activity. Through practical exercises and peer feedback, they will consider how to align AI use with learning objectives and make students’ reasoning, decisions, and individual contributions visible.",
+          "By the end of the workshop, participants will have redesigned one teaching activity that purposefully integrates AI to promote creativity, critical thinking, student agency, and future-ready skills within their disciplinary context."
+         ],
+         "outcomes_lead": "By the end of the workshop, participants will be able to:",
+         "outcomes": [
+          "Identify opportunities for creative and critical thinking within an existing teaching activity.",
+          "Integrate AI at selected stages while defining the thinking and decisions students must undertake themselves.",
+          "Design prompts and questions that encourage exploration, critique, and reasoned revision.",
+          "Identify evidence and assessment criteria that make students’ thinking visible."
+         ],
+         "takeaway": "One redesigned, classroom-ready teaching activity integrating creative and critical thinking, with clear roles for AI, student instructions, and criteria for evaluating students’ ideas and reasoning."
+        }
        }
       ],
       "break": false
@@ -393,15 +445,6 @@
     "featured": false
    },
    {
-    "name": "Dr. Sabri Dogan",
-    "role": "Associate Professor of Psychology",
-    "org": "American University of Bahrain",
-    "country": "Bahrain",
-    "photo": "../wp-content/uploads/2026/05/Sabri.png",
-    "linkedin": "",
-    "featured": false
-   },
-   {
     "name": "Prof. Hoda Mostafa",
     "role": "Director, Center for Learning and Teaching",
     "org": "The American University in Cairo",
@@ -435,6 +478,24 @@
     "country": "Oman",
     "photo": "../wp-content/uploads/2026/05/nabila.jpg",
     "linkedin": "https://www.linkedin.com/in/nabila-al-macki/",
+    "featured": false
+   },
+   {
+    "name": "Prof. Khaled Assaleh",
+    "role": "Vice Chancellor for Academic Affairs",
+    "org": "Ajman University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Khaled.jpg",
+    "linkedin": "",
+    "featured": false
+   },
+   {
+    "name": "Dr. James Griffin",
+    "role": "Associate Professor",
+    "org": "American University of Sharjah (AUS)",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/James.jpg",
+    "linkedin": "",
     "featured": false
    }
   ]
@@ -692,6 +753,11 @@
    "title": "Sponsorship Package",
    "text": "Gold, Silver, and Bronze partnership tiers, benefits, and contact details",
    "href": "files/sponsorship-package.pdf"
+  },
+  {
+   "title": "Exhibition Package",
+   "text": "Exhibitor package, fees, exhibition space, and the exhibitor registration form",
+   "href": "files/exhibition-package.pdf"
   }
  ],
  "logos": [
@@ -828,7 +894,16 @@
    "Faculty training providers",
    "Graduate readiness and skills organisations"
   ],
-  "cta": "To explore sponsorship or request a tailored package, contact us:"
+  "cta": "To explore sponsorship or request a tailored package, contact us:",
+  "exhibit": {
+   "title": "Exhibit at ACTLC 2027",
+   "tagline": "Showcase your innovations. Connect with higher education leaders. Shape the future of teaching and learning.",
+   "body": [
+    "Position your organisation at the heart of a dynamic regional community dedicated to advancing innovation, excellence, and impact in higher education across the Arab world.",
+    "Join us on 2–3 February 2027 at Abu Dhabi University to showcase your solutions, engage with academic decision-makers, explore strategic partnerships, and expand your visibility across the higher education sector."
+   ],
+   "bold": "2–3 February 2027 at Abu Dhabi University"
+  }
  },
  "contact": {
   "eyebrow": "Contact Us",

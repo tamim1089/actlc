@@ -573,3 +573,15 @@
   .acx .acx-c-team .acx-c-person + .acx-c-person::before { left: 102px; }
   .acx .acx-c-team .acx-c-photo { width: 72px; height: 90px; border-radius: 14px; object-position: 50% 20%; }
 }
+
+/* Sponsorship: exhibiting, under the sponsorship offer */
+.acx .acx-c-exhibit { margin-top: calc(var(--t) * 3); padding-top: calc(var(--t) * 2); border-top: 1px solid var(--hairline); }
+.acx .acx-c-exhibit p { margin: calc(var(--t) * .8) 0 0; max-width: 62ch; font-size: var(--fs-body); line-height: 1.6; color: var(--body); }
+.acx .acx-c-exhibit .acx-c-extag, .acx .acx-c-exhibit b { font-weight: 600; color: var(--ink); }
+/* Programme: a workshop title that opens the workshop's own page */
+.acx .acx-c-ws b a { color: var(--teal-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+@media (hover: hover) { .acx .acx-c-ws b a:hover { color: var(--teal); } }
+@media (max-width: 760px) {
+  .acx .acx-c-exhibit { margin-top: 32px; padding-top: 24px; }
+  .acx .acx-c-exhibit p { margin-top: 8px; }
+}

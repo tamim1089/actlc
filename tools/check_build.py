@@ -3,7 +3,8 @@
 import hashlib, os, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PAGES = ["index.html", "events/index.html", "conference/index.html", "registration/index.html",
-         *sorted(f"events-main/{d}/{f}" for d in os.listdir(os.path.join(ROOT, "events-main")) for f in ("index.html", "event.ics"))]
+         *sorted(f"events-main/{d}/{f}" for d in os.listdir(os.path.join(ROOT, "events-main")) for f in ("index.html", "event.ics")),
+         *sorted(f"conference/{d}/index.html" for d in os.listdir(os.path.join(ROOT, "conference")) if os.path.isfile(os.path.join(ROOT, "conference", d, "index.html")))]
 def digest(): return hashlib.sha256(b"".join(open(os.path.join(ROOT, p), "rb").read() for p in PAGES)).hexdigest()
 for _ in range(2): subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build_events.py")], check=True, capture_output=True)
 a = digest(); subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build_events.py")], check=True, capture_output=True)

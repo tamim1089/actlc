@@ -147,7 +147,13 @@ def site_pages():
     pages = ["index.html"] + sorted(p for p in os.listdir(ROOT) if os.path.isfile(os.path.join(ROOT, p, "index.html")))
     pages = [p if p.endswith(".html") else f"{p}/index.html" for p in pages]
     pages += sorted(f"events-main/{d}/index.html" for d in os.listdir(os.path.join(ROOT, "events-main")))
+    pages += workshop_pages()
     return [p for p in pages if 'id="masthead"' in open(os.path.join(ROOT, p), encoding="utf-8", errors="ignore").read()]
+
+def workshop_pages():
+    """Conference workshop pages: conference/<slug>/index.html."""
+    base = os.path.join(ROOT, "conference")
+    return sorted(f"conference/{d}/index.html" for d in os.listdir(base) if os.path.isfile(os.path.join(base, d, "index.html")))
 
 def cf_decode(hexstr):
     b = bytes.fromhex(hexstr); return "".join(chr(c ^ b[0]) for c in b[1:])
@@ -226,7 +232,8 @@ def build_site():
         h = distil(h, page)
         h = version_images(h, page)
         h = picture_images(h, page)
-        is_list, is_detail, is_res = page == "events/index.html", page.startswith("events-main/"), page == "resources/index.html"
+        is_list, is_res = page == "events/index.html", page == "resources/index.html"
+        is_detail = page.startswith("events-main/") or page in workshop_pages()
         h = ensure_head(h, rel, is_list or is_detail or page == "index.html",
                         "acx-page-list" if is_list else "acx-page-detail" if is_detail else "acx-page-res" if is_res else "acx-page-reg" if page.startswith("registration/") else None,
                         ("events.css", "resources.css") if is_res else ("mobile-home.css",) if page == "index.html" else ("mobile-forms.css",) if page.startswith("registration/") else ())
@@ -420,6 +427,80 @@ def new_page(e):
     h = re.sub(r'<meta content="[^"]*" property="article:modified_time"/>\n?', "", h)
     return re.sub(r'<script class="yoast-schema-graph"[^>]*>.*?</script>\n?', "", h, flags=re.S)
 
+# ---------------------------------------------------------------- conference workshop pages
+def workshop_html(w, n, day, start, end, register):
+    d = w["details"]
+    name, _, role = w["by"].partition(", ")
+    paras = "\n".join(f'<p class="acx-p">{esc(p)}</p>' for p in d["overview"])
+    outs = "".join(f"<li>{esc(x)}</li>" for x in d["outcomes"])
+    reg = f'<a class="acx-btn acx-btn-filled" href="{esc(register)}" target="_blank" rel="noopener">Register for the conference</a>'
+    return f"""<div class="acx acx-detail acx-workshop" data-start="{Ev.iso(start)}" data-end="{Ev.iso(end)}" data-tz="Asia/Dubai">
+<a class="acx-back" href="../index.html#programme">{I_CHEV}Conference programme</a>
+<h1 class="acx-h1">{esc(w["title"])}</h1>
+<p class="acx-byline"><span class="acx-pname">{esc(name)}</span><span class="acx-bsep"> · </span><span class="acx-borg">{esc(role)}</span></p>
+<section class="acx-when" aria-label="Date and time">
+<div class="acx-when-main">
+<div class="acx-when-info">
+<p class="acx-dateline"><time datetime="{start:%Y-%m-%d}">{start:%A}, {start.day} {start:%B %Y}</time><span class="acx-status">Upcoming</span></p>
+<p class="acx-bigtime"><time datetime="{Ev.iso(start)}">{start:%H:%M}</time> – <time datetime="{Ev.iso(end)}">{end:%H:%M}</time></p>
+<p class="acx-when-sub">UAE time (GMT+4) · {esc(d["duration"])} · Abu Dhabi University</p>
+<p class="acx-elsewhere"><span>Conference Day {day} · Workshop {n}</span><span>For {esc(d["audience"][:1].lower() + d["audience"][1:])}</span></p>
+</div>
+<div class="acx-actions">
+<div class="acx-actions-row">{reg}</div>
+</div>
+</div>
+</section>
+<section class="acx-about" aria-labelledby="acx-about-h">
+<h2 class="acx-h2" id="acx-about-h">About this workshop</h2>
+<p class="acx-lead">{esc(d["question"])}</p>
+{paras}
+<h2 class="acx-h2">Workshop outcomes</h2>
+<p class="acx-p">{esc(d["outcomes_lead"])}</p>
+<ul class="acx-ul">{outs}</ul>
+<h2 class="acx-h2">Practical takeaway</h2>
+<p class="acx-p">{esc(d["takeaway"])}</p>
+</section>
+<div class="acx-bar">{reg}</div>
+</div>"""
+
+def build_workshops():
+    """Every programme workshop with a "page" gets conference/<page>/index.html, laid out like a session page."""
+    c = json.load(open(os.path.join(ROOT, "tools", "conference.json"), encoding="utf-8"))
+    tz, built = ZoneInfo("Asia/Dubai"), []
+    for dn, day in enumerate(c["programme"]["days"], 1):
+        date = dt.datetime.strptime(re.search(r"\d{1,2} \w+ \d{4}", day["date"]).group(0), "%d %B %Y")
+        for it in day["items"]:
+            for n, w in enumerate(it.get("workshops", []), 1):
+                if not w.get("page"): continue
+                t0, t1 = (dt.datetime.combine(date.date(), dt.time.fromisoformat(x), tz) for x in it["time"].split("–"))
+                d = os.path.join(ROOT, "conference", w["page"]); p = os.path.join(d, "index.html")
+                if os.path.exists(p):
+                    h = open(p, encoding="utf-8").read()
+                else:   # first build: start from the template session page, head rewritten for the workshop
+                    t = next(x for x in EVENTS if x.detail == TEMPLATE_PAGE)
+                    h = undistil(open(os.path.join(ROOT, "events-main", t.detail, "index.html"), encoding="utf-8").read())
+                    h = h.replace(t.title, esc(w["title"])).replace("events-main/" + t.detail, "conference/" + w["page"])
+                    desc = f"ACTLC 2027 workshop with {w['by']}, {t0.day} {t0:%B %Y}. {w['details']['question']}"
+                    h = re.sub(r'<meta content="[^"]*" property="og:description"/>', lambda m: f'<meta content="{esc(desc)}" property="og:description"/>', h)
+                    h = re.sub(r'<meta content="[^"]*" property="article:modified_time"/>\n?', "", h)
+                    h = re.sub(r'<script class="yoast-schema-graph"[^>]*>.*?</script>\n?', "", h, flags=re.S)
+                    os.makedirs(d, exist_ok=True)
+                m = re.search(r'<div class="acx acx-detail', h)
+                assert m, f"detail block not found in {p}"
+                s, end = block_span(h, m.start())
+                h = h[:s] + workshop_html(w, n, dn, t0, t1, c["hero"]["register"]) + h[end:]
+                h = replace_jsonld(h, {"@context": "https://schema.org", "@type": "Event", "name": w["title"],
+                                       "startDate": Ev.iso(t0), "endDate": Ev.iso(t1), "eventStatus": "https://schema.org/EventScheduled",
+                                       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                                       "location": {"@type": "Place", "name": "Abu Dhabi University, Abu Dhabi Campus",
+                                                    "address": {"@type": "PostalAddress", "addressLocality": "Abu Dhabi", "addressCountry": "AE"}},
+                                       "performer": {"@type": "Person", "name": w["by"].split(", ")[0]},
+                                       "description": w["details"]["question"]}, "acx-event-jsonld")
+                open(p, "w", encoding="utf-8").write(h)
+                built.append(p)
+    return built
+
 def build_detail(e):
     d = os.path.join(ROOT, "events-main", e.detail); p = os.path.join(d, "index.html")
     h = open(p, encoding="utf-8").read() if os.path.exists(p) else new_page(e)
@@ -439,6 +520,7 @@ if __name__ == "__main__":
         if e.detail: print("built", build_detail(e))
     print("built", build_home())
     print("built", build_conference())
+    for p in build_workshops(): print("built", p)
     print("built", build_resources())
     from search_index import build_index
     print("built %s (%d records)" % build_index(ROOT, EVENTS))

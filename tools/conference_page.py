@@ -138,7 +138,9 @@ def conference_html(c, email):
             kind = "is-break" if it["break"] else "is-par" if it["title"].startswith("Parallel") else "is-ses"
             note = '<span class="acx-c-note">%s</span>' % esc(it["note"].strip("()")) if it["note"] else ""
             detail = '<span class="acx-c-sd">%s</span>' % esc(it["detail"]) if it["detail"] else ""
-            detail += "".join('<span class="acx-c-sd acx-c-ws"><b>%s</b>%s</span>' % (esc(w["title"]), esc(w["by"])) for w in it.get("workshops", []))
+            # a workshop with its own page: the title links to it
+            wt = lambda w: '<a href="%s/index.html">%s</a>' % (esc(w["page"]), esc(w["title"])) if w.get("page") else esc(w["title"])
+            detail += "".join('<span class="acx-c-sd acx-c-ws"><b>%s</b>%s</span>' % (wt(w), esc(w["by"])) for w in it.get("workshops", []))
             if it.get("people"):
                 detail += '<ul class="acx-c-sd acx-c-ppl">%s</ul>' % "".join("<li><b>%s</b>, %s</li>" % (esc(p["name"]), esc(p["role"])) for p in it["people"])
             t0, t1 = it["time"].split("–")
@@ -207,9 +209,10 @@ def conference_html(c, email):
     o.append('<section class="acx-c-sec" id="sponsorship" aria-labelledby="acx-h-spo"><div class="acx-c-in">%s'
              '<h3 class="acx-c-h3">%s</h3>%s'
              '<div class="acx-c-actions acx-c-spcta"><a class="acx-btn" href="mailto:%s?subject=%s">Email about sponsorship</a>'
-             '</div>%s</div></section>'
+             '</div>%s%s</div></section>'
              % (head(so, "acx-h-spo"), esc(so["who_title"]), bullets(so["who"], ' style="columns:2;column-gap:2.5em"'),
-                email, quote("ACTLC 2027 sponsorship"), download(dl["Sponsorship Package"]["href"], "Download the sponsorship package", dl["Sponsorship Package"]["meta"])))
+                email, quote("ACTLC 2027 sponsorship"), download(dl["Sponsorship Package"]["href"], "Download the sponsorship package", dl["Sponsorship Package"]["meta"]),
+                exhibit_block(so["exhibit"], dl["Exhibition Package"], email)))
 
     ct = c["contact"]
 
@@ -228,6 +231,15 @@ def conference_html(c, email):
              % (head(ct, "acx-h-con"), items, email, quote("ACTLC 2027 conference")))
     o.append("</div>")
     return "\n".join(o)
+
+
+def exhibit_block(ex, dl, email):
+    """Under the sponsorship offer: exhibiting, with its own email and the exhibition package PDF."""
+    body = "".join("<p>%s</p>" % esc(t).replace(esc(ex["bold"]), "<b>%s</b>" % esc(ex["bold"])) for t in ex["body"])
+    return ('<div class="acx-c-exhibit"><h3 class="acx-c-h3" id="exhibit">%s</h3><p class="acx-c-extag">%s</p>%s'
+            '<div class="acx-c-actions acx-c-spcta"><a class="acx-btn" href="mailto:%s?subject=%s">Email about exhibiting</a></div>%s</div>'
+            % (esc(ex["title"]), esc(ex["tagline"]), body, email, quote("ACTLC 2027 exhibition"),
+               download(dl["href"], "Download the exhibition package", dl["meta"])))
 
 
 def build_conference(root, block_span, asset_version, email):

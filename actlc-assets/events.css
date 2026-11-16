@@ -389,3 +389,8 @@
   .acx-detail .acx-btn[data-label]::before, .acx-detail .acx-btn[data-label]::after { display: none; }   /* no dot in the buttons */
   .acx-detail .acx-btn[data-label] .acx-btn-t { transform: none !important; opacity: 1 !important; }
 }
+
+/* Conference workshop pages reuse the session layout: more than one heading and a list in the text column */
+.acx .acx-about .acx-h2 ~ .acx-h2 { margin-top: calc(var(--t) * 1.6); }
+.acx .acx-ul { margin: 0 0 calc(var(--t) * .9); padding-left: 1.2em; max-width: 66ch; font-size: var(--fs-body); line-height: 1.6; color: var(--body); }
+.acx .acx-ul li + li { margin-top: .35em; }
