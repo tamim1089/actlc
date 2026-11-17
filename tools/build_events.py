@@ -430,14 +430,17 @@ def new_page(e):
 # ---------------------------------------------------------------- conference workshop pages
 def workshop_html(w, n, day, start, end, register):
     d = w["details"]
-    name, _, role = w["by"].partition(", ")
+    people = w.get("presenters") or [w["by"].split(", ", 1)]
+    who = lambda nm, rl: f'<span class="acx-pname">{esc(nm)}</span><span class="acx-bsep"> · </span><span class="acx-borg">{esc(rl)}</span>'
+    byline = (f'<p class="acx-byline">{who(*people[0])}</p>' if len(people) == 1 else   # two or more presenters: one line each, still one grid cell
+              '<div class="acx-byline">' + "".join(f'<p class="acx-person">{who(*x)}</p>' for x in people) + '</div>')
     paras = "\n".join(f'<p class="acx-p">{esc(p)}</p>' for p in d["overview"])
     outs = "".join(f"<li>{esc(x)}</li>" for x in d["outcomes"])
     reg = f'<a class="acx-btn acx-btn-filled" href="{esc(register)}" target="_blank" rel="noopener">Register for the conference</a>'
     return f"""<div class="acx acx-detail acx-workshop" data-start="{Ev.iso(start)}" data-end="{Ev.iso(end)}" data-tz="Asia/Dubai">
 <a class="acx-back" href="../index.html#programme">{I_CHEV}Conference programme</a>
 <h1 class="acx-h1">{esc(w["title"])}</h1>
-<p class="acx-byline"><span class="acx-pname">{esc(name)}</span><span class="acx-bsep"> · </span><span class="acx-borg">{esc(role)}</span></p>
+{byline}
 <section class="acx-when" aria-label="Date and time">
 <div class="acx-when-main">
 <div class="acx-when-info">
@@ -495,7 +498,8 @@ def build_workshops():
                                        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                                        "location": {"@type": "Place", "name": "Abu Dhabi University, Abu Dhabi Campus",
                                                     "address": {"@type": "PostalAddress", "addressLocality": "Abu Dhabi", "addressCountry": "AE"}},
-                                       "performer": {"@type": "Person", "name": w["by"].split(", ")[0]},
+                                       "performer": [{"@type": "Person", "name": x[0]} for x in w["presenters"]] if w.get("presenters")
+                                                    else {"@type": "Person", "name": w["by"].split(", ")[0]},
                                        "description": w["details"]["question"]}, "acx-event-jsonld")
                 open(p, "w", encoding="utf-8").write(h)
                 built.append(p)

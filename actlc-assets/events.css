@@ -165,6 +165,8 @@
 /* Session page, reduced: byline, your-time line, member times on demand */
 .acx .acx-byline { margin: calc(var(--t) * .9) 0 0; font-size: var(--fs-body); color: var(--muted); }
 .acx .acx-byline .acx-pname { display: inline; color: var(--ink); font-weight: 600; }
+.acx .acx-person { margin: 0; }
+.acx .acx-person + .acx-person { margin-top: .6em; }
 .acx .acx-yourtime { margin: .35em 0 0; font-size: var(--fs-callout); font-weight: 600; color: var(--teal-deep); }
 .acx details.acx-when-world { display: block; padding: 0 calc(var(--t) * 1.5); }
 .acx details.acx-when-world summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: .5em; min-height: var(--tap); font-size: var(--fs-sub); font-weight: 600; color: var(--muted); }

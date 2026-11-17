@@ -343,6 +343,40 @@
          ],
          "takeaway": "One redesigned, classroom-ready teaching activity integrating creative and critical thinking, with clear roles for AI, student instructions, and criteria for evaluating students’ ideas and reasoning."
         }
+       },
+       {
+        "title": "AI for Every Learner: Designing Personalised and Inclusive Learning Experiences at Scale",
+        "by": "Prof. Mohammad Ghazal and Dr Mohammad Fteiha, Abu Dhabi University, UAE",
+        "presenters": [
+         [
+          "Prof. Mohammad Ghazal",
+          "Associate Dean for Academic Affairs, College of Engineering; Director, Research Institute for AI and Emerging Technologies, Professor and Chair, Electrical, Computer, and Biomedical Engineering Department, Abu Dhabi University, UAE"
+         ],
+         [
+          "Dr Mohammad Fteiha",
+          "Director of the Al Ain Campus, Director of the Center for Faculty Development and Learning Innovation, and Associate Professor of Special Education, Abu Dhabi University, UAE"
+         ]
+        ],
+        "page": "ai-for-every-learner",
+        "details": {
+         "duration": "2.5 hours",
+         "audience": "Higher education faculty across disciplines",
+         "question": "How can faculty use AI to personalise learning and improve accessibility while preserving equity, academic standards, and meaningful student engagement?",
+         "overview": [
+          "This interactive, hands-on workshop explores how artificial intelligence and Universal Design for Learning (UDL) can work together to create flexible, accessible, and responsive learning experiences for diverse students. Rather than focusing on prompting techniques, it addresses the pedagogical design decisions that make AI-enabled personalisation purposeful and inclusive.",
+          "Participants will examine realistic teaching scenarios involving different levels of prior knowledge, language proficiency, accessibility needs, and learner confidence. They will consider how AI can support alternative explanations, accessible materials, differentiated learning pathways, and timely formative feedback, while faculty retain responsibility for accuracy, fairness, privacy, and instructional decisions.",
+          "Working with a learning activity from their own courses, participants will use a guided UDL-informed design process and practical AI demonstrations to identify barriers, develop alternative learning resources, and select appropriate supports and feedback strategies. In small groups, they will test and refine their designs using an accessibility and responsible-AI checklist, then identify simple evidence of student engagement and learning impact.",
+          "By the end of the workshop, participants will have developed one classroom-ready, AI-supported inclusive learning activity, with clear learner choices, human oversight, and an approach to evaluating its effectiveness."
+         ],
+         "outcomes_lead": "By the end of the workshop, participants will be able to:",
+         "outcomes": [
+          "Identify barriers to participation and learning in an existing teaching activity using UDL principles.",
+          "Use AI to develop differentiated and accessible resources that respond to diverse learner needs.",
+          "Design flexible learning options and feedback while addressing AI bias, privacy, and human oversight.",
+          "Define practical indicators for evaluating the accessibility, engagement, and learning impact of the redesigned activity."
+         ],
+         "takeaway": "One redesigned, classroom-ready inclusive learning activity featuring AI-supported differentiated resources, flexible learner options, faculty oversight safeguards, and simple indicators for evaluating learning impact."
+        }
        }
       ],
       "break": false
@@ -496,6 +530,24 @@
     "country": "UAE",
     "photo": "../wp-content/uploads/2026/05/James.jpg",
     "linkedin": "https://www.linkedin.com/in/jamesgriffinc/",
+    "featured": false
+   },
+   {
+    "name": "Prof. Mohammad Ghazal",
+    "role": "Associate Dean for Academic Affairs, College of Engineering",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Ghazal.jpg",
+    "linkedin": "",
+    "featured": false
+   },
+   {
+    "name": "Dr. Mohammad Fteiha",
+    "role": "Director of Al Ain Campus & Director, Centre for Faculty Development and Learning Innovation",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Fteiha.png",
+    "linkedin": "",
     "featured": false
    }
   ]
