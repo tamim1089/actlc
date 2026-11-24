@@ -426,6 +426,24 @@
     "featured": true
    },
    {
+    "name": "Dr. Mohammad Fteiha",
+    "role": "Director of Al Ain Campus & Director, Centre for Faculty Development and Learning Innovation",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Fteiha.png",
+    "linkedin": "https://www.linkedin.com/in/mohammad-fteiha-pfhea-42434215/",
+    "featured": false
+   },
+   {
+    "name": "Prof. Mohammad Ghazal",
+    "role": "Associate Dean for Academic Affairs, College of Engineering",
+    "org": "Abu Dhabi University",
+    "country": "UAE",
+    "photo": "../wp-content/uploads/2026/05/Ghazal.jpg",
+    "linkedin": "https://www.linkedin.com/in/mohammed-ghazal-60291475/",
+    "featured": false
+   },
+   {
     "name": "Dr. Randa Mikati",
     "role": "Associate",
     "org": "CLICKS",
@@ -522,24 +540,6 @@
     "country": "UAE",
     "photo": "../wp-content/uploads/2026/05/James.jpg",
     "linkedin": "https://www.linkedin.com/in/jamesgriffinc/",
-    "featured": false
-   },
-   {
-    "name": "Prof. Mohammad Ghazal",
-    "role": "Associate Dean for Academic Affairs, College of Engineering",
-    "org": "Abu Dhabi University",
-    "country": "UAE",
-    "photo": "../wp-content/uploads/2026/05/Ghazal.jpg",
-    "linkedin": "https://www.linkedin.com/in/mohammed-ghazal-60291475/",
-    "featured": false
-   },
-   {
-    "name": "Dr. Mohammad Fteiha",
-    "role": "Director of Al Ain Campus & Director, Centre for Faculty Development and Learning Innovation",
-    "org": "Abu Dhabi University",
-    "country": "UAE",
-    "photo": "../wp-content/uploads/2026/05/Fteiha.png",
-    "linkedin": "https://www.linkedin.com/in/mohammad-fteiha-pfhea-42434215/",
     "featured": false
    }
   ]
